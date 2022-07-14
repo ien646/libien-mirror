@@ -4,6 +4,7 @@
 #include <type_traits>
 
 #include <ien/bit_tools.hpp>
+#include <ien/lang_utils.hpp>
 
 namespace ien
 {
@@ -13,10 +14,9 @@ namespace ien
         MSB_TO_LSB
     };
 
-    template<typename T, bit_iterator_mode Mode = bit_iterator_mode::LSB_TO_MSB>
+    template<concepts::Integral T, bit_iterator_mode Mode = bit_iterator_mode::LSB_TO_MSB>
     class bit_iterator
     {
-        static_assert(std::is_integral_v<T>, "bit_iterator works only with integral types!");
         static_assert(sizeof(T) <= 64, "Max integral supported size is 64 bits" );
 
     private:

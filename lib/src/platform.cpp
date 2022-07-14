@@ -1,8 +1,8 @@
 #include <ien/platform.hpp>
 
-#if defined(LIEN_ARCH_X86) || defined(LIEN_ARCH_X86_64)
+#if defined(IEN_ARCH_X86) || defined(IEN_ARCH_X86_64)
 
-#if defined(LIEN_COMPILER_MSVC)
+#if defined(IEN_COMPILER_MSVC)
     #include <intrin.h>
 #endif
 
@@ -11,21 +11,19 @@
 #include <memory>
 #include <unordered_map>
 
-#ifndef LIEN_COMPILER_MSVC
+#ifndef IEN_COMPILER_MSVC
     // https://github.com/01org/linux-sgx/blob/master/common/inc/internal/linux/cpuid_gnu.h
     void __cpuidex(int cpuid[4], int func_id, int subfunc_id)
     {
-    #if defined(LIEN_ARCH_X86_64)
-        asm volatile ("cpuid"
-                : "=a" (cpuid[0]), "=b" (cpuid[1]), "=c" (cpuid[2]), "=d" (cpuid[3])
-                : "0" (func_id), "2" (subfunc_id));
-    #elif defined(LIEN_ARCH_X86)
-        asm volatile ("xchgl %%ebx, %1; cpuid; xchgl %%ebx, %1"
-                : "=a" (cpuid[0]), "=r" (cpuid[1]), "=c" (cpuid[2]), "=d" (cpuid[3])
-                : "0" (func_id), "2" (subfunc_id));
-    #else
-        #error "Unsupported MSVC platform"
-    #endif
+        #if defined(IEN_ARCH_X86_64)
+            asm volatile ("cpuid"
+                    : "=a" (cpuid[0]), "=b" (cpuid[1]), "=c" (cpuid[2]), "=d" (cpuid[3])
+                    : "0" (func_id), "2" (subfunc_id));
+        #elif defined(IEN_ARCH_X86)
+            asm volatile ("xchgl %%ebx, %1; cpuid; xchgl %%ebx, %1"
+                    : "=a" (cpuid[0]), "=r" (cpuid[1]), "=c" (cpuid[2]), "=d" (cpuid[3])
+                    : "0" (func_id), "2" (subfunc_id));
+        #endif
     }
 #endif
 
@@ -49,7 +47,6 @@ namespace ien
 namespace ien::platform::x86
 {
     void init();
-    void print_enabled_features(std::ostream& ostr);
     bool get_feature(feature f);
 
     typedef std::unordered_map<int, std::string> feature_names_map_t;

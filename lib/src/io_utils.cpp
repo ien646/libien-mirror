@@ -1,0 +1,98 @@
+#include <ien/io_utils.hpp>
+
+#include <ien/str_utils.hpp>
+
+#include <cstdio>
+
+#ifdef IEN_OS_WIN
+    #define NOMINMAX
+    #include <Windows.h>
+#endif
+
+namespace ien
+{
+    template<typename TPath, typename TMode>
+    FILE* get_file_descriptor(const TPath& path, const TMode& mode)
+    {
+    #ifdef IEN_OS_WIN
+        return _wfopen(ien::xstr_to_wstr(path).c_str(), ien::xstr_to_wstr(mode).c_str());
+    #else
+        return std::fopen(ien::xstr_to_str(path).c_str(), ien::xstr_to_str(mode).c_str());
+    #endif
+    }
+
+    unique_file_descriptor::unique_file_descriptor(std::string_view path, std::string_view mode)
+    {
+        value = get_file_descriptor(path, mode);
+    }
+
+#ifdef IEN_OS_WIN
+    unique_file_descriptor::unique_file_descriptor(std::wstring_view path, std::wstring_view mode)
+    {
+        value = _wfopen(std::wstring(path).c_str(), std::wstring(mode).c_str());
+    }
+#endif
+
+    unique_file_descriptor::unique_file_descriptor(const std::u8string& path, std::string_view mode)
+    {
+        get_file_descriptor(path, mode);
+    }
+
+    unique_file_descriptor::unique_file_descriptor(FILE* fd, int(*f_close)(FILE*))
+    {
+        value = fd;
+        func_close = f_close;
+    }
+
+    unique_file_descriptor::~unique_file_descriptor()
+    {
+        if (value)
+        {
+            func_close(value);
+        }
+    }
+
+    long unique_file_descriptor::file_size()
+    {
+        long previous_pos = current_position();
+        move_to_end();
+        long result = current_position();
+        set_position(previous_pos);
+        return result;
+    }
+
+    long unique_file_descriptor::current_position()
+    {
+        return std::ftell(value);
+    }
+
+    void unique_file_descriptor::set_position(long pos)
+    {
+        std::fseek(value, pos, SEEK_SET);
+    }
+
+    void unique_file_descriptor::move_position(long offset)
+    {
+        std::fseek(value, offset, SEEK_CUR);
+    }
+
+    void unique_file_descriptor::move_to_start()
+    {
+        std::fseek(value, 0, SEEK_SET);
+    }
+
+    void unique_file_descriptor::move_to_end()
+    {
+        std::fseek(value, 0, SEEK_END);
+    }
+
+    size_t unique_file_descriptor::read(void* target_buffer, size_t count, size_t elem_size)
+    {
+        return std::fread(target_buffer, elem_size, count, value);
+    }
+
+    void unique_file_descriptor::write(const void* source_buffer, size_t count, size_t elem_size)
+    {
+        std::fwrite(source_buffer, elem_size, count, value);
+    }
+}

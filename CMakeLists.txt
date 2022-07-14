@@ -1,23 +1,24 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.18)
 
-project(libien)
+set(libien_VERSION 0.1.0)
 
-add_library(libien
-    "src/base64.cpp"
-    "src/platform.cpp"
-    "src/strutils.cpp"
+option(LIBIEN_BUILD_TESTS "Build tests" ON)
+option(LIBIEN_BUILD_IMAGE "Build image library" ON)
+option(LIBIEN_BUILD_SFTP "Build sftp library" ON)
+
+project(libien
+    VERSION ${libien_VERSION}
+    LANGUAGES C CXX
 )
 
-set_target_properties(libien PROPERTIES
-    CXX_STANDARD 20
-    CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF
+execute_process(
+    COMMAND git submodule update --init --recursive
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 
-if(MSVC)
-    target_compile_options(libien PUBLIC /permissive-)
-else()
-    target_compile_options(libien PUBLIC -Wextra -pedantic)
+add_subdirectory("third-party")
+add_subdirectory("lib")
+
+if(LIBIEN_BUILD_TESTS)
+    add_subdirectory("test")
 endif()
-
-target_include_directories(libien PUBLIC "./include")
