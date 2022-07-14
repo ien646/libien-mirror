@@ -22,9 +22,11 @@
 //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 // OS
 //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-#if defined(_WIN64)
+#if defined(WIN64) || defined(_WIN64)
+    #define IEN_OS_WIN
     #define IEN_OS_WIN64
-#elif defined(_WIN32)
+#elif defined(WIN32) || defined(_WIN32)
+    #define IEN_OS_WIN
     #define IEN_OS_WIN32
 #endif
 
@@ -82,21 +84,27 @@
 //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 #include <cstddef>
+#include <cstdint>
 
 namespace ien
 {
     template<typename T>
     constexpr bool is_ptr_aligned(const T* ptr, size_t alignment)
     {
-        auto ptrval =
-            reinterpret_cast<const char*>(ptr) -
-            reinterpret_cast<const char*>(0);
+        if (ptr == nullptr)
+        {
+            return true;
+        }
+        const uintptr_t prtval = reinterpret_cast<uintptr_t>(ptr);
+        return (prtval % alignment) == 0;
+    }
 
-        return (ptrval % alignment) == 0;
+    template<typename T>
+    constexpr T aligned_sz(T sz, size_t alignment)
+    {
+        return (sz - (sz % alignment) + alignment);
     }
 }
-
-#define IEN_ALIGNED_SZ(sz, alig) (sz - (sz % alig) + alig)
 
 #if defined(IEN_ARCH_X86_64) || defined(IEN_ARCH_X86)
     #define IEN_DEFAULT_ALIGNMENT 32
@@ -112,7 +120,7 @@ namespace ien
 
 // -- Unreachable case --
 #if defined(IEN_COMPILER_MSVC)
-    #define IEN_HINT_UNREACHABLE() __assume(false)
+    #define IEN_HINT_UNREACHABLE() __assume(0)
 #elif defined(IEN_COMPILER_GNU) || defined(IEN_COMPILER_CLANG) || defined(IEN_COMPILER_INTEL)
     #define IEN_HINT_UNREACHABLE() __builtin_unreachable()
 #else
@@ -136,38 +144,6 @@ namespace ien
 #endif
 #if __cplusplus >= 202002L
     #define IEN_HAS_CPP20
-#endif
-
-//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-// UNSUPPORTED COMPILER GUARDS
-//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
-#ifndef IEN_COMPILER_IGNORE_VER
-    #if defined(IEN_COMPILER_MSVC)
-        #if IEN_COMPILER_MSVC_VER < 1900
-            #error "Unsupported Microsoft Visual C++ Compiler Version!"
-            #error "A compiler with at least C++17 support is required"
-            #error "If you believe this error to be a false positive, define IEN_COMPILER_IGNORE_VER in your code"
-        #endif
-    #elif defined(IEN_COMPILER_GNU)
-        #if IEN_COMPILER_GNU_VER < 7
-            #error "Unsupported GNU C++ Compiler Version!"
-            #error "A compiler with at least C++17 support is required"
-            #error "If you believe this error to be a false positive, define IEN_COMPILER_IGNORE_VER in your code"
-        #endif
-    #elif defined(IEN_COMPILER_CLANG)
-        #if IEN_COMPILER_CLANG_VER < 5
-            #error "Unsupported Clang C++ Compiler Version!"
-            #error "A compiler with at least C++17 support is required"
-            #error "If you believe this error to be a false positive, define IEN_COMPILER_IGNORE_VER in your code"
-        #endif
-    #elif defined(IEN_COMPILER_INTEL)
-        #if IEN_COMPILER_INTEL_VER < 1900
-            #error "Unsupported Intel C++ Compiler Version!"
-            #error "A compiler with at least C++17 support is required"
-            #error "If you believe this error to be a false positive, define IEN_COMPILER_IGNORE_VER in your code"
-        #endif
-    #endif
 #endif
 
 //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -201,7 +177,6 @@ namespace ien::platform::x86
 
     extern void force_feature(feature, bool);
     extern bool get_feature(feature);
-    extern void print_enabled_features(std::ostream& = std::cout);
 }
 
 #endif
