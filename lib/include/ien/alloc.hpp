@@ -13,7 +13,7 @@ namespace ien::detail
 	[[nodiscard]] inline void* aligned_alloc(size_t bytes, size_t alignment)
 	{
 		assert(is_power_of_2(alignment));
-		#ifdef IEN_OS_WIN_ANY
+		#ifdef IEN_OS_WIN
 			return _aligned_malloc(bytes, alignment);
 		#else
 			return aligned_alloc(bytes, alignment);
@@ -23,7 +23,7 @@ namespace ien::detail
 	inline void aligned_free(void* ptr)
 	{
 		assert(ptr != nullptr);
-		#ifdef IEN_OS_WIN_ANY
+		#ifdef IEN_OS_WIN
 			_aligned_free(ptr);
 		#else
 			free(ptr);
