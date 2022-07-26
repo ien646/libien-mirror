@@ -10,6 +10,7 @@
 
 #include <array>
 #include <filesystem>
+#include <fstream>
 #include <stdexcept>
 
 namespace ien
@@ -30,11 +31,6 @@ namespace ien
 	image::image(const std::string& path, image_format fmt, image_load_mode load_mode)
 		: _format(fmt)
 	{
-		if(!std::filesystem::exists(path))
-		{
-			throw std::invalid_argument("Image path not found");
-		}
-
 		if (load_mode == image_load_mode::IMAGE)
 		{
 			int dummy;
@@ -56,12 +52,24 @@ namespace ien
 				throw std::logic_error("Unable to open image");
 			}
 
-			std::array<uint32_t, 3> header = {};
-			fd.read(header.data(), 3, sizeof(uint32_t));
+			char signature[4] = { 0, 0, 0, 0 };
+			uint32_t width = 0;
+			uint32_t height = 0;
+			uint8_t channels = 0;
 
-			_width = header[0];
-			_height = header[1];
-			_format = static_cast<image_format>(header[2]);
+			fd.read(signature, sizeof(signature));
+			if(strncmp(signature, "IRIS", 4) != 0)
+			{
+				throw std::logic_error("Invalid tagged raw image signature");
+			}
+
+			fd.read(&width, sizeof(width));
+			fd.read(&height, sizeof(height));
+			fd.read(&channels, sizeof(channels));
+
+			_width = width;
+			_height = height;
+			_format = static_cast<image_format>(channels);
 
 			size_t total_bytes = _width * _height * static_cast<size_t>(_format);
 			_data = reinterpret_cast<unsigned char*>(malloc(total_bytes));
@@ -125,5 +133,37 @@ namespace ien
 	void image::write_to_file_bmp(const std::string& path)
 	{
 		stbi_write_bmp(path.c_str(), (int)_width, (int)_height, channel_count(), _data);
+	}
+
+	void image::write_to_file_raw_tagged(const std::string& path)
+	{
+		constexpr char signature[4] = { 'I', 'R', 'I', 'S' }; // Ien's Raw Image Signature
+		uint32_t width = _width;
+		uint32_t height = _height;
+		uint8_t channels = channel_count();
+
+		std::vector<uint8_t> binary;
+
+		size_t offset = 0;
+		size_t header_size = sizeof(signature) + sizeof(width) + sizeof(height) + sizeof(channels);
+		size_t image_size = size();
+		binary.resize(header_size + image_size);
+
+		memcpy(binary.data() + offset, signature, sizeof(signature));
+		offset += sizeof(signature);
+
+		memcpy(binary.data() + offset, reinterpret_cast<char*>(&width), sizeof(width));
+		offset += sizeof(width);
+
+		memcpy(binary.data() + offset, reinterpret_cast<char*>(&height), sizeof(height));
+		offset += sizeof(height);
+
+		memcpy(binary.data() + offset, reinterpret_cast<char*>(&channels), sizeof(channels));
+		offset += sizeof(channels);
+
+		// Copy image data into binary
+		memcpy(binary.data() + offset, _data, image_size);
+
+		ien::write_file_binary(path, binary);
 	}
 }

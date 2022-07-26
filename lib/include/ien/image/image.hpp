@@ -42,6 +42,7 @@ namespace ien
 
 		void write_to_file_png(const std::string& path, int compression = 8);
 		void write_to_file_bmp(const std::string& path);
+		void write_to_file_raw_tagged(const std::string& path);
 
 		image extract_channel_image(size_t channel_index);
 	};
