@@ -127,4 +127,13 @@ namespace ien
     bool file_exists(const std::wstring& path) { return _file_exists(path); }
     bool directory_exists(const std::wstring& path) { return _dir_exists(path); }
 #endif
+
+    std::string format_timestamp_iso8601(time_t ts)
+    {
+        constexpr char formatstr[] = "%F %T %z";
+        std::tm* ltime = std::localtime(&ts);
+        char buff[64];
+        size_t bytes = std::strftime(buff, 64, formatstr, ltime);
+        return std::string(buff, bytes);
+    }
 }
