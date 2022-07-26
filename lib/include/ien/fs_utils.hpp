@@ -36,7 +36,7 @@ namespace ien
 	extern bool directory_exists(const std::u8string& path);
 	extern bool directory_exists(const std::filesystem::path& path);
 
-#ifdef IEN_OS_WIN_ANY
+#ifdef IEN_OS_WIN
 	extern size_t get_file_size(const std::wstring& path);
 	extern time_t get_file_atime(const std::wstring& path);
 	extern time_t get_file_mtime(const std::wstring& path);
