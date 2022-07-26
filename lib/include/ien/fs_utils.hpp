@@ -47,4 +47,6 @@ namespace ien
 	extern bool file_exists(const std::wstring& path);
 	extern bool directory_exists(const std::wstring& path);
 #endif
+
+ 	extern std::string format_timestamp_iso8601(time_t ts);
 }
