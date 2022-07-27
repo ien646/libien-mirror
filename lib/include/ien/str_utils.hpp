@@ -145,7 +145,7 @@ namespace ien
         }
         else if constexpr (std::is_same_v<typename TString::value_type, wchar_t>)
         {
-            return str;
+            return std::wstring(str);
         }
         return { };
     }
