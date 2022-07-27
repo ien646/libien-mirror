@@ -12,6 +12,7 @@
 #endif
 
 #include <filesystem>
+namespace fs = std::filesystem;
 
 #ifdef IEN_OS_WIN
     #define NOMINMAX
@@ -92,31 +93,85 @@ namespace ien
 
     size_t get_file_size(const std::string& path) { return _get_file_size(path); }
     size_t get_file_size(const std::u8string& path) { return _get_file_size(path); }
-    size_t get_file_size(const std::filesystem::path& path) { return _get_file_size(path.u8string()); }
+    size_t get_file_size(const fs::path& path) { return _get_file_size(path.u8string()); }
 
     time_t get_file_atime(const std::string& path) { return _get_atime(path); }
     time_t get_file_atime(const std::u8string& path) { return _get_atime(path); }
-    time_t get_file_atime(const std::filesystem::path& path) { return _get_atime(path.u8string()); }
+    time_t get_file_atime(const fs::path& path) { return _get_atime(path.u8string()); }
 
     time_t get_file_mtime(const std::string& path) { return _get_mtime(path); }
     time_t get_file_mtime(const std::u8string& path) { return _get_mtime(path); }
-    time_t get_file_mtime(const std::filesystem::path& path) { return _get_mtime(path.u8string()); }
+    time_t get_file_mtime(const fs::path& path) { return _get_mtime(path.u8string()); }
 
     bool set_file_atime(const std::string& path, time_t atime) { return _set_atime(path, atime); }
     bool set_file_atime(const std::u8string& path, time_t atime) { return _set_atime(path, atime); }
-    bool set_file_atime(const std::filesystem::path& path, time_t atime) { return _set_atime(path.u8string(), atime); }
+    bool set_file_atime(const fs::path& path, time_t atime) { return _set_atime(path.u8string(), atime); }
 
     bool set_file_mtime(const std::string& path, time_t mtime) { return _set_mtime(path, mtime); }
     bool set_file_mtime(const std::u8string& path, time_t mtime) { return _set_mtime(path, mtime); }
-    bool set_file_mtime(const std::filesystem::path& path, time_t mtime) { return _set_mtime(path.u8string(), mtime); }
+    bool set_file_mtime(const fs::path& path, time_t mtime) { return _set_mtime(path.u8string(), mtime); }
 
     bool file_exists(const std::string& path) { return _file_exists(path); }
     bool file_exists(const std::u8string& path) { return _file_exists(path); }
-    bool file_exists(const std::filesystem::path& path) { return _file_exists(path.u8string()); }
+    bool file_exists(const fs::path& path) { return _file_exists(path.u8string()); }
 
     bool directory_exists(const std::string& path) { return _dir_exists(path); }
     bool directory_exists(const std::u8string& path) { return _dir_exists(path); }
-    bool directory_exists(const std::filesystem::path& path) { return _dir_exists(path.u8string()); }
+    bool directory_exists(const fs::path& path) { return _dir_exists(path.u8string()); }
+
+    std::string get_file_name(const std::string& path)
+    {
+    #ifdef IEN_OS_WIN
+        return wstr_to_str(fs::path(path).filename().wstring());
+    #else
+        return fs::path(path).filename().string();
+    #endif
+    }
+
+	std::string get_file_name(const std::u8string& path)
+    {
+    #ifdef IEN_OS_WIN
+        return wstr_to_str(fs::path(path).filename().wstring());
+    #else
+        return fs::path(path).filename().string();
+    #endif
+    }
+
+	std::string get_file_name(const fs::path& path)
+    {
+    #ifdef IEN_OS_WIN
+        return wstr_to_str(path.filename().wstring());
+    #else
+        return path.filename().string();
+    #endif
+    }
+
+    std::string get_file_extension(const std::string& path)
+    {
+    #ifdef IEN_OS_WIN
+        return wstr_to_str(fs::path(path).extension().wstring());
+    #else
+        return fs::path(path).extension().string();
+    #endif
+    }
+
+	std::string get_file_extension(const std::u8string& path)
+    {
+    #ifdef IEN_OS_WIN
+        return wstr_to_str(fs::path(path).extension().wstring());
+    #else
+        return fs::path(path).extension().string();
+    #endif
+    }
+
+	std::string get_file_extension(const fs::path& path)
+    {
+    #ifdef IEN_OS_WIN
+        return wstr_to_str(path.extension().wstring());
+    #else
+        return path.extension().string();
+    #endif
+    }
 
 #ifdef IEN_OS_WIN
     size_t get_file_size(const std::wstring& path) { return _get_file_size(path); }
@@ -126,6 +181,8 @@ namespace ien
     bool set_file_mtime(const std::wstring& path, time_t mtime) { return _set_mtime(path, mtime); }
     bool file_exists(const std::wstring& path) { return _file_exists(path); }
     bool directory_exists(const std::wstring& path) { return _dir_exists(path); }
+    std::string get_file_name(std::wstring_view path) { return wstr_to_str(fs::path(path).filename().wstring()); }
+	std::string get_file_extension(std::wstring_view path) { return wstr_to_str(fs::path(path).extension().wstring()); }
 #endif
 
     std::string format_timestamp_iso8601(time_t ts)
