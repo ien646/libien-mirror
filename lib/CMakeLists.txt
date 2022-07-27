@@ -31,12 +31,6 @@ set_target_properties(libien PROPERTIES
     CXX_EXTENSIONS OFF
 )
 
-if(MSVC)
-    target_compile_options(libien PRIVATE /permissive-)
-else()
-    target_compile_options(libien PRIVATE -Wextra -pedantic)
-endif()
-
 target_compile_definitions(libien PRIVATE _CRT_SECURE_NO_WARNINGS)
 target_include_directories(libien PUBLIC include)
 target_link_libraries(libien PRIVATE fmt)
