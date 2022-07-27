@@ -33,4 +33,4 @@ set_target_properties(libien PROPERTIES
 
 target_compile_definitions(libien PRIVATE _CRT_SECURE_NO_WARNINGS)
 target_include_directories(libien PUBLIC include)
-target_link_libraries(libien PRIVATE fmt)
+target_link_libraries(libien PUBLIC fmt)
