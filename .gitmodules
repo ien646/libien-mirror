@@ -1,9 +1,0 @@
-[submodule "third-party/fmt"]
-	path = third-party/fmt
-	url = https://github.com/fmtlib/fmt
-[submodule "third-party/libssh2"]
-	path = third-party/libssh2
-	url = https://github.com/libssh2/libssh2
-[submodule "third-party/catch2"]
-	path = third-party/catch2
-	url = https://github.com/catchorg/Catch2
