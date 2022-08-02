@@ -15,6 +15,9 @@ if(LIBIEN_BUILD_SFTP)
         GIT_TAG "libssh2-1.10.0"
         OPTIONS "BUILD_EXAMPLES OFF" "BUILD_TESTING OFF"
     )
+    # check if SYSTEM support is added to CPM
+    get_target_property(_LIBSSH2_INCLUDES libssh2 INTERFACE_INCLUDE_DIRECTORIES)
+    target_include_directories(libssh2 SYSTEM INTERFACE ${_LIBHSS2_INCLUDES})
 endif()
 
 if(LIBIEN_BUILD_TESTS)
