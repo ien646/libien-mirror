@@ -16,7 +16,7 @@ if(LIBIEN_BUILD_SFTP)
         OPTIONS "BUILD_EXAMPLES OFF" "BUILD_TESTING OFF"
     )
     # check if SYSTEM support is added to CPM
-    get_target_property(_LIBSSH2_INCLUDES libssh2 INTERFACE_INCLUDE_DIRECTORIES)
+    get_target_property(_LIBSSH2_INCLUDES libssh2 INCLUDE_DIRECTORIES)
     target_include_directories(libssh2 SYSTEM INTERFACE ${_LIBHSS2_INCLUDES})
 endif()
 
