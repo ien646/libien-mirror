@@ -66,8 +66,7 @@ namespace ien
     }
 
     template<concepts::StdAnyStrStrV T, concepts::AnyChar TOcurrence, concepts::AnyChar TReplacement>
-        requires (detail::is_same_underlying_char_type<T, TOcurrence>
-            && detail::is_same_underlying_char_type<T, TReplacement>)
+        requires detail::is_same_underlying_char_type<T, TOcurrence, TReplacement>
     constexpr std::basic_string<underlying_char_t<T>> str_replace(
         const T& str,
         const TOcurrence& ocurrence,
@@ -87,8 +86,7 @@ namespace ien
     }
 
     template<concepts::AnyStr T, concepts::AnyStr TOcurrence, concepts::AnyStr TReplacement>
-        requires (detail::is_same_underlying_char_type<T, TOcurrence>
-            && detail::is_same_underlying_char_type<T, TReplacement>)
+        requires detail::is_same_underlying_char_type<T, TOcurrence, TReplacement>
     constexpr std::basic_string<underlying_char_t<T>> str_replace(
         const T& str,
         const TOcurrence& ocurrence,
