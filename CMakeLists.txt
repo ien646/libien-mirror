@@ -18,13 +18,16 @@ if(LIBIEN_BUILD_SFTP)
         DOWNLOAD_ONLY YES
     )
     # Turn off libssh2's annoying warning bullshit
-    set(BUILD_EXAMPLES OFF)
-    set(BUILD_TESTING OFF)
+    set(BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
+    set(BUILD_TESTING OFF CACHE BOOL "Build tests" FORCE)
     file(READ ${libssh2_SOURCE_DIR}/CMakeLists.txt __LIBSSH2_CMAKELISTS)
     string(REPLACE "include(max_warnings)" "#include(max_warnings)" __LIBSSH2_CMAKELISTS ${__LIBSSH2_CMAKELISTS})
     file(WRITE ${libssh2_SOURCE_DIR}/CMakeLists.txt ${__LIBSSH2_CMAKELISTS})
     if(MSVC)
-        set_directory_properties(${libssh2_SOURCE_DIR} APPEND PROPERTY COMPILE_OPTIONS "/W0")
+        set_directory_properties(${libssh2_SOURCE_DIR}
+            APPEND PROPERTY COMPILE_OPTIONS "/W0"
+            APPEND PROPERTY COMPILE_DEFINITIONS "WIN32_NO_STATUS"
+        )
     else()
         set_directory_properties(${libssh2_SOURCE_DIR} APPEND PROPERTY COMPILE_OPTIONS "-w")
     endif()

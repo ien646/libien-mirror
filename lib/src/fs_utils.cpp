@@ -16,6 +16,8 @@ namespace fs = std::filesystem;
 
 #ifdef IEN_OS_WIN
     #define NOMINMAX
+    #define WIN32_NO_STATUS
+    #define WIN32_LEAN_AND_MEAN
     #include <Windows.h>
     using stat_t = struct _stat;
     using utimbuf_t = struct _utimbuf;

@@ -1,6 +1,7 @@
 add_executable(libien_tests
 	"str_utils.cpp"
- "lang_utils.cpp")
+    "lang_utils.cpp"
+)
 
 set_target_properties(libien_tests PROPERTIES
     CXX_STANDARD 20
