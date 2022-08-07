@@ -5,10 +5,9 @@
 
 namespace ien::detail
 {
-    template<concepts::AnyStrOrChar TA, concepts::AnyStrOrChar TB>
-    constexpr bool is_same_underlying_char_type = std::is_same_v<
-        underlying_char_t<TA>, underlying_char_t<TB>
-    >;
+    template<concepts::AnyStrOrChar T, concepts::AnyStrOrChar ... TOther>
+    constexpr bool is_same_underlying_char_type =
+        (std::is_same_v<underlying_char_t<T>, underlying_char_t<TOther>> && ...);
 
     template<typename T>
     constexpr size_t str_length(const T& str)
