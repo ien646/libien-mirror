@@ -13,8 +13,8 @@ include(cmake/CPM.cmake)
 if(LIBIEN_BUILD_SFTP)
     CPMAddPackage(
         NAME libssh2
-        GIT_REPOSITORY "https://github.com/libssh2/libssh2"
-        GIT_TAG "libssh2-1.10.0"
+        GIT_REPOSITORY "https://github.com/ien646/libssh2"
+        GIT_TAG "092324348cd5d0fd359bb082f6f01c8f4f900715"
         DOWNLOAD_ONLY YES
     )
     # Turn off libssh2's annoying warning bullshit
