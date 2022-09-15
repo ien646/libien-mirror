@@ -49,14 +49,10 @@ namespace ien
     namespace detail
     {
         template<bool Binary, typename TPath>
-            requires(concepts::RawCStr<TPath> || concepts::StdCStrStrV<TPath>)
+            requires(concepts::AnyStr<TPath>)
         unique_file_descriptor get_read_fd(const TPath& path)
         {
-            using path_char_type = std::conditional_t<
-                concepts::RawCStr<TPath>,
-                raw_str_char_t<TPath>,
-                typename TPath::value_type
-            >;
+            using path_char_type = underlying_char_t<TPath>;
 
             constexpr const path_char_type* mode = Binary
                 ? select_template<const path_char_type*>(L"rb", "rb")
@@ -65,14 +61,10 @@ namespace ien
         }
 
         template<bool Binary, typename TPath>
-            requires(concepts::RawCStr<TPath> || concepts::StdCStrStrV<TPath>)
+            requires(concepts::AnyStr<TPath>)
         unique_file_descriptor get_write_fd(const TPath& path)
         {
-            using path_char_type = std::conditional_t<
-                concepts::RawCStr<TPath>,
-                raw_str_char_t<TPath>,
-                typename TPath::value_type
-            >;
+            using path_char_type = underlying_char_t<TPath>;
 
             constexpr const path_char_type* mode = Binary
                 ? select_template<const path_char_type*>(L"wb", "wb")
@@ -82,14 +74,10 @@ namespace ien
         }
 
         template<bool Binary, typename TPath>
-            requires(concepts::RawCStr<TPath> || concepts::StdCStrStrV<TPath>)
+            requires(concepts::AnyStr<TPath>)
         unique_file_descriptor get_append_fd(const TPath& path)
         {
-            using path_char_type = std::conditional_t<
-                concepts::RawCStr<TPath>,
-                raw_str_char_t<TPath>,
-                typename TPath::value_type
-            >;
+            using path_char_type = underlying_char_t<TPath>;
 
             constexpr const path_char_type* mode = Binary
                 ? select_template<const path_char_type*>(L"ab", "ab")
@@ -100,7 +88,7 @@ namespace ien
     }
 
     template<bool Binary, typename TPath, typename TVal = char>
-        requires(concepts::RawCStr<TPath> || concepts::StdAnyStrStrV<TPath>)
+        requires(concepts::AnyStr<TPath>)
     std::optional<std::conditional_t<Binary, std::vector<TVal>, std::basic_string<TVal>>> read_file(const TPath& path)
     {
         unique_file_descriptor fd = detail::get_read_fd<Binary>(path);
@@ -121,21 +109,21 @@ namespace ien
     }
 
     template<typename TPath, typename TChar = char>
-        requires(concepts::RawCStr<TPath> || concepts::StdCStrStrV<TPath>)
+        requires(concepts::AnyStr<TPath>)
     std::optional<std::basic_string<TChar>> read_file_text(const TPath& path)
     {
         return read_file<false>(path);
     }
 
     template<typename TPath, typename TVal = char>
-        requires(concepts::RawCStr<TPath> || concepts::StdCStrStrV<TPath>)
+        requires(concepts::AnyStr<TPath>)
     std::optional<std::vector<TVal>> read_file_binary(const TPath& path)
     {
         return read_file<true>(path);
     }
 
     template<typename TPath, typename TChar>
-        requires (concepts::RawCStr<TPath> || concepts::StdCStrStrV<TPath>)
+        requires (concepts::AnyStr<TPath>)
     bool write_file_text(const TPath& path, const std::basic_string<TChar>& text)
     {
         unique_file_descriptor fd = detail::get_write_fd<false>(path);
@@ -148,7 +136,7 @@ namespace ien
     }
 
     template<typename TPath, typename TContainer, typename TChar = char>
-        requires (concepts::RawCStr<TPath> || concepts::StdCStrStrV<TPath>)
+        requires (concepts::AnyStr<TPath>)
     bool write_file_binary(const TPath& path, const TContainer& data)
     {
         unique_file_descriptor fd = detail::get_write_fd<false>(path);
