@@ -104,7 +104,8 @@ namespace ien
             // Add odd element in case of non perfectly divisible file length
             static_cast<size_t>((file_size % sizeof(TVal)) ? 1 : 0)
         );
-        fd.read(result.data(), result.size(), sizeof(TVal));
+        size_t read_bytes = fd.read(result.data(), result.size(), sizeof(TVal));
+        result.resize(read_bytes); // discard null bytes if present (\r is discarded in text mode, for example)
         return result;
     }
 
