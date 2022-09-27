@@ -24,6 +24,7 @@ namespace ien
 	public:
 		image(int width, int height, image_format = image_format::RGBA);
 		image(const std::string& path, image_format fmt = image_format::RGBA, image_load_mode load_mode = image_load_mode::IMAGE);
+		image(const unsigned char* data, int width, int height, image_format format);
 		image(const image& cp_src) = delete;
 		image(image&& mv_src) noexcept;
 		~image();
