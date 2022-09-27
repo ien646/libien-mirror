@@ -88,6 +88,7 @@ namespace ien
 
 		size_t alloc_sz = width * height * static_cast<int>(format);
 		_data = reinterpret_cast<unsigned char*>(malloc(alloc_sz));
+		std::memcpy(_data, data, alloc_sz);
 		_width = width;
 		_height = height;
 	}
