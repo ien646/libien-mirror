@@ -39,13 +39,13 @@ namespace ien
 		inline unsigned char* data() { return _data; }
 		inline const unsigned char* data() const { return _data; }
 
-		image resize(int width, int height);
+		image resize(int width, int height) const;
 
-		void write_to_file_png(const std::string& path, int compression = 8);
-		void write_to_file_bmp(const std::string& path);
-		void write_to_file_raw_tagged(const std::string& path);
+		void write_to_file_png(const std::string& path, int compression = 8) const;
+		void write_to_file_bmp(const std::string& path) const;
+		void write_to_file_raw_tagged(const std::string& path) const;
 
-		image extract_channel_image(size_t channel_index);
+		image extract_channel_image(size_t channel_index) const;
 	};
 
 }

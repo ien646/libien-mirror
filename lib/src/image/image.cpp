@@ -113,7 +113,7 @@ namespace ien
 		}
 	}
 
-	image image::resize(int width, int height)
+	image image::resize(int width, int height) const
 	{
 		IEN_ASSERT(width > 0 && height > 0);
 		image result(width, height, _format);
@@ -121,7 +121,7 @@ namespace ien
 		return result;
 	}
 
-	image image::extract_channel_image(size_t channel_index)
+	image image::extract_channel_image(size_t channel_index) const
 	{
 		IEN_ASSERT(channel_index <= 4);
 		if (channel_index >= channel_count())
@@ -139,7 +139,7 @@ namespace ien
 		return result;
 	}
 
-    void image::write_to_file_png(const std::string& path, int compression)
+    void image::write_to_file_png(const std::string& path, int compression) const
     {
 		IEN_ASSERT(!path.empty());
 		IEN_ASSERT(compression > 0);
@@ -149,13 +149,13 @@ namespace ien
 		stbi_write_png_compression_level = aux;
     }
 
-	void image::write_to_file_bmp(const std::string& path)
+	void image::write_to_file_bmp(const std::string& path) const
 	{
 		IEN_ASSERT(!path.empty());
 		stbi_write_bmp(path.c_str(), (int)_width, (int)_height, channel_count(), _data);
 	}
 
-	void image::write_to_file_raw_tagged(const std::string& path)
+	void image::write_to_file_raw_tagged(const std::string& path) const
 	{
 		IEN_ASSERT(!path.empty());
 		constexpr char signature[4] = { 'I', 'R', 'I', 'S' }; // Ien's Raw Image Signature
