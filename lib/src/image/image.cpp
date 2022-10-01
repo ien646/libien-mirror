@@ -70,8 +70,8 @@ namespace ien
 			fd.read(&height, sizeof(height));
 			fd.read(&channels, sizeof(channels));
 
-			_width = width;
-			_height = height;
+			_width = (size_t)width;
+			_height = (size_t)height;
 			_format = static_cast<image_format>(channels);
 
 			size_t total_bytes = _width * _height * static_cast<size_t>(_format);
