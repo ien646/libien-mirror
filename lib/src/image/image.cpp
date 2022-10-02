@@ -159,8 +159,8 @@ namespace ien
 	{
 		IEN_ASSERT(!path.empty());
 		constexpr char signature[4] = { 'I', 'R', 'I', 'S' }; // Ien's Raw Image Signature
-		uint32_t width = _width;
-		uint32_t height = _height;
+		uint32_t width = (uint32_t)_width;
+		uint32_t height = (uint32_t)_height;
 		uint8_t channels = channel_count();
 
 		std::vector<uint8_t> binary;
