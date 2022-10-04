@@ -1,9 +1,8 @@
 #pragma once
 
 #include <ien/image/image_format.hpp>
-
+#include <cstdint>
 #include <string>
-#include <vector>
 
 namespace ien
 {
