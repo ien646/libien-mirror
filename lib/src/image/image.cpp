@@ -30,6 +30,7 @@
 #include <filesystem>
 #include <fstream>
 #include <stdexcept>
+#include <string>
 
 #ifdef IEN_ARCH_X86 || IEN_ARCH_X86_64
 #include <xmmintrin.h>
