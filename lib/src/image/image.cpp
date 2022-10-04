@@ -239,7 +239,7 @@ namespace ien
 		}
 	};
 
-	#ifdef IEN_ARCH_X86 || IEN_ARCH_X86_64
+	#if defined(IEN_ARCH_X86) || defined(IEN_ARCH_X86_64)
 	namespace x86 = ien::platform::x86;
 	if(!x86::get_feature(x86::feature::SSSE3))
 	{
@@ -288,6 +288,8 @@ namespace ien
 	{
 		do_shuffle_std(i);
 	}
+
+	return;
 
 	#endif
 
