@@ -152,6 +152,11 @@ namespace ien
 
 #if defined(IEN_ARCH_X86) || defined(IEN_ARCH_X86_64)
 
+#define IEN_SSE_ALIGNMENT 16
+#define IEN_AVX_ALIGNMENT 32
+#define IEN_SSE_VECSIZE 32
+#define IEN_AVX_VECSIZE 64
+
 #include <iostream>
 namespace ien::platform::x86
 {

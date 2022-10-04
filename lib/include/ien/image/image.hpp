@@ -13,6 +13,11 @@ namespace ien
 		RAW
 	};
 
+	struct image_shuffle
+	{
+		uint8_t indices[4] = {0, 1, 2, 3};
+	};
+
 	class image
 	{
 	protected:
@@ -46,6 +51,7 @@ namespace ien
 		void write_to_file_raw_tagged(const std::string& path) const;
 
 		image extract_channel_image(size_t channel_index) const;
-	};
 
+		void shuffle(const image_shuffle&);
+	};
 }
