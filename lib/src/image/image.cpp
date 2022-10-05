@@ -1,10 +1,27 @@
 #include <ien/image/image.hpp>
 
+#include <ien/alloc.hpp>
 #include <ien/assert.hpp>
 #include <ien/io_utils.hpp>
+#include <ien/platform.hpp>
 
 #define STBI_WINDOWS_UTF8
 #define STBIW_WINDOWS_UTF8
+
+#define STBI_MALLOC(size) \
+	ien::aligned_alloc(size, IEN_SSE_ALIGNMENT)
+#define STBI_REALLOC(ptr, size) \
+	ien::aligned_realloc(aptr, size, IEN_SSE_ALIGNMENT)
+#define STBI_FREE(ptr) \
+	ien::aligned_free(ptr)
+
+#define STBIR_MALLOC(size) \
+	ien::aligned_alloc(size, IEN_SSE_ALIGNMENT)
+#define STBIR_REALLOC(ptr, size) \
+	ien::aligned_realloc(aptr, size, IEN_SSE_ALIGNMENT)
+#define STBIR_FREE(ptr) \
+	ien::aligned_free(ptr)
+
 #include <stb_image.h>
 #include <stb_image_resize.h>
 #include <stb_image_write.h>
@@ -13,6 +30,11 @@
 #include <filesystem>
 #include <fstream>
 #include <stdexcept>
+
+#ifdef IEN_ARCH_X86 || IEN_ARCH_X86_64
+#include <xmmintrin.h>
+#include <tmmintrin.h>
+#endif
 
 namespace ien
 {
@@ -23,7 +45,7 @@ namespace ien
 		size_t total_bytes = (size_t)width * height * channel_count();
 
 		// Using malloc() instead of new[] so that the deallocation interface matches stbi's
-		_data = reinterpret_cast<unsigned char*>(malloc(total_bytes));
+		_data = ien::aligned_alloc(total_bytes, IEN_SSE_ALIGNMENT);
 
 		_width = width;
 		_height = height;
@@ -75,7 +97,7 @@ namespace ien
 			_format = static_cast<image_format>(channels);
 
 			size_t total_bytes = _width * _height * static_cast<size_t>(_format);
-			_data = reinterpret_cast<unsigned char*>(malloc(total_bytes));
+			_data = ien::aligned_alloc(total_bytes, IEN_SSE_ALIGNMENT);
 
 			fd.read(_data, total_bytes, 1);
 		}
@@ -87,7 +109,7 @@ namespace ien
 		IEN_ASSERT(width > 0 && height > 0);
 
 		size_t alloc_sz = width * height * static_cast<int>(format);
-		_data = reinterpret_cast<unsigned char*>(malloc(alloc_sz));
+		_data = ien::aligned_alloc(alloc_sz, IEN_SSE_ALIGNMENT);
 		std::memcpy(_data, data, alloc_sz);
 		_width = width;
 		_height = height;
@@ -109,7 +131,7 @@ namespace ien
 	{
 		if (_data != nullptr)
 		{
-			free(_data);
+			ien::aligned_free(_data);
 		}
 	}
 
@@ -186,5 +208,92 @@ namespace ien
 		memcpy(binary.data() + offset, _data, image_size);
 
 		ien::write_file_binary(path, binary);
+	}
+
+	void image::shuffle(const image_shuffle& op)
+	{
+	#ifndef NDEBUG
+		for(size_t i = 0; i < 4; ++i)
+		{
+			IEN_ASSERT(op.src[0] < 4);
+			IEN_ASSERT(op.dst[0] < 4);
+		}
+	#endif
+
+	const size_t pixels = pixel_count();
+	const size_t channels = static_cast<size_t>(_format);
+	const size_t len = this->size();
+
+	if(channels == 1)
+	{
+		return;
+	}
+
+	const auto do_shuffle_std = [&](size_t pixel_index)
+	{
+		uint8_t* pxptr = _data + (pixel_index * channels);
+		for(size_t ch = 0; ch < channels; ++ch)
+		{
+			pxptr[op.indices[ch]] = pxptr[ch];
+		}
+	};
+
+	#ifdef IEN_ARCH_X86 || IEN_ARCH_X86_64
+	namespace x86 = ien::platform::x86;
+	if(!x86::get_feature(x86::feature::SSSE3))
+	{
+		goto opt_no_vec;
+	}
+
+	__m128i mask;
+	switch(channels)
+	{
+		case 2:
+			mask = _mm_set_epi8(
+				op.indices[1], op.indices[0], op.indices[1], op.indices[0],
+				op.indices[1], op.indices[0], op.indices[1], op.indices[0],
+				op.indices[1], op.indices[0], op.indices[1], op.indices[0],
+				op.indices[1], op.indices[0], op.indices[1], op.indices[0]
+			);
+			break;
+		case 3:
+			mask = _mm_set_epi8(
+				op.indices[2], op.indices[1], op.indices[0], op.indices[2],
+				op.indices[1], op.indices[0], op.indices[2], op.indices[1],
+				op.indices[0], op.indices[2], op.indices[1], op.indices[0],
+				op.indices[2], op.indices[1], op.indices[0], op.indices[2]
+			);
+			break;
+		case 4:
+			mask = _mm_set_epi8(
+				op.indices[3], op.indices[2], op.indices[1], op.indices[0],
+				op.indices[3], op.indices[2], op.indices[1], op.indices[0],
+				op.indices[3], op.indices[2], op.indices[1], op.indices[0],
+				op.indices[3], op.indices[2], op.indices[1], op.indices[0]
+			);
+			break;
+	}
+
+	for(size_t i = 0; i < len % IEN_SSE_VECSIZE; ++i)
+	{
+		uint8_t* ptr = data + i;
+		__m128i chunk = _mm_loadu_epi8(ptr);
+		__m128i shuffled = _mm_shuffle_epi8(chunk, mask);
+		_mm_store_si128(ptr, shuffled);
+	}
+
+	const size_t remaining_pixels = ((len - (len % IEN_SSE_VECSIZE)) / channels) + 1;
+	for(size_t i = pixels - remaining_pixels; i < pixels; ++i)
+	{
+		do_shuffle_std(i);
+	}
+
+	#endif
+
+	opt_no_vec:
+		for(size_t i = 0; i < pixels; ++i)
+		{
+			do_shuffle_std(i);
+		}
 	}
 }
