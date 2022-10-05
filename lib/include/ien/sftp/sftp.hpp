@@ -7,6 +7,10 @@
 #include <string>
 #include <vector>
 
+#ifndef LIBIEN_BUILD_SFTP
+	#error "libien must be compiled with CMake option 'LIBIEN_BUILD_SFTP' to use sftp functionality"
+#endif
+
 // need to forward declare session types just to avoid including libssh2 headers
 // which for some reason include windows headers (yuck)
 struct _LIBSSH2_SESSION;

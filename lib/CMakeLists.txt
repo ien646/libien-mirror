@@ -15,6 +15,7 @@ if(LIBIEN_BUILD_IMAGE)
         "src/image/image_ycrcb.cpp"
     )
     target_link_libraries(libien PRIVATE stb)
+    target_compile_definitions(libien PUBLIC "LIBIEN_BUILD_IMAGE")
 endif()
 
 if(LIBIEN_BUILD_SFTP)
@@ -22,6 +23,7 @@ if(LIBIEN_BUILD_SFTP)
         "src/sftp/sftp.cpp"
     )
     target_link_libraries(libien PRIVATE libssh2)
+    target_compile_definitions(libien PUBLIC "LIBIEN_BUILD_SFTP")
 endif()
 
 
