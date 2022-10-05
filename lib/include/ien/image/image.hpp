@@ -4,6 +4,10 @@
 #include <cstdint>
 #include <string>
 
+#ifndef LIBIEN_BUILD_IMAGE
+	#error "libien must be compiled with CMake option 'LIBIEN_BUILD_IMAGE' to use image functionality"
+#endif
+
 namespace ien
 {
 	enum class image_load_mode

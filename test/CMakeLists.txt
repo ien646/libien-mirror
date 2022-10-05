@@ -3,6 +3,10 @@ add_executable(libien_tests
     "lang_utils.cpp"
 )
 
+if(LIBIEN_BUILD_IMAGE)
+    target_sources(libien_tests PRIVATE "image.cpp")
+endif()
+
 set_target_properties(libien_tests PROPERTIES
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
