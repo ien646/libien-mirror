@@ -26,8 +26,8 @@ if(LIBIEN_BUILD_SFTP)
     file(WRITE ${libssh2_SOURCE_DIR}/CMakeLists.txt ${__LIBSSH2_CMAKELISTS})
     if(MSVC)
         set_directory_properties(${libssh2_SOURCE_DIR}
-            APPEND PROPERTY COMPILE_OPTIONS "/W0"
             APPEND PROPERTY COMPILE_DEFINITIONS "WIN32_NO_STATUS"
+            APPEND PROPERTY COMPILE_OPTIONS "/wo4267"
         )
     else()
         set_directory_properties(${libssh2_SOURCE_DIR} APPEND PROPERTY COMPILE_OPTIONS "-w")
@@ -40,7 +40,11 @@ if(LIBIEN_BUILD_TESTS)
         NAME catch2
         GIT_REPOSITORY "https://github.com/catchorg/Catch2"
         GIT_TAG "v3.1.0"
+        OPTIONS "CATCH_INSTALL_EXTRAS OFF" "CATCH_INSTALL_DOCS OFF"
     )
+    if(MSVC)
+        set_directory_properties(${catch2_SOURCE_DIR} APPEND PROPERTY COMPILE_OPTIONS "/wo9025")
+    endif()
 endif()
 
 CPMAddPackage(
