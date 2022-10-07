@@ -32,29 +32,20 @@ namespace ien::detail
 	}
 }
 
+#ifdef IEN_COMPILER_MSVC
+	#define IEN_ASSUME_ALIGNED(ptr, alig) (__assume((((char*)ptr) - ((char*)ptr)) % (alig) == 0), ptr)
+#elif IEN_COMPILER_GNU || IEN_COMPILER_CLANG || IEN_COMPILER_INTEL
+	#define IEN_ASSUME_ALIGNED(ptr, alig) (__builtin_assume_aligned(ptr, alig))
+#endif
+#define IEN_ASSUME_ALIGNED_T(ptr, alig, ptr_type) reinterpret_cast<ptr_type*>(IEN_ASSUME_ALIGNED(ptr, alig))
+
 namespace ien
 {
-	template<typename T>
-    [[nodiscard]] inline T* assume_aligned(T* ptr, size_t alignment)
-    {
-		#ifdef IEN_COMPILER_MSVC
-			__assume((((char*)ptr) - ((char*)ptr)) % (alignment) == 0);
-			return ptr;
-
-		#elif defined(IEN_COMPILER_CLANG) || defined(IEN_COMPILER_GNU)
-			return reinterpret_cast<T*>(__builtin_assume_aligned(ptr, alignment));
-
-		#elif defined(IEN_COMPILER_INTEL)
-			__assume_aligned(ptr, alignment);
-			return ptr;
-		#endif
-    }
-
 	template<typename T = uint8_t>
 	[[nodiscard]] inline T* aligned_alloc(size_t len, size_t alignment)
 	{
 		IEN_ASSERT(is_power_of_2(alignment));
-		return assume_aligned<T>(reinterpret_cast<T*>(detail::aligned_alloc(len * sizeof(T), alignment)), alignment);
+		return IEN_ASSUME_ALIGNED_T(detail::aligned_alloc(len * sizeof(T), alignment), alignment, T);
 	}
 
 	template<typename T>
