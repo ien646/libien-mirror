@@ -9,12 +9,13 @@ option(LIBIEN_BUILD_SFTP "Build sftp library" OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(cmake/CPM.cmake)
+set(CPM_SOURCE_CACHE ${CMAKE_SOURCE_DIR}/.cache)
 
 if(LIBIEN_BUILD_SFTP)
     CPMAddPackage(
         NAME libssh2
         GIT_REPOSITORY "https://github.com/ien646/libssh2"
-        GIT_TAG "092324348cd5d0fd359bb082f6f01c8f4f900715"
+        GIT_TAG "fix-windows-macro-redefinitions"
         DOWNLOAD_ONLY YES
     )
     # Turn off libssh2's annoying warning bullshit
