@@ -58,6 +58,9 @@ namespace ien
         template<typename T> concept Pointer =
             std::is_pointer_v<std::decay_t<T>>;
 
+        template<typename T> concept CArray =
+            std::is_array_v<T>;
+
         template<typename T> concept CChar =
             is_one_of_v<std::remove_const_t<T>, char, wchar_t>;
 

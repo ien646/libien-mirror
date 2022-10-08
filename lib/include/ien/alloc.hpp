@@ -34,7 +34,7 @@ namespace ien::detail
 
 #ifdef IEN_COMPILER_MSVC
 	#define IEN_ASSUME_ALIGNED(ptr, alig) (__assume((((char*)ptr) - ((char*)ptr)) % (alig) == 0), ptr)
-#elif IEN_COMPILER_GNU || IEN_COMPILER_CLANG || IEN_COMPILER_INTEL
+#elif defined(IEN_COMPILER_GNU) || defined(IEN_COMPILER_CLANG) || defined(IEN_COMPILER_INTEL)
 	#define IEN_ASSUME_ALIGNED(ptr, alig) (__builtin_assume_aligned(ptr, alig))
 #endif
 #define IEN_ASSUME_ALIGNED_T(ptr, alig, ptr_type) reinterpret_cast<ptr_type*>(IEN_ASSUME_ALIGNED(ptr, alig))
@@ -45,7 +45,7 @@ namespace ien
 	[[nodiscard]] inline T* aligned_alloc(size_t len, size_t alignment)
 	{
 		IEN_ASSERT(is_power_of_2(alignment));
-		return IEN_ASSUME_ALIGNED_T(detail::aligned_alloc(len * sizeof(T), alignment), alignment, T);
+		return reinterpret_cast<T*>(detail::aligned_alloc(len * sizeof(T), alignment));
 	}
 
 	template<typename T>

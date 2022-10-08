@@ -7,6 +7,7 @@
 #include <ien/bits/str_split.hpp>
 
 #include <limits>
+#include <memory>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -85,8 +86,9 @@ namespace ien
         return result;
     }
 
-    template<concepts::AnyStr T, concepts::AnyStr TOcurrence, concepts::AnyStr TReplacement>
-        requires detail::is_same_underlying_char_type<T, TOcurrence, TReplacement>
+    template<concepts::AnyStr T, concepts::AnyStrOrChar TOcurrence, concepts::AnyStrOrChar TReplacement>
+        requires (detail::is_same_underlying_char_type<T, TOcurrence, TReplacement>
+            && concepts::AnyStr<TOcurrence> || concepts::AnyStr<TReplacement>)
     constexpr std::basic_string<underlying_char_t<T>> str_replace(
         const T& str,
         const TOcurrence& ocurrence,
@@ -106,9 +108,13 @@ namespace ien
 
         int64_t replace_offset = 0;
 
+        size_t replacement_len = detail::str_length(replacement);
+        const char_type* replacement_data = detail::str_dataptr(replacement);
+        const std::basic_string_view<char_type> replacement_view(replacement_data, replacement_len);
+
         for(const auto& index : found_indices)
         {
-            result.replace(index + replace_offset, ocurrence_length, replacement);
+            result.replace(index + replace_offset, ocurrence_length, replacement_view);
             replace_offset += size_diff;
         }
         return result;
