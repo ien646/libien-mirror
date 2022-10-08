@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.18)
 
 set(libien_VERSION 0.1.0)
 
+project(libien
+    VERSION ${libien_VERSION}
+    LANGUAGES C CXX
+)
+
 option(LIBIEN_BUILD_TESTS "Build tests" ON)
 option(LIBIEN_BUILD_IMAGE "Build image library" ON)
 option(LIBIEN_BUILD_SFTP "Build sftp library" ON)
@@ -26,7 +31,6 @@ if(LIBIEN_BUILD_SFTP)
     file(WRITE ${libssh2_SOURCE_DIR}/CMakeLists.txt ${__LIBSSH2_CMAKELISTS})
     if(MSVC)
         set_directory_properties(${libssh2_SOURCE_DIR}
-            APPEND PROPERTY COMPILE_DEFINITIONS "WIN32_NO_STATUS"
             APPEND PROPERTY COMPILE_OPTIONS "/wo4267"
         )
     else()
@@ -42,20 +46,12 @@ if(LIBIEN_BUILD_TESTS)
         GIT_TAG "v3.1.0"
         OPTIONS "CATCH_INSTALL_EXTRAS OFF" "CATCH_INSTALL_DOCS OFF"
     )
-    if(MSVC)
-        set_directory_properties(${catch2_SOURCE_DIR} APPEND PROPERTY COMPILE_OPTIONS "/wo9025")
-    endif()
 endif()
 
 CPMAddPackage(
     NAME fmt
     GIT_REPOSITORY "https://github.com/fmtlib/fmt"
     GIT_TAG "9.0.0"
-)
-
-project(libien
-    VERSION ${libien_VERSION}
-    LANGUAGES C CXX
 )
 
 add_subdirectory("third-party")
