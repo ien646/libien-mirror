@@ -36,7 +36,40 @@ TEST_CASE("replace (char)")
 
 TEST_CASE("replace (str)")
 {
-	std::string str = "I have some pineapple candy left from yesterday. I love pineapples! I hate coconuts!";
-	std::string res = ien::str_replace(str, "pineapple", "coconut", 0, 67);
-	REQUIRE(res == "I have some coconut candy left from yesterday. I love coconuts!");
+	SECTION("Normal use case")
+	{
+		std::string str = "I have some pineapple candy left from yesterday. I love pineapples! I hate coconuts!";
+		std::string res = ien::str_replace(str, "pineapple", "coconut", 0, 67);
+		REQUIRE(res == "I have some coconut candy left from yesterday. I love coconuts!");
+	};
+
+	SECTION("Empty string")
+	{
+		std::string str = "";
+		std::string res = ien::str_replace(str, " ", "asdf");
+		REQUIRE(res == str);
+	};
+
+	SECTION("No replacement")
+	{
+		std::string str = "aaa bbb";
+		std::string res = ien::str_replace(str, "c", "x");
+		REQUIRE(res == str);
+	};
+
+	SECTION("Mix chars and strings")
+	{
+		std::string str = "aaa bbb";
+		std::string res0 = ien::str_replace(str, ' ', "---");
+		std::string res1 = ien::str_replace(str, "aaa", '*');
+		REQUIRE(res0 == "aaa---bbb");
+		REQUIRE(res1 == "* bbb");
+	};
+
+	SECTION("Replace chars with chars")
+	{
+		std::string str = "aaa bbb";
+		std::string res = ien::str_replace(str, ' ', '-');
+		REQUIRE(res == "aaa-bbb");
+	};
 };

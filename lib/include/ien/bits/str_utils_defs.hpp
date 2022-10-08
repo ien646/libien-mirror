@@ -9,8 +9,8 @@ namespace ien::detail
     constexpr bool is_same_underlying_char_type =
         (std::is_same_v<underlying_char_t<T>, underlying_char_t<TOther>> && ...);
 
-    template<typename T>
-    constexpr size_t str_length(const T& str)
+    template<concepts::AnyStrOrChar T>
+    constexpr inline size_t str_length(const T& str)
     {
         if constexpr (concepts::AnyChar<T>)
         {
@@ -24,10 +24,28 @@ namespace ien::detail
         {
             return std::basic_string_view<raw_str_char_t<T>>(str).size();
         }
-        else
+        IEN_HINT_UNREACHABLE();
+        return 0;
+    };
+
+    template<concepts::AnyStrOrChar T>
+    constexpr inline const underlying_char_t<T>* str_dataptr(const T& str)
+    {
+        constexpr bool x = concepts::AnyChar<const char*>;
+        if constexpr (concepts::AnyChar<T>)
         {
-            IEN_HINT_UNREACHABLE();
+            return &str;
         }
+        else if constexpr (concepts::StdAnyStrStrV<T>)
+        {
+            return str.data();
+        }
+        else if constexpr (concepts::RawAnyStr<T>)
+        {
+            return &(str[0]);
+        }
+        IEN_HINT_UNREACHABLE();
+        return nullptr;
     };
 
     template<concepts::AnyStr T>
