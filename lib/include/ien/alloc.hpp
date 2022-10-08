@@ -14,21 +14,13 @@ namespace ien::detail
 	[[nodiscard]] inline void* aligned_alloc(size_t bytes, size_t alignment)
 	{
 		IEN_ASSERT(is_power_of_2(alignment));
-		#ifdef IEN_OS_WIN
-			return _aligned_malloc(bytes, alignment);
-		#else
-			return ::aligned_alloc(bytes, alignment);
-		#endif
+		return IEN_OS_WIN_SELECT(_aligned_malloc, ::aligned_alloc)(bytes, alignment);
 	}
 
 	inline void aligned_free(void* ptr)
 	{
 		IEN_ASSERT(ptr != nullptr);
-		#ifdef IEN_OS_WIN
-			_aligned_free(ptr);
-		#else
-			free(ptr);
-		#endif
+		IEN_OS_WIN_SELECT(_aligned_free, ::free)(ptr);
 	}
 }
 
