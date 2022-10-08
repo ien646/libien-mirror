@@ -104,12 +104,6 @@ namespace ien
         const uintptr_t prtval = reinterpret_cast<uintptr_t>(ptr);
         return (prtval % alignment) == 0;
     }
-
-    template<typename T>
-    constexpr T aligned_sz(T sz, size_t alignment)
-    {
-        return (sz - (sz % alignment) + alignment);
-    }
 }
 
 #if defined(IEN_ARCH_X86_64) || defined(IEN_ARCH_X86)
@@ -186,8 +180,11 @@ namespace ien::platform::x86
         XOP
     };
 
-    extern void force_feature(feature, bool);
-    extern bool get_feature(feature);
+    /// @brief Query availability of provided cpu feature
+    extern bool get_feature(feature feat);
+
+    /// @brief Artificially set the availability of the provided cpu feature
+    extern void force_feature(feature feat, bool enabled);
 }
 
 #endif

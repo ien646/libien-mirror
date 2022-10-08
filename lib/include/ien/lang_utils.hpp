@@ -80,7 +80,7 @@ namespace ien
             std::is_arithmetic_v<T>;
 
         template<typename T> concept RawCStr =
-            (Pointer<T> || CArray<T>) && 
+            (Pointer<T> || CArray<T>) &&
             CChar<raw_str_char_t<T>>;
 
         template<typename T> concept RawUnicodeStr =
@@ -142,20 +142,6 @@ namespace ien
             return val;
         }
         else
-        {
-            return val.data();
-        }
-    }
-
-    template<typename T>
-        requires(concepts::Pointer<T> || requires(T& v) { v.data(); })
-    constexpr const auto* cdata(const T& val)
-    {
-        if constexpr (concepts::Pointer<T>)
-        {
-            return val;
-        }
-        if constexpr (requires(T & v) { v.data(); })
         {
             return val.data();
         }
