@@ -80,11 +80,11 @@ namespace ien
             std::is_arithmetic_v<T>;
 
         template<typename T> concept RawCStr =
-            Pointer<T> &&
+            (Pointer<T> || CArray<T>) && 
             CChar<raw_str_char_t<T>>;
 
         template<typename T> concept RawUnicodeStr =
-            Pointer<T> &&
+            (Pointer<T> || CArray<T>) &&
             UnicodeChar<raw_str_char_t<T>>;
 
         template<typename T> concept RawAnyStr =

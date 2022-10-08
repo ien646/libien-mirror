@@ -108,10 +108,8 @@ namespace ien
 
         int64_t replace_offset = 0;
 
-        size_t replacement_len = detail::str_length(replacement);
-        const char_type* replacement_data = detail::str_dataptr(replacement);
-        const std::basic_string_view<char_type> replacement_view(replacement_data, replacement_len);
-
+        std::basic_string_view<char_type> replacement_view(detail::str_dataptr(replacement), detail::str_length(replacement));
+        
         for(const auto& index : found_indices)
         {
             result.replace(index + replace_offset, ocurrence_length, replacement_view);
