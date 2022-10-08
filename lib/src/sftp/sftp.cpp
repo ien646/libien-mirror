@@ -20,11 +20,8 @@
 #endif
 
 #ifdef IEN_OS_WIN
-    #define NOMINMAX
-    #define WIN32_NO_STATUS
-    #define WIN32_LEAN_AND_MEAN
-    #include <WinSock2.h>
-    #include <Ws2tcpip.h>
+    #include <ien/win32/winsock2.h>
+    #include <ien/win32/ws2tcpip.h>
     #pragma comment(lib, "ws2_32.lib")
 #else
     #include <netdb.h>

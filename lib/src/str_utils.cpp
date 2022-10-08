@@ -1,10 +1,7 @@
 #include <ien/str_utils.hpp>
 
 #ifdef IEN_OS_WIN
-    #define NOMINMAX
-    #define WIN32_NO_STATUS
-    #define WIN32_LEAN_AND_MEAN
-    #include <Windows.h>
+    #include <ien/win32/windows.h>
 #endif
 
 namespace ien
