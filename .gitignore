@@ -3,4 +3,6 @@
 .vscode/
 
 build/
+html/
+latex/
 out/
