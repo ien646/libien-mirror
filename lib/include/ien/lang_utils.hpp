@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ien/platform.hpp>
+
 #include <string>
 #include <string_view>
 #include <tuple>
@@ -165,44 +167,87 @@ namespace ien
     template<concepts::Integral T>
     using superior_integral_t = typename superior_integral<T>::type;
 
+    /// @brief Get the underlying character type of a string-like type T.
+    /// Fallback specialization.
     template<typename T>
     struct underlying_char {};
 
+    /// @brief Get the underlying character type of a string-like type T.
+    /// Scalar character type specialization.
     template<concepts::AnyChar T>
     struct underlying_char<T> { using type = std::remove_const_t<T>; };
 
+    /// @brief Get the underlying character type of a string-like type T.
+    /// std::basic_string/basic_string_view type specialization.
     template<concepts::StdAnyStrStrV T>
     struct underlying_char<T> { using type = std::remove_const_t<typename T::value_type>; };
 
+    /// @brief Get the underlying character type of a string-like type T.
+    /// C-string (const char*/char[]) type specialization.
     template<concepts::RawAnyStr T>
     struct underlying_char<T> { using type = std::remove_const_t<raw_str_char_t<T>>; };
 
+    /// @brief Get the underlying character type of a string-like type T.
     template<concepts::AnyStrOrChar T>
     using underlying_char_t = typename underlying_char<T>::type;
 
-    template<concepts::AnyStr T>
+    /// @brief Obtain a data pointer for any string-like or character type
+    template<concepts::AnyStrOrChar T>
     constexpr underlying_char_t<T>* anystr_data(T& str)
     {
         if constexpr(concepts::StdAnyStrStrV<T>)
         {
             return str.data();
         }
+        else if constexpr(concepts::AnyChar<T>)
+        {
+            return &str;
+        }
         else
         {
-            return str;
+            return &str[0];
         }
+        IEN_HINT_UNREACHABLE();
+        return nullptr;
     }
 
-    template<concepts::AnyStr T>
+    /// @brief Obtain a data pointer for any string-like or character type
+    template<concepts::AnyStrOrChar T>
     constexpr const underlying_char_t<T>* anystr_data(const T& str)
     {
         if constexpr(concepts::StdAnyStrStrV<T>)
         {
             return str.data();
         }
+        else if constexpr(concepts::AnyChar<T>)
+        {
+            return &str;
+        }
         else
         {
-            return str;
+            return &str[0];
         }
+        IEN_HINT_UNREACHABLE();
+        return nullptr;
     }
+
+    /// @brief Obtain the length value for any string-like or character type
+    template<concepts::AnyStrOrChar T>
+    constexpr inline size_t anystr_length(const T& str)
+    {
+        if constexpr (concepts::AnyChar<T>)
+        {
+            return 1;
+        }
+        else if constexpr (concepts::StdAnyStrStrV<T>)
+        {
+            return str.size();
+        }
+        else if constexpr (concepts::RawAnyStr<T>)
+        {
+            return std::basic_string_view<raw_str_char_t<T>>(str).size();
+        }
+        IEN_HINT_UNREACHABLE();
+        return 0;
+    };
 }
