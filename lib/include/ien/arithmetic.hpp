@@ -7,12 +7,16 @@
 
 namespace ien
 {
+	/// @brief Obtain the sum of all provided arguments.
+	/// Arguments are cast to T before addition to prevent over/under-flows.
 	template<concepts::Arithmetic T, concepts::Arithmetic ... TArgs>
 	constexpr T safe_add(TArgs... args)
 	{
 		return (static_cast<T>(args) + ...);
 	}
 
+	/// @brief Obtain the product of all provided arguments.
+	/// Arguments are cast to T before multiplication to prevent over/under-flows.
 	template<concepts::Arithmetic T, concepts::Arithmetic ... TArgs>
 	constexpr T safe_mul(TArgs... args)
 	{
