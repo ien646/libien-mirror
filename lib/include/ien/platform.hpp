@@ -30,6 +30,12 @@
     #define IEN_OS_WIN32
 #endif
 
+#ifdef IEN_OS_WIN
+    #define IEN_OS_WIN_SELECT(win, other) (win)
+#else
+    #define IEN_OS_WIN_SELECT(win, other) (other)
+#endif
+
 #if defined(__unix__)
     #define IEN_OS_UNIX
 #endif
