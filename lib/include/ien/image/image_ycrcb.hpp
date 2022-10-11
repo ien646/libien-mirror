@@ -8,7 +8,7 @@ namespace ien
 		: public image
 	{
 	public:
-		image_ycrcb(const std::string& path);
+		explicit image_ycrcb(const std::string& path);
 
 	private:
 		void convert_format();

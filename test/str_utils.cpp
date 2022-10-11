@@ -11,7 +11,7 @@ TEST_CASE("split")
 	REQUIRE(segments0[1] == "b");
 	REQUIRE(segments0[2] == "c");
 
-	std::string str1 = "";
+	std::string str1;
 	auto segments1 = ien::str_split(str1, 'a');
 	REQUIRE(segments1.empty());
 
@@ -45,7 +45,7 @@ TEST_CASE("replace (str)")
 
 	SECTION("Empty string")
 	{
-		std::string str = "";
+		std::string str;
 		std::string res = ien::str_replace(str, " ", "asdf");
 		REQUIRE(res == str);
 	};
