@@ -3,6 +3,8 @@
 #include <ien/lang_utils.hpp>
 #include <ien/bits/str_utils/common.hpp>
 
+#include <limits>
+
 namespace ien
 {
     template<typename T, typename TOcurrence>

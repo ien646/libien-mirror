@@ -208,7 +208,6 @@ namespace ien
             return &str[0];
         }
         IEN_HINT_UNREACHABLE();
-        return nullptr;
     }
 
     /// @brief Obtain a data pointer for any string-like or character type
@@ -228,7 +227,6 @@ namespace ien
             return &str[0];
         }
         IEN_HINT_UNREACHABLE();
-        return nullptr;
     }
 
     /// @brief Obtain the length value for any string-like or character type
@@ -248,6 +246,5 @@ namespace ien
             return std::basic_string_view<raw_str_char_t<T>>(str).size();
         }
         IEN_HINT_UNREACHABLE();
-        return 0;
     };
 }

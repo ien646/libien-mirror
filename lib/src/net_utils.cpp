@@ -43,7 +43,7 @@ namespace ien
 		}
 
 		addrinfo* info = nullptr;
-		if(int err = getaddrinfo(hostname.c_str(), NULL, NULL, &info))
+		if(getaddrinfo(hostname.c_str(), nullptr, nullptr, &info))
 		{
 			return std::nullopt;
 		}
@@ -64,7 +64,7 @@ namespace ien
 		}
 		else
 		{
-			sockaddr_in_t* addr = reinterpret_cast<sockaddr_in_t*>(info->ai_addr);
+			auto* addr = reinterpret_cast<sockaddr_in_t*>(info->ai_addr);
 			std::array<char, 64> buff = {};
 			const char* str = nullptr;
 			if constexpr (IpV4)

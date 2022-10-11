@@ -56,7 +56,7 @@ namespace ien::sftp
     {
     private:
         client_params _params = {};
-        std::string _address = "";
+        std::string _address;
         socket_t _socket = 0;
         LIBSSH2_SESSION* _ssh_session = nullptr;
         LIBSSH2_SFTP* _sftp_session = nullptr;
@@ -76,7 +76,7 @@ namespace ien::sftp
         void get_file(const std::string& remote_path, const std::string& local_path) const;
         void put_file(const std::string& local_path, const std::string& remote_path) const;
 
-        bool create_directory(const std::string& path) const;
+        [[nodiscard]] bool create_directory(const std::string& path) const;
 
         file_info get_file_info(const std::string& remote_path) const;
 
