@@ -51,8 +51,8 @@ namespace ien::sftp
         operator LIBSSH2_SFTP_HANDLE*() { return _handle; }
     };
 
-    client::client(const client_params& params)
-        : _params(params)
+    client::client(client_params params)
+        : _params(std::move(params))
     #ifdef IEN_OS_WIN
         , _wsadata(new WSADATA)
     #endif
