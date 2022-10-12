@@ -15,7 +15,7 @@ namespace ien
         const std::string _msg;
 
     public:
-        assertion_failed_error(const std::string& file, const std::string func, size_t line, const std::string msg)
+        assertion_failed_error(const std::string& file, const std::string& func, size_t line, const std::string& msg)
             : _file(file)
             , _func(func)
             , _line(line)
@@ -25,7 +25,7 @@ namespace ien
 
     private:
         std::string get_filename(const std::string& f) const;
-        std::string gen_err_msg() const;
+        [[nodiscard]] std::string gen_err_msg() const;
     };
 }
 
