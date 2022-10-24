@@ -8,20 +8,6 @@
 #define STBI_WINDOWS_UTF8
 #define STBIW_WINDOWS_UTF8
 
-#define STBI_MALLOC(size) \
-	ien::aligned_alloc(size, IEN_SSE_ALIGNMENT)
-#define STBI_REALLOC(ptr, size) \
-	ien::aligned_realloc(aptr, size, IEN_SSE_ALIGNMENT)
-#define STBI_FREE(ptr) \
-	ien::aligned_free(ptr)
-
-#define STBIR_MALLOC(size) \
-	ien::aligned_alloc(size, IEN_SSE_ALIGNMENT)
-#define STBIR_REALLOC(ptr, size) \
-	ien::aligned_realloc(aptr, size, IEN_SSE_ALIGNMENT)
-#define STBIR_FREE(ptr) \
-	ien::aligned_free(ptr)
-
 #include <stb_image.h>
 #include <stb_image_resize.h>
 #include <stb_image_write.h>
@@ -67,6 +53,11 @@ namespace ien
 			{
 				throw std::logic_error("Unable to open image");
 			}
+			uint8_t* aligned_data = ien::aligned_alloc(w * h * channel_count(), IEN_SSE_ALIGNMENT);
+			std::memcpy(aligned_data, _data, w * h * channel_count());
+			free(_data);
+			_data = aligned_data;
+
 			_width = (size_t)w;
 			_height = (size_t)h;
 		}
