@@ -52,6 +52,10 @@
     #define IEN_OS_FREEBSD
 #endif
 
+#if defined(__ANDROID__)
+    #define IEN_OS_ANDROID
+#endif
+
 //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 // COMPILER
 //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
