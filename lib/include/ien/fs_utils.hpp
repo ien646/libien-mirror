@@ -44,6 +44,10 @@ namespace ien
 	extern std::string get_file_extension(const std::u8string& path);
 	extern std::string get_file_extension(const std::filesystem::path& path);
 
+	extern std::string get_file_directory(const std::string& path);
+	extern std::string get_file_directory(const std::u8string& path);
+	extern std::string get_file_directory(const std::filesystem::path& path);
+
 #ifdef IEN_OS_WIN
 	extern size_t get_file_size(const std::wstring& path);
 	extern time_t get_file_atime(const std::wstring& path);
@@ -57,6 +61,7 @@ namespace ien
 
 	extern std::string get_file_name(const std::wstring& path);
 	extern std::string get_file_extension(const std::wstring& path);
+	extern std::string get_file_directory(const std::wstring& path);
 #endif
 
  	extern std::string format_timestamp_iso8601(time_t ts);
