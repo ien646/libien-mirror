@@ -47,7 +47,6 @@ namespace ien
 			{
 				throw std::logic_error("Unable to open image");
 			}
-			_data = (uint8_t*)malloc(w * h * channel_count());
 
 			_width = (size_t)w;
 			_height = (size_t)h;
@@ -95,7 +94,7 @@ namespace ien
 		IEN_ASSERT(width > 0 && height > 0);
 
 		size_t alloc_sz = width * height * static_cast<int>(format);
-		_data = ien::aligned_alloc(alloc_sz, IEN_SSE_ALIGNMENT);
+		_data = (uint8_t*)malloc(alloc_sz);
 		std::memcpy(_data, data, alloc_sz);
 	}
 
@@ -115,7 +114,7 @@ namespace ien
 	{
 		if (_data != nullptr)
 		{
-			ien::aligned_free(_data);
+			free(_data);
 		}
 	}
 
