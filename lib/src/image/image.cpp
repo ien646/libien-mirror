@@ -19,12 +19,6 @@
 #include <stdexcept>
 #include <string>
 
-#if defined(IEN_ARCH_X86) || defined(IEN_ARCH_X86_64)
-#include <xmmintrin.h>
-#include <tmmintrin.h>
-#include <immintrin.h>
-#endif
-
 namespace ien
 {
 	image::image(int width, int height, image_format fmt)
@@ -36,7 +30,7 @@ namespace ien
 		size_t total_bytes = (size_t)width * height * channel_count();
 
 		// Using malloc() instead of new[] so that the deallocation interface matches stbi's
-		_data = ien::aligned_alloc(total_bytes, IEN_SSE_ALIGNMENT);
+		_data = (uint8_t*)malloc(total_bytes);
 	}
 
 	image::image(const std::string& path, image_format fmt, image_load_mode load_mode)
@@ -53,10 +47,7 @@ namespace ien
 			{
 				throw std::logic_error("Unable to open image");
 			}
-			uint8_t* aligned_data = ien::aligned_alloc(w * h * channel_count(), IEN_SSE_ALIGNMENT);
-			std::memcpy(aligned_data, _data, w * h * channel_count());
-			free(_data);
-			_data = aligned_data;
+			_data = (uint8_t*)malloc(w * h * channel_count());
 
 			_width = (size_t)w;
 			_height = (size_t)h;
@@ -89,7 +80,7 @@ namespace ien
 			_format = static_cast<image_format>(channels);
 
 			size_t total_bytes = _width * _height * static_cast<size_t>(_format);
-			_data = ien::aligned_alloc(total_bytes, IEN_SSE_ALIGNMENT);
+			_data = (uint8_t*)malloc(total_bytes);
 
 			fd.read(_data, total_bytes, 1);
 		}
