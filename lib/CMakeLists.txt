@@ -1,5 +1,4 @@
 add_library(libien
-    "src/assert.cpp"
     "src/base64.cpp"
     "src/fs_utils.cpp"
     "src/io_utils.cpp"
