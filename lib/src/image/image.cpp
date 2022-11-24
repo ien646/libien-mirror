@@ -1,7 +1,6 @@
 #include <ien/image/image.hpp>
 
 #include <ien/alloc.hpp>
-#include <ien/assert.hpp>
 #include <ien/io_utils.hpp>
 #include <ien/platform.hpp>
 
@@ -13,6 +12,7 @@
 #include <stb_image_write.h>
 
 #include <array>
+#include <cassert>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
@@ -26,7 +26,7 @@ namespace ien
 		, _width(width)
 		, _height(height)
 	{
-		IEN_ASSERT(width > 0 && height > 0);
+		assert(width > 0 && height > 0);
 		size_t total_bytes = (size_t)width * height * channel_count();
 
 		// Using malloc() instead of new[] so that the deallocation interface matches stbi's
@@ -36,7 +36,7 @@ namespace ien
 	image::image(const std::string& path, image_format fmt, image_load_mode load_mode)
 		: _format(fmt)
 	{
-		IEN_ASSERT(!path.empty());
+		assert(!path.empty());
 		if (load_mode == image_load_mode::IMAGE)
 		{
 			int dummy;
@@ -90,8 +90,8 @@ namespace ien
 		, _width(width)
 		, _height(height)
 	{
-		IEN_ASSERT(data != nullptr);
-		IEN_ASSERT(width > 0 && height > 0);
+		assert(data != nullptr);
+		assert(width > 0 && height > 0);
 
 		size_t alloc_sz = width * height * static_cast<int>(format);
 		_data = (uint8_t*)malloc(alloc_sz);
@@ -120,7 +120,7 @@ namespace ien
 
 	image image::resize(int width, int height) const
 	{
-		IEN_ASSERT(width > 0 && height > 0);
+		assert(width > 0 && height > 0);
 		image result(width, height, _format);
 		stbir_resize_uint8(_data, (int)_width, (int)_height, 0, result._data, width, height, 0, channel_count());
 		return result;
@@ -128,7 +128,7 @@ namespace ien
 
 	image image::extract_channel_image(size_t channel_index) const
 	{
-		IEN_ASSERT(channel_index <= 4);
+		assert(channel_index <= 4);
 		if (channel_index >= channel_count())
 		{
 			throw std::out_of_range("Invalid image channel index");
@@ -146,8 +146,8 @@ namespace ien
 
     void image::write_to_file_png(const std::string& path, int compression) const
     {
-		IEN_ASSERT(!path.empty());
-		IEN_ASSERT(compression > 0);
+		assert(!path.empty());
+		assert(compression > 0);
 		int aux = stbi_write_png_compression_level;
 		stbi_write_png_compression_level = compression;
         stbi_write_png(path.c_str(), (int)_width, (int)_height, channel_count(), _data, (int)(_width * channel_count()));
@@ -156,13 +156,13 @@ namespace ien
 
 	void image::write_to_file_bmp(const std::string& path) const
 	{
-		IEN_ASSERT(!path.empty());
+		assert(!path.empty());
 		stbi_write_bmp(path.c_str(), (int)_width, (int)_height, channel_count(), _data);
 	}
 
 	void image::write_to_file_raw_tagged(const std::string& path) const
 	{
-		IEN_ASSERT(!path.empty());
+		assert(!path.empty());
 		constexpr char signature[4] = { 'I', 'R', 'I', 'S' }; // Ien's Raw Image Signature
 		uint32_t width = (uint32_t)_width;
 		uint32_t height = (uint32_t)_height;

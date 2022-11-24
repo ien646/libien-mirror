@@ -6,20 +6,19 @@
 #include <cstdint>
 
 #include <ien/arithmetic.hpp>
-#include <ien/assert.hpp>
 #include <ien/platform.hpp>
 
 namespace ien::detail
 {
 	[[nodiscard]] inline void* aligned_alloc(size_t bytes, size_t alignment)
 	{
-		IEN_ASSERT(is_power_of_2(alignment));
+		assert(is_power_of_2(alignment));
 		return IEN_OS_WIN_SELECT(_aligned_malloc, ::aligned_alloc)(bytes, alignment);
 	}
 
 	inline void aligned_free(void* ptr)
 	{
-		IEN_ASSERT(ptr != nullptr);
+		assert(ptr != nullptr);
 		IEN_OS_WIN_SELECT(_aligned_free, ::free)(ptr);
 	}
 }
@@ -36,7 +35,7 @@ namespace ien
 	template<typename T = uint8_t>
 	[[nodiscard]] inline T* aligned_alloc(size_t len, size_t alignment)
 	{
-		IEN_ASSERT(is_power_of_2(alignment));
+		assert(is_power_of_2(alignment));
 		return reinterpret_cast<T*>(detail::aligned_alloc(len * sizeof(T), alignment));
 	}
 
@@ -49,7 +48,7 @@ namespace ien
 	template<typename T>
 	[[nodiscard]] inline T* aligned_realloc(T* ptr, size_t len, size_t alignment)
 	{
-		IEN_ASSERT(is_power_of_2(alignment));
+		assert(is_power_of_2(alignment));
 		#ifdef IEN_COMPILER_MSVC
 			return reinterpret_cast<T*>(_aligned_realloc(ptr, len, alignment));
 		#else
