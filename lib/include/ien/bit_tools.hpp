@@ -2,6 +2,7 @@
 
 #include <ien/lang_utils.hpp>
 
+#include <cassert>
 #include <cinttypes>
 #include <type_traits>
 
@@ -10,12 +11,19 @@ namespace ien
     template<concepts::Integral T, concepts::Integral ... SetBits>
     constexpr T bitmask(SetBits... bits)
     {
+        assert(((bits >= 0) && ...));
         return ((static_cast<T>(1) << bits) | ...);
     }
 
     template<concepts::Integral T>
+    constexpr T bitmask()
+    {
+        return static_cast<T>(0);
+    }
+
+    template<concepts::Integral T>
     constexpr bool get_bit(T v, size_t i)
-    {        
+    {
         return (v | bitmask<T>(i)) == v;
     }
 
@@ -39,7 +47,7 @@ namespace ien
 
     template<concepts::Integral T>
     constexpr std::conditional_t<std::is_signed_v<T>, int8_t, uint8_t> hi_nibble(T v)
-    {        
+    {
         return (v & static_cast<T>(0xF0)) >> 4;
     }
 
