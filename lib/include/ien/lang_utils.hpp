@@ -75,6 +75,12 @@ namespace ien
         template<typename T> concept Integral =
             std::is_integral_v<T>;
 
+        template<typename T> concept SignedIntegral =
+            std::is_signed_v<T> && std::is_integral_v<T>;
+
+        template<typename T> concept UnsignedIntegral =
+            std::is_unsigned_v<T> && std::is_integral_v<T>;
+
         template<typename T> concept FloatingPoint =
             std::is_floating_point_v<T>;
 
