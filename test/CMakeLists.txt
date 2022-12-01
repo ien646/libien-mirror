@@ -1,4 +1,8 @@
 add_executable(libien_tests
+    "bit_tools.cpp"
+    "lang_utils.cpp"
+    "image.cpp"
+    "net_utils.cpp"
 	"str_utils.cpp"
     "lang_utils.cpp"
 )
