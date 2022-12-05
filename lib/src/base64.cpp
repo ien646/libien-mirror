@@ -1,7 +1,9 @@
 #include <ien/base64.hpp>
 
-static const unsigned char b64charset[65] =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+#include <array>
+#include <string>
+
+const std::string b64charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 std::string ien::base64::encode(const uint8_t *src, size_t len)
 {
@@ -48,7 +50,7 @@ std::string ien::base64::encode(const uint8_t *src, size_t len)
     return result;
 }
 
-const int32_t b64i[256] = {
+const std::array<int32_t, 256> b64i = {
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,

@@ -11,6 +11,7 @@
 #include <sys/utime.h>
 #endif
 
+#include <array>
 #include <filesystem>
 namespace fs = std::filesystem;
 
@@ -214,10 +215,10 @@ namespace ien
 
     std::string format_timestamp_iso8601(time_t ts)
     {
-        constexpr char formatstr[] = "%F %T %z";
+        const std::string formatstr = "%F %T %z";
         std::tm* ltime = std::localtime(&ts);
-        char buff[64];
-        size_t bytes = std::strftime(buff, 64, formatstr, ltime);
-        return std::string(buff, bytes);
+        std::array<char, 64> buff;
+        size_t bytes = std::strftime(buff.data(), 64, formatstr.c_str(), ltime);
+        return std::string(buff.data(), bytes);
     }
 }

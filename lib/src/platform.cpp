@@ -29,7 +29,7 @@
 
 namespace ien
 {
-    template<typename TEnumType, size_t MAX_VALUE> 
+    template<typename TEnumType, size_t MAX_VALUE>
     class feature_map
     {
     private:
@@ -39,7 +39,7 @@ namespace ien
         bool& operator[](TEnumType idx)
         { return _map[static_cast<size_t>(idx)]; }
 
-        bool& operator[](size_t idx) 
+        bool& operator[](size_t idx)
         { return _map[idx]; }
     };
 }
@@ -85,14 +85,14 @@ namespace ien::platform::x86
         result.emplace((int)feature::SSSE3,       "SSSE3      " );
         result.emplace((int)feature::x64,         "x64        " );
         result.emplace((int)feature::XOP,         "XOP        " );
-        return result; 
+        return result;
     }
 
     feature_map<feature, 30> map;
     std::unique_ptr<feature_names_map_t> names;
 
     void W32_CPUID(int* info, int x)
-    { 
+    {
         __cpuidex(info, x, 0);
     }
 
@@ -101,17 +101,17 @@ namespace ien::platform::x86
     {
         names = std::make_unique<feature_names_map_t>(gen_names_map());
 
-        int info[4];
-        W32_CPUID(info, 0);
+        std::array<int, 4> info;
+        W32_CPUID(info.data(), 0);
         int nIds = info[0];
 
-        W32_CPUID(info, 0x80000000);
+        W32_CPUID(info.data(), 0x80000000);
         unsigned nExIds = info[0];
 
         //  Detect Features
         if (nIds >= 0x00000001)
         {
-            W32_CPUID(info, 0x00000001);
+            W32_CPUID(info.data(), 0x00000001);
             map[feature::MMX]    = (info[3] & (1 << 23)) != 0;
             map[feature::SSE]    = (info[3] & (1 << 25)) != 0;
             map[feature::SSE2]   = (info[3] & (1 << 26)) != 0;
@@ -126,7 +126,7 @@ namespace ien::platform::x86
         }
         if (nIds >= 0x00000007)
         {
-            W32_CPUID(info,0x00000007);
+            W32_CPUID(info.data(), 0x00000007);
             map[feature::AVX2]        = (info[1] & (1 <<  5)) != 0;
             map[feature::BMI1]        = (info[1] & (1 <<  3)) != 0;
             map[feature::BMI2]        = (info[1] & (1 <<  8)) != 0;
@@ -145,7 +145,7 @@ namespace ien::platform::x86
         }
         if (nExIds >= 0x80000001)
         {
-            W32_CPUID(info,0x80000001);
+            W32_CPUID(info.data(), 0x80000001);
             map[feature::x64]   = (info[3] & (1 << 29)) != 0;
             map[feature::ABM]   = (info[2] & (1 <<  5)) != 0;
             map[feature::SSE4a] = (info[2] & (1 <<  6)) != 0;
