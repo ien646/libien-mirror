@@ -21,6 +21,8 @@
 
 namespace ien
 {
+	const std::string IEN_RAW_TAGGED_SIGNATURE = "IRIS";
+
 	image::image(int width, int height, image_format fmt)
 		: _format(fmt)
 		, _width(width)
@@ -59,13 +61,13 @@ namespace ien
 				throw std::logic_error("Unable to open image");
 			}
 
-			char signature[4] = { 0, 0, 0, 0 };
+			std::string signature(4, 0);
 			uint32_t width = 0;
 			uint32_t height = 0;
 			uint8_t channels = 0;
 
-			fd.read(signature, sizeof(signature));
-			if(strncmp(signature, "IRIS", 4) != 0)
+			fd.read(signature.data(), sizeof(signature));
+			if(signature != IEN_RAW_TAGGED_SIGNATURE)
 			{
 				throw std::logic_error("Invalid tagged raw image signature");
 			}
@@ -163,7 +165,6 @@ namespace ien
 	void image::write_to_file_raw_tagged(const std::string& path) const
 	{
 		assert(!path.empty());
-		constexpr char signature[4] = { 'I', 'R', 'I', 'S' }; // Ien's Raw Image Signature
 		uint32_t width = (uint32_t)_width;
 		uint32_t height = (uint32_t)_height;
 		uint8_t channels = channel_count();
@@ -171,12 +172,12 @@ namespace ien
 		std::vector<uint8_t> binary;
 
 		size_t offset = 0;
-		size_t header_size = sizeof(signature) + sizeof(width) + sizeof(height) + sizeof(channels);
+		size_t header_size = IEN_RAW_TAGGED_SIGNATURE.size() + sizeof(width) + sizeof(height) + sizeof(channels);
 		size_t image_size = size();
 		binary.resize(header_size + image_size);
 
-		memcpy(binary.data() + offset, signature, sizeof(signature));
-		offset += sizeof(signature);
+		memcpy(binary.data() + offset, IEN_RAW_TAGGED_SIGNATURE.data(), IEN_RAW_TAGGED_SIGNATURE.size());
+		offset += sizeof(IEN_RAW_TAGGED_SIGNATURE.size());
 
 		memcpy(binary.data() + offset, reinterpret_cast<char*>(&width), sizeof(width));
 		offset += sizeof(width);
@@ -206,7 +207,7 @@ namespace ien
 		const auto shuffle_index_std = [&](size_t pixel_index)
 		{
 			uint8_t* pxptr = _data + (pixel_index * channels);
-			uint8_t temp[4];
+			std::array<uint8_t, 4> temp;
 			for(size_t i = 0; i < channels; ++i)
 			{
 				temp[i] = pxptr[op.indices[i]];
