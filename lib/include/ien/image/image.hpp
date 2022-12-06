@@ -1,6 +1,8 @@
 #pragma once
 
 #include <ien/image/image_format.hpp>
+
+#include <array>
 #include <cstdint>
 #include <string>
 
@@ -18,7 +20,7 @@ namespace ien
 
 	struct image_shuffle
 	{
-		uint8_t indices[4] = {0, 1, 2, 3};
+		std::array<uint8_t, 4> indices = {0, 1, 2, 3};
 	};
 
 	class image
