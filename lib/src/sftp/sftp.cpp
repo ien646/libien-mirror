@@ -31,6 +31,8 @@
 
 namespace ien::sftp
 {
+    const std::string TEMP_SUFFIX = ".__iensftp_temp__";
+
     class unique_sftp_handle
     {
     private:
@@ -88,6 +90,11 @@ namespace ien::sftp
         return !libssh2_sftp_stat(_sftp_session, remote_path.c_str(), &attributes);
     }
 
+    bool client::is_temp_file(const file_entry& entry) const
+    {
+        return entry.path.ends_with(TEMP_SUFFIX);
+    }
+
     directory_listing client::list_directory(const std::string& remote_path) const
     {
         directory_listing result = {};
@@ -115,7 +122,7 @@ namespace ien::sftp
             else if (LIBSSH2_SFTP_S_ISREG(attrs.permissions))
             {
                 file_entry entry = {};
-                entry.filename = path;
+                entry.path = path;
                 entry.info.size = attrs.filesize;
                 entry.info.mtime = attrs.mtime;
                 entry.info.atime = attrs.atime;
@@ -174,7 +181,7 @@ namespace ien::sftp
             return;
         }
 
-        const std::string temp_path = remote_path + ".__iensftp_temp__";
+        const std::string temp_path = remote_path + TEMP_SUFFIX;
 
         {
             auto mode = 0x777;
@@ -223,6 +230,17 @@ namespace ien::sftp
             return false;
         }
         return true;
+    }
+
+    void client::clean_temp_files(const directory_listing& listing) const
+    {
+        for (const auto& entry : listing.files)
+        {
+            if (is_temp_file(entry))
+            {
+                libssh2_sftp_unlink(_sftp_session, entry.path.c_str());
+            }
+        }
     }
 
     file_info client::get_file_info(const std::string& remote_path) const
