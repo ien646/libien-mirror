@@ -42,7 +42,7 @@ namespace ien::sftp
 
     struct file_entry
     {
-        std::string filename;
+        std::string path;
         file_info info;
     };
 
@@ -71,12 +71,16 @@ namespace ien::sftp
         [[nodiscard]] bool file_exists(const std::string& remote_path) const;
         [[nodiscard]] bool directory_exists(const std::string& remote_path) const;
 
+        [[nodiscard]] bool is_temp_file(const file_entry& entry) const;
+
         [[nodiscard]] directory_listing list_directory(const std::string& remote_path) const;
 
         void get_file(const std::string& remote_path, const std::string& local_path) const;
         void put_file(const std::string& local_path, const std::string& remote_path) const;
 
         [[nodiscard]] bool create_directory(const std::string& path) const;
+
+        void clean_temp_files(const directory_listing&) const;
 
         [[nodiscard]] file_info get_file_info(const std::string& remote_path) const;
 
