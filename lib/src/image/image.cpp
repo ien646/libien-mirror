@@ -7,6 +7,8 @@
 #define STBI_WINDOWS_UTF8
 #define STBIW_WINDOWS_UTF8
 
+#include <fmt/format.h>
+
 #include <stb_image.h>
 #include <stb_image_resize.h>
 #include <stb_image_write.h>
@@ -47,7 +49,7 @@ namespace ien
 			_data = stbi_load(path.c_str(), &w, &h, &dummy, channel_count());
 			if (_data == nullptr)
 			{
-				throw std::logic_error("Unable to open image");
+				throw std::logic_error(fmt::format("Unable to open image at '{}'", path));
 			}
 
 			_width = (size_t)w;
@@ -58,7 +60,7 @@ namespace ien
 			ien::unique_file_descriptor fd(path, "r");
 			if (!fd)
 			{
-				throw std::logic_error("Unable to open image");
+				throw std::logic_error(fmt::format("Unable to open image at '{}'", path));
 			}
 
 			std::string signature(4, 0);
@@ -69,7 +71,7 @@ namespace ien
 			fd.read(signature.data(), sizeof(signature));
 			if(signature != IEN_RAW_TAGGED_SIGNATURE)
 			{
-				throw std::logic_error("Invalid tagged raw image signature");
+				throw std::logic_error(fmt::format("Invalid tagged raw image signature for image '{}'", path));
 			}
 
 			fd.read(&width, sizeof(width));
@@ -160,6 +162,12 @@ namespace ien
 	{
 		assert(!path.empty());
 		stbi_write_bmp(path.c_str(), (int)_width, (int)_height, channel_count(), _data);
+	}
+
+	void image::write_to_file_tga(const std::string& path) const
+	{
+		assert(!path.empty());
+		stbi_write_tga(path.c_str(), (int)_width, (int)_height, channel_count(), _data);
 	}
 
 	void image::write_to_file_raw_tagged(const std::string& path) const
