@@ -5,6 +5,7 @@ add_library(libien
     "src/net_utils.cpp"
     "src/platform.cpp"
     "src/str_utils.cpp"
+    "src/win32/windows.cpp"
 )
 add_library(libien::libien ALIAS libien)
 
