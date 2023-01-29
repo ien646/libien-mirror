@@ -1,0 +1,9 @@
+﻿---
+BasedOnStyle: Microsoft
+AccessModifierOffset: '-4'
+IndentPPDirectives: BeforeHash
+IndentWidth: '4'
+NamespaceIndentation: All
+TabWidth: '4'
+
+...
