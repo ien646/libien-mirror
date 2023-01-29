@@ -1,4 +1,4 @@
-#include <ien/sftp/sftp.hpp>
+#include <ien/sftp/client.hpp>
 
 #include <ien/net_utils.hpp>
 #include <ien/io_utils.hpp>
