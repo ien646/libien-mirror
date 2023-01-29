@@ -31,6 +31,7 @@ if(LIBIEN_BUILD_SFTP)
     file(WRITE ${libssh2_SOURCE_DIR}/CMakeLists.txt ${__LIBSSH2_CMAKELISTS})
     if(MSVC)
         set_directory_properties(${libssh2_SOURCE_DIR}
+            APPEND PROPERTY LANGUAGE C
             APPEND PROPERTY COMPILE_OPTIONS "/wo4267" # disable size_t implicit cast warnings
             APPEND PROPERTY COMPILE_OPTIONS "/wo4068" # disable GCC pragma warnings
         )
