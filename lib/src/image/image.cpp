@@ -1,3 +1,4 @@
+#include "ien/image/image_data.hpp"
 #include <ien/image/image.hpp>
 
 #include <ien/alloc.hpp>
@@ -26,19 +27,12 @@ namespace ien
 	const std::string IEN_RAW_TAGGED_SIGNATURE = "IRIS";
 
 	image::image(int width, int height, image_format fmt)
-		: _format(fmt)
-		, _width(width)
-		, _height(height)
+		: image_data(width, height, fmt)
 	{
 		assert(width > 0 && height > 0);
-		size_t total_bytes = (size_t)width * height * channel_count();
-
-		// Using malloc() instead of new[] so that the deallocation interface matches stbi's
-		_data = (uint8_t*)malloc(total_bytes);
 	}
 
 	image::image(const std::string& path, image_format fmt, image_load_mode load_mode)
-		: _format(fmt)
 	{
 		assert(!path.empty());
 		if (load_mode == image_load_mode::IMAGE)
@@ -90,36 +84,12 @@ namespace ien
 	}
 
 	image::image(const unsigned char* data, int width, int height, image_format format)
-		: _format(format)
-		, _width(width)
-		, _height(height)
+		: image_data(width, height, format)
 	{
 		assert(data != nullptr);
 		assert(width > 0 && height > 0);
 
-		size_t alloc_sz = width * height * static_cast<int>(format);
-		_data = (uint8_t*)malloc(alloc_sz);
-		std::memcpy(_data, data, alloc_sz);
-	}
-
-	image::image(image&& mv_src) noexcept
-	{
-		_data = mv_src._data;
-		_width = mv_src._width;
-		_height = mv_src._height;
-		_format = mv_src._format;
-
-		mv_src._data = nullptr;
-		mv_src._width = 0;
-		mv_src._height = 0;
-	}
-
-	image::~image()
-	{
-		if (_data != nullptr)
-		{
-			free(_data);
-		}
+		std::memcpy(_data, data, width * height * (size_t)format);
 	}
 
 	image image::resize(int width, int height) const
