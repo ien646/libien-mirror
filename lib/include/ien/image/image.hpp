@@ -35,24 +35,12 @@ namespace ien
 		image(image&& mv_src) = default;
 		image& operator=(image&& mvsrc) = default;
 
-		inline size_t width() const { return _width; }
-		inline size_t height() const { return _height; }
-
-		inline size_t pixel_count() const { return _width * _height; }
-		inline unsigned char channel_count() const { return static_cast<unsigned char>(_format); }
-		inline size_t size() const { return pixel_count() * channel_count(); }
-
-		inline unsigned char* data() { return _data; }
-		inline const unsigned char* data() const { return _data; }
-
         [[nodiscard]] image resize(int width, int height) const;
 
 		void write_to_file_png(const std::string& path, int compression = 8) const;
 		void write_to_file_bmp(const std::string& path) const;
 		void write_to_file_tga(const std::string& path) const;
 		void write_to_file_raw_tagged(const std::string& path) const;
-
-        image extract_channel_image(size_t channel_index) const;
 
 		void shuffle(const image_shuffle&);
 	};

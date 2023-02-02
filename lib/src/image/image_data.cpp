@@ -1,6 +1,8 @@
 #include <ien/image/image_data.hpp>
 
+#include <cassert>
 #include <cstdlib>
+#include <stdexcept>
 #include <utility>
 
 namespace ien
@@ -38,5 +40,23 @@ namespace ien
 
         mvsrc._data = nullptr;
         return *this;
+    }
+
+    image_data image_data::extract_channel(size_t channel_index) const
+    {
+        assert(channel_index <= 4);
+		if (channel_index >= channel_count())
+		{
+			throw std::out_of_range("Invalid image channel index");
+		}
+
+		image_data result(_width, _height, image_format::R);
+		const size_t channels = channel_count();
+		const size_t pixels = pixel_count();
+		for (size_t i = 0, j = channel_index; i < pixels; ++i, j += channels)
+		{
+			result._data[i] = _data[j];
+		}
+		return result;
     }
 }
