@@ -28,14 +28,14 @@ namespace ien
 		: public image_data
 	{
 	public:
-		image(int width, int height, image_format = image_format::RGBA);
+		image(size_t width, size_t height, image_format = image_format::RGBA);
 		explicit image(const std::string& path, image_format fmt = image_format::RGBA, image_load_mode load_mode = image_load_mode::IMAGE);
-		image(const unsigned char* data, int width, int height, image_format format);
+		image(const unsigned char* data, size_t width, size_t height, image_format format);
 		image(const image& cp_src) = delete;
 		image(image&& mv_src) = default;
 		image& operator=(image&& mvsrc) = default;
 
-        [[nodiscard]] image resize(int width, int height) const;
+        [[nodiscard]] image resize(size_t width, size_t height) const;
 
 		void write_to_file_png(const std::string& path, int compression = 8) const;
 		void write_to_file_bmp(const std::string& path) const;

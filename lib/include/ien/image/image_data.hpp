@@ -26,7 +26,7 @@ namespace ien
 		inline size_t height() const { return _height; }
 
 		inline size_t pixel_count() const { return _width * _height; }
-		inline unsigned char channel_count() const { return static_cast<unsigned char>(_format); }
+		inline unsigned char channel_count() const { return image_format_channels(_format); }
 		inline size_t size() const { return pixel_count() * channel_count(); }
 
 		inline unsigned char* data() { return _data; }
