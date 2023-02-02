@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ien/image/image_data.hpp>
 #include <ien/image/image_format.hpp>
 
 #include <array>
@@ -24,20 +25,15 @@ namespace ien
 	};
 
 	class image
+		: public image_data
 	{
-	protected:
-		unsigned char* _data = nullptr;
-		size_t _width = 0;
-		size_t _height = 0;
-		image_format _format = image_format::RGBA;
-
 	public:
 		image(int width, int height, image_format = image_format::RGBA);
 		explicit image(const std::string& path, image_format fmt = image_format::RGBA, image_load_mode load_mode = image_load_mode::IMAGE);
 		image(const unsigned char* data, int width, int height, image_format format);
 		image(const image& cp_src) = delete;
-		image(image&& mv_src) noexcept;
-		~image();
+		image(image&& mv_src) = default;
+		image& operator=(image&& mvsrc) = default;
 
 		inline size_t width() const { return _width; }
 		inline size_t height() const { return _height; }
