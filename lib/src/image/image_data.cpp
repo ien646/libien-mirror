@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <new>
 #include <stdexcept>
 #include <utility>
 
@@ -13,7 +14,12 @@ namespace ien
         , _height(h)
         , _format(fmt)
     {
+        assert(w > 0 && h > 0);
         _data = (uint8_t*)malloc(w * h * image_format_channels(fmt));
+        if(_data == nullptr)
+        {
+            throw std::bad_alloc();
+        }
     }
 
     image_data::image_data(image_data&& mvsrc)
