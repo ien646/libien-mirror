@@ -100,24 +100,6 @@ namespace ien
 		return result;
 	}
 
-	image image::extract_channel_image(size_t channel_index) const
-	{
-		assert(channel_index <= 4);
-		if (channel_index >= channel_count())
-		{
-			throw std::out_of_range("Invalid image channel index");
-		}
-
-		image result((int)_width, (int)_height, image_format::R);
-		const size_t channels = channel_count();
-		const size_t pixels = pixel_count();
-		for (size_t i = 0, j = channel_index; i < pixels; ++i, j += channels)
-		{
-			result._data[i] = _data[j];
-		}
-		return result;
-	}
-
     void image::write_to_file_png(const std::string& path, int compression) const
     {
 		assert(!path.empty());
