@@ -1,3 +1,4 @@
+#include "ien/image/image_format.hpp"
 #include <ien/image/image_data.hpp>
 
 #include <cassert>
@@ -12,7 +13,7 @@ namespace ien
         , _height(h)
         , _format(fmt)
     {
-        _data = (uint8_t*)malloc(w * h * (size_t)fmt);
+        _data = (uint8_t*)malloc(w * h * image_format_channels(fmt));
     }
 
     image_data::image_data(image_data&& mvsrc)

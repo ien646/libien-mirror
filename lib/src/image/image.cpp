@@ -26,7 +26,7 @@ namespace ien
 {
 	const std::string IEN_RAW_TAGGED_SIGNATURE = "IRIS";
 
-	image::image(int width, int height, image_format fmt)
+	image::image(size_t width, size_t height, image_format fmt)
 		: image_data(width, height, fmt)
 	{
 		assert(width > 0 && height > 0);
@@ -35,6 +35,7 @@ namespace ien
 	image::image(const std::string& path, image_format fmt, image_load_mode load_mode)
 	{
 		assert(!path.empty());
+		_format = fmt;
 		if (load_mode == image_load_mode::IMAGE)
 		{
 			int dummy;
@@ -83,7 +84,7 @@ namespace ien
 		}
 	}
 
-	image::image(const unsigned char* data, int width, int height, image_format format)
+	image::image(const unsigned char* data, size_t width, size_t height, image_format format)
 		: image_data(width, height, format)
 	{
 		assert(data != nullptr);
@@ -92,7 +93,7 @@ namespace ien
 		std::memcpy(_data, data, width * height * (size_t)format);
 	}
 
-	image image::resize(int width, int height) const
+	image image::resize(size_t width, size_t height) const
 	{
 		assert(width > 0 && height > 0);
 		image result(width, height, _format);
