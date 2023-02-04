@@ -19,11 +19,6 @@ namespace ien
 		RAW
 	};
 
-	struct image_shuffle
-	{
-		std::array<uint8_t, 4> indices = {0, 1, 2, 3};
-	};
-
 	class image
 		: public image_data
 	{
@@ -41,7 +36,5 @@ namespace ien
 		void write_to_file_bmp(const std::string& path) const;
 		void write_to_file_tga(const std::string& path) const;
 		void write_to_file_raw_tagged(const std::string& path) const;
-
-		void shuffle(const image_shuffle&);
 	};
 }

@@ -1,3 +1,4 @@
+#include "ien/image/image.hpp"
 #include "ien/image/image_format.hpp"
 #include <ien/image/image_data.hpp>
 
@@ -15,7 +16,8 @@ namespace ien
         , _format(fmt)
     {
         assert(w > 0 && h > 0);
-        _data = (uint8_t*)malloc(w * h * image_format_channels(fmt));
+        size_t alloc_sz = w * h * channel_count();
+        _data = (uint8_t*)malloc(alloc_sz);
         if(_data == nullptr)
         {
             throw std::bad_alloc();
@@ -65,5 +67,78 @@ namespace ien
 			result._data[i] = _data[j];
 		}
 		return result;
+    }
+
+    void image_data::cast_format(image_format target_format)
+    {
+        if(channel_count() != image_format_channels(target_format))
+        {
+            throw std::logic_error("Unable to cast image format with different number of channels");
+        }
+
+        if(target_format == _format || channel_count() < 3)
+        {
+            // Nothing to do here
+            return;
+        }
+
+        if(channel_count() == 3)
+        {
+            shuffle({{2,1,0}}); //bgr <-> rgb
+        }
+        else if(channel_count() == 4)
+        {
+            if(_format == image_format::RGBA)
+            {
+                if(target_format == image_format::ABGR)
+                { shuffle({{3,2,1,0}}); }
+                else if(target_format == image_format::BGRA)
+                { shuffle({{2,1,0,3}}); }
+            }
+            else if(_format == image_format::ABGR)
+            {
+                if(target_format == image_format::RGBA)
+                { shuffle({{3,2,1,0}}); }
+                else if(target_format == image_format::BGRA)
+                { shuffle({{1,2,3,0}}); }
+            }
+            else if(_format == image_format::BGRA)
+            {
+                if(target_format == image_format::RGBA)
+                { shuffle({{2,1,0,3}}); }
+                else if(target_format == image_format::ABGR)
+                { shuffle({{1,2,3,0}}); }
+            }
+        }
+    }
+
+    void image_data::shuffle(const image_shuffle& op)
+    {
+        const size_t pixels = pixel_count();
+        const size_t channels = channel_count();
+		if(channels == 1)
+		{
+			return;
+		}
+
+		const auto shuffle_index_std = [&](size_t pixel_index)
+		{
+			uint8_t* pxptr = _data + (pixel_index * channels);
+			std::array<uint8_t, 4> temp;
+			for(size_t i = 0; i < channels; ++i)
+			{
+				temp[i] = pxptr[op.indices[i]];
+			}
+
+			for(size_t i = 0; i < channels; ++i)
+			{
+				pxptr[i] = temp[i];
+			}
+		};
+
+		for(size_t i = 0; i < pixels; ++i)
+		{
+			shuffle_index_std(i);
+		}
     }
 }

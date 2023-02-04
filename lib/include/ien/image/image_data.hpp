@@ -2,10 +2,16 @@
 
 #include <ien/image/image_format.hpp>
 
+#include <array>
 #include <cstdint>
 
 namespace ien
 {
+    struct image_shuffle
+	{
+		std::array<uint8_t, 4> indices = {0, 1, 2, 3};
+	};
+
     class image_data
     {
     protected:
@@ -25,6 +31,8 @@ namespace ien
         inline size_t width() const { return _width; }
 		inline size_t height() const { return _height; }
 
+        inline image_format format() const { return _format; }
+
 		inline size_t pixel_count() const { return _width * _height; }
 		inline unsigned char channel_count() const { return image_format_channels(_format); }
 		inline size_t size() const { return pixel_count() * channel_count(); }
@@ -41,5 +49,9 @@ namespace ien
         inline const unsigned char* data(size_t x, size_t y) const { return _data + (pixel_index(x, y) * channel_count()); }
 
         image_data extract_channel(size_t channel_index) const;
+
+        void cast_format(image_format target_format);
+
+        void shuffle(const image_shuffle&);
     };
 }
