@@ -112,45 +112,45 @@ namespace ien::platform::x86
         if (nIds >= 0x00000001)
         {
             W32_CPUID(info.data(), 0x00000001);
-            map[feature::MMX]    = (info[3] & (1 << 23)) != 0;
-            map[feature::SSE]    = (info[3] & (1 << 25)) != 0;
-            map[feature::SSE2]   = (info[3] & (1 << 26)) != 0;
-            map[feature::SSE3]   = (info[2] & (1 <<  0)) != 0;
-            map[feature::SSSE3]  = (info[2] & (1 <<  9)) != 0;
-            map[feature::SSE41]  = (info[2] & (1 << 19)) != 0;
-            map[feature::SSE42]  = (info[2] & (1 << 20)) != 0;
-            map[feature::AES]    = (info[2] & (1 << 25)) != 0;
-            map[feature::AVX]    = (info[2] & (1 << 28)) != 0;
-            map[feature::FMA3]   = (info[2] & (1 << 12)) != 0;
-            map[feature::RDRAND] = (info[2] & (1 << 30)) != 0;
+            map[feature::MMX]    = (info[3] & (1u << 23)) != 0;
+            map[feature::SSE]    = (info[3] & (1u << 25)) != 0;
+            map[feature::SSE2]   = (info[3] & (1u << 26)) != 0;
+            map[feature::SSE3]   = (info[2] & (1u <<  0)) != 0;
+            map[feature::SSSE3]  = (info[2] & (1u <<  9)) != 0;
+            map[feature::SSE41]  = (info[2] & (1u << 19)) != 0;
+            map[feature::SSE42]  = (info[2] & (1u << 20)) != 0;
+            map[feature::AES]    = (info[2] & (1u << 25)) != 0;
+            map[feature::AVX]    = (info[2] & (1u << 28)) != 0;
+            map[feature::FMA3]   = (info[2] & (1u << 12)) != 0;
+            map[feature::RDRAND] = (info[2] & (1u << 30)) != 0;
         }
         if (nIds >= 0x00000007)
         {
             W32_CPUID(info.data(), 0x00000007);
-            map[feature::AVX2]        = (info[1] & (1 <<  5)) != 0;
-            map[feature::BMI1]        = (info[1] & (1 <<  3)) != 0;
-            map[feature::BMI2]        = (info[1] & (1 <<  8)) != 0;
-            map[feature::ADX]         = (info[1] & (1 << 19)) != 0;
-            map[feature::SHA]         = (info[1] & (1 << 29)) != 0;
-            map[feature::PREFETCHWT1] = (info[2] & (1 <<  0)) != 0;
-            map[feature::AVX512F]     = (info[1] & (1 << 16)) != 0;
-            map[feature::AVX512CD]    = (info[1] & (1 << 28)) != 0;
-            map[feature::AVX512PF]    = (info[1] & (1 << 26)) != 0;
-            map[feature::AVX512ER]    = (info[1] & (1 << 27)) != 0;
-            map[feature::AVX512VL]    = (info[1] & (1 << 31)) != 0;
-            map[feature::AVX512BW]    = (info[1] & (1 << 30)) != 0;
-            map[feature::AVX512DQ]    = (info[1] & (1 << 17)) != 0;
-            map[feature::AVX512IFMA]  = (info[1] & (1 << 21)) != 0;
-            map[feature::AVX512VBMI]  = (info[2] & (1 <<  1)) != 0;
+            map[feature::AVX2]        = (info[1] & (1u <<  5)) != 0;
+            map[feature::BMI1]        = (info[1] & (1u <<  3)) != 0;
+            map[feature::BMI2]        = (info[1] & (1u <<  8)) != 0;
+            map[feature::ADX]         = (info[1] & (1u << 19)) != 0;
+            map[feature::SHA]         = (info[1] & (1u << 29)) != 0;
+            map[feature::PREFETCHWT1] = (info[2] & (1u <<  0)) != 0;
+            map[feature::AVX512F]     = (info[1] & (1u << 16)) != 0;
+            map[feature::AVX512CD]    = (info[1] & (1u << 28)) != 0;
+            map[feature::AVX512PF]    = (info[1] & (1u << 26)) != 0;
+            map[feature::AVX512ER]    = (info[1] & (1u << 27)) != 0;
+            map[feature::AVX512VL]    = (info[1] & (1u << 31)) != 0;
+            map[feature::AVX512BW]    = (info[1] & (1u << 30)) != 0;
+            map[feature::AVX512DQ]    = (info[1] & (1u << 17)) != 0;
+            map[feature::AVX512IFMA]  = (info[1] & (1u << 21)) != 0;
+            map[feature::AVX512VBMI]  = (info[2] & (1u <<  1)) != 0;
         }
         if (nExIds >= 0x80000001)
         {
             W32_CPUID(info.data(), 0x80000001);
-            map[feature::x64]   = (info[3] & (1 << 29)) != 0;
-            map[feature::ABM]   = (info[2] & (1 <<  5)) != 0;
-            map[feature::SSE4a] = (info[2] & (1 <<  6)) != 0;
-            map[feature::FMA4]  = (info[2] & (1 << 16)) != 0;
-            map[feature::XOP]   = (info[2] & (1 << 11)) != 0;
+            map[feature::x64]   = (info[3] & (1u << 29)) != 0;
+            map[feature::ABM]   = (info[2] & (1u <<  5)) != 0;
+            map[feature::SSE4a] = (info[2] & (1u <<  6)) != 0;
+            map[feature::FMA4]  = (info[2] & (1u << 16)) != 0;
+            map[feature::XOP]   = (info[2] & (1u << 11)) != 0;
         }
     }
 
