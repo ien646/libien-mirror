@@ -1,14 +1,14 @@
-#include <ien/image/image_ycrcb.hpp>
+#include <ien/image/image_ycbcr.hpp>
 
 namespace ien
 {
-	image_ycrcb::image_ycrcb(const std::string& path)
+	image_ycbcr::image_ycbcr(const std::string& path)
 		: image(path, image_format::RGB)
 	{
 		convert_format();
 	}
 
-	void image_ycrcb::convert_format()
+	void image_ycbcr::convert_format()
 	{
 		for (size_t i = 0; i < size(); i += 3)
 		{
