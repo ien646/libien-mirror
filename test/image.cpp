@@ -1,3 +1,4 @@
+#include "catch2/catch_message.hpp"
 #include <ien/image/image.hpp>
 
 #include <catch2/catch_test_macros.hpp>
@@ -84,6 +85,7 @@ TEST_CASE("image::shuffle")
         img.shuffle(rg_shuffle);
         for(size_t i = 0; i < img.size(); ++i)
         {
+            INFO(i);
             REQUIRE(img.data()[i] == rg_data_shuffled[i]);
         }
     };

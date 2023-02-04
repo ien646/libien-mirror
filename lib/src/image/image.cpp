@@ -1,4 +1,5 @@
 #include "ien/image/image_data.hpp"
+#include "ien/image/image_format.hpp"
 #include <ien/image/image.hpp>
 
 #include <ien/alloc.hpp>
@@ -61,7 +62,7 @@ namespace ien
 			std::string signature(4, 0);
 			uint32_t width = 0;
 			uint32_t height = 0;
-			uint8_t channels = 0;
+			uint8_t format = 0;
 
 			fd.read(signature.data(), sizeof(signature));
 			if(signature != IEN_RAW_TAGGED_SIGNATURE)
@@ -71,13 +72,13 @@ namespace ien
 
 			fd.read(&width, sizeof(width));
 			fd.read(&height, sizeof(height));
-			fd.read(&channels, sizeof(channels));
+			fd.read(&format, sizeof(format));
 
 			_width = (size_t)width;
 			_height = (size_t)height;
-			_format = static_cast<image_format>(channels);
+			_format = static_cast<image_format>(format);
 
-			size_t total_bytes = _width * _height * static_cast<size_t>(_format);
+			size_t total_bytes = _width * _height * channel_count();
 			_data = (uint8_t*)malloc(total_bytes);
 
 			fd.read(_data, total_bytes, 1);
@@ -90,7 +91,7 @@ namespace ien
 		assert(data != nullptr);
 		assert(width > 0 && height > 0);
 
-		std::memcpy(_data, data, width * height * (size_t)format);
+		std::memcpy(_data, data, width * height * channel_count());
 	}
 
 	image image::resize(size_t width, size_t height) const
@@ -128,12 +129,12 @@ namespace ien
 		assert(!path.empty());
 		uint32_t width = (uint32_t)_width;
 		uint32_t height = (uint32_t)_height;
-		uint8_t channels = channel_count();
+		uint8_t fmt = static_cast<uint8_t>(format());
 
 		std::vector<uint8_t> binary;
 
 		size_t offset = 0;
-		size_t header_size = IEN_RAW_TAGGED_SIGNATURE.size() + sizeof(width) + sizeof(height) + sizeof(channels);
+		size_t header_size = IEN_RAW_TAGGED_SIGNATURE.size() + sizeof(width) + sizeof(height) + sizeof(fmt);
 		size_t image_size = size();
 		binary.resize(header_size + image_size);
 
@@ -146,43 +147,12 @@ namespace ien
 		memcpy(binary.data() + offset, reinterpret_cast<char*>(&height), sizeof(height));
 		offset += sizeof(height);
 
-		memcpy(binary.data() + offset, reinterpret_cast<char*>(&channels), sizeof(channels));
-		offset += sizeof(channels);
+		memcpy(binary.data() + offset, reinterpret_cast<char*>(&fmt), sizeof(fmt));
+		offset += sizeof(fmt);
 
 		// Copy image data into binary
 		memcpy(binary.data() + offset, _data, image_size);
 
 		ien::write_file_binary(path, binary);
-	}
-
-	void image::shuffle(const image_shuffle& op)
-	{
-		const size_t pixels = pixel_count();
-		const size_t channels = static_cast<size_t>(_format);
-
-		if(channels == 1)
-		{
-			return;
-		}
-
-		const auto shuffle_index_std = [&](size_t pixel_index)
-		{
-			uint8_t* pxptr = _data + (pixel_index * channels);
-			std::array<uint8_t, 4> temp;
-			for(size_t i = 0; i < channels; ++i)
-			{
-				temp[i] = pxptr[op.indices[i]];
-			}
-
-			for(size_t i = 0; i < channels; ++i)
-			{
-				pxptr[i] = temp[i];
-			}
-		};
-
-		for(size_t i = 0; i < pixels; ++i)
-		{
-			shuffle_index_std(i);
-		}
 	}
 }
