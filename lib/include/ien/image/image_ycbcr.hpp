@@ -4,11 +4,11 @@
 
 namespace ien
 {
-	class image_ycrcb
+	class image_ycbcr
 		: public image
 	{
 	public:
-		explicit image_ycrcb(const std::string& path);
+		explicit image_ycbcr(const std::string& path);
 
 	private:
 		void convert_format();

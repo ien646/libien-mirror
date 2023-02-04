@@ -13,7 +13,7 @@ if(LIBIEN_BUILD_IMAGE)
     target_sources(libien PRIVATE
         "src/image/image_data.cpp"
         "src/image/image.cpp"
-        "src/image/image_ycrcb.cpp"
+        "src/image/image_ycbcr.cpp"
     )
     target_link_libraries(libien PRIVATE stb)
     target_compile_definitions(libien PUBLIC "LIBIEN_BUILD_IMAGE")
