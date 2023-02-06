@@ -1,8 +1,7 @@
-#include "ien/image/image_data.hpp"
-#include "ien/image/image_format.hpp"
+#include <ien/image/image_data.hpp>
+#include <ien/image/image_format.hpp>
 #include <ien/image/image.hpp>
 
-#include <ien/alloc.hpp>
 #include <ien/io_utils.hpp>
 #include <ien/platform.hpp>
 
