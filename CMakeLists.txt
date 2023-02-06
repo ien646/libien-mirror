@@ -7,9 +7,9 @@ project(libien
     LANGUAGES C CXX
 )
 
-option(LIBIEN_BUILD_TESTS "Build tests" ON)
-option(LIBIEN_BUILD_IMAGE "Build image library" ON)
-option(LIBIEN_BUILD_SFTP "Build sftp library" ON)
+option(LIBIEN_BUILD_TESTS "Build tests" OFF)
+option(LIBIEN_BUILD_IMAGE "Build image library" OFF)
+option(LIBIEN_BUILD_SFTP "Build sftp library" OFF)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
