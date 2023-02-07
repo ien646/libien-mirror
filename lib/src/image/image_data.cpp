@@ -1,4 +1,3 @@
-#include "ien/image/image.hpp"
 #include "ien/image/image_format.hpp"
 #include <ien/image/image_data.hpp>
 
