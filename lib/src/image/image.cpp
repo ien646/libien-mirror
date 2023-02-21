@@ -123,6 +123,12 @@ namespace ien
 		stbi_write_tga(path.c_str(), (int)_width, (int)_height, channel_count(), _data);
 	}
 
+	void image::write_to_file_jpg(const std::string& path, int quality) const
+	{
+		assert(!path.empty());
+		stbi_write_jpg(path.c_str(), (int)_width, (int)_height, channel_count(), _data, quality);
+	}
+
 	void image::write_to_file_raw_tagged(const std::string& path) const
 	{
 		assert(!path.empty());

@@ -25,6 +25,12 @@ TEST_CASE("split")
 	REQUIRE(segments3[0] == "a");
 	REQUIRE(segments3[1] == "b");
 	REQUIRE(segments3[2] == "c");
+
+	auto segments3 = ien::str_split("a b c", " ");
+	REQUIRE(segments3.size() == 3);
+	REQUIRE(segments3[0] == "a");
+	REQUIRE(segments3[1] == "b");
+	REQUIRE(segments3[2] == "c");
 };
 
 TEST_CASE("replace (char)")
