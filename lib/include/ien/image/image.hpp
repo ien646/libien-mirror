@@ -35,6 +35,7 @@ namespace ien
 		void write_to_file_png(const std::string& path, int compression = 8) const;
 		void write_to_file_bmp(const std::string& path) const;
 		void write_to_file_tga(const std::string& path) const;
+		void write_to_file_jpg(const std::string& path, int quality = 100) const;
 		void write_to_file_raw_tagged(const std::string& path) const;
 	};
 }
