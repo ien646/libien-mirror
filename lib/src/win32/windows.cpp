@@ -7,7 +7,7 @@
 #include <filesystem>
 #include <shellapi.h>
 
-namespace win32
+namespace ien::win32
 {
     std::vector<std::wstring> get_cmdline_wargs()
     {

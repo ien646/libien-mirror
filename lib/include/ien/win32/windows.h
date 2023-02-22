@@ -16,7 +16,7 @@
 #undef WIN32_NO_STATUS
 #undef WIN32_LEAN_AND_MEAN
 
-namespace win32
+namespace ien::win32
 {
 	extern std::vector<std::wstring> get_cmdline_wargs();
 }
