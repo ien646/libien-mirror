@@ -8,7 +8,7 @@ namespace ien::detail
 {
     template<bool StrView, concepts::AnyStr T, concepts::AnyStrOrChar TDelim>
         requires is_same_underlying_char_type<T, TDelim>
-    std::vector<std::conditional_t<StrView,
+    IEN_CPP_STDVECTOR_CONSTEXPR std::vector<std::conditional_t<StrView,
                                    std::basic_string_view<underlying_char_t<T>>,
                                    std::basic_string<underlying_char_t<T>>>>
     str_split(
@@ -64,7 +64,7 @@ namespace ien
 {
     template<concepts::AnyStr T, concepts::AnyStrOrChar TDelim>
         requires detail::is_same_underlying_char_type<T, TDelim>
-    constexpr std::vector<std::basic_string<underlying_char_t<T>>> str_split(
+    IEN_CPP_STDVECTOR_CONSTEXPR std::vector<std::basic_string<underlying_char_t<T>>> str_split(
         const T& str,
         const TDelim& delim,
         size_t offset = 0,
@@ -75,7 +75,7 @@ namespace ien
 
     template<concepts::AnyStr T, concepts::AnyStrOrChar TDelim>
         requires detail::is_same_underlying_char_type<T, TDelim>
-    constexpr std::vector<std::basic_string_view<underlying_char_t<T>>> str_splitv(
+    IEN_CPP_STDVECTOR_CONSTEXPR std::vector<std::basic_string_view<underlying_char_t<T>>> str_splitv(
         const T& str,
         const TDelim& delim,
         size_t offset = 0,

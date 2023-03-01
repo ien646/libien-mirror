@@ -6,7 +6,7 @@ namespace ien
 {
     template<concepts::StdAnyStrStrV T, concepts::AnyChar TOcurrence, concepts::AnyChar TReplacement>
         requires detail::is_same_underlying_char_type<T, TOcurrence, TReplacement>
-    constexpr std::basic_string<underlying_char_t<T>> str_replace(
+    IEN_CPP_STDSTRING_CONSTEXPR std::basic_string<underlying_char_t<T>> str_replace(
         const T& str,
         const TOcurrence& ocurrence,
         const TReplacement& replacement,
@@ -27,7 +27,7 @@ namespace ien
     template<concepts::AnyStr T, concepts::AnyStrOrChar TOcurrence, concepts::AnyStrOrChar TReplacement>
         requires (detail::is_same_underlying_char_type<T, TOcurrence, TReplacement>
             && concepts::AnyStr<TOcurrence> || concepts::AnyStr<TReplacement>)
-    constexpr std::basic_string<underlying_char_t<T>> str_replace(
+    IEN_CPP_STDSTRING_CONSTEXPR std::basic_string<underlying_char_t<T>> str_replace(
         const T& str,
         const TOcurrence& ocurrence,
         const TReplacement& replacement,

@@ -1,97 +1,11 @@
 #pragma once
 
-//--------------------------------------------
-// ARCH
-//--------------------------------------------
-#if defined(__amd64__) || defined(__amd64) || defined(__x86_64__) || defined(__x86_64) || defined(_M_AMD64)
-    #define IEN_ARCH_X86_64
-#endif
-
-#if defined(i386) || defined(__i386) || defined(__i386__) || defined(_M_IX86)
-    #define IEN_ARCH_X86
-#endif
-
-#if defined(__arm__) || defined(_M_ARM)
-    #define IEN_ARCH_ARM
-#endif
-
-#if defined(__aarch64__)
-    #define IEN_ARCH_ARM64
-#endif
-
-//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-// OS
-//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-#if defined(WIN64) || defined(_WIN64)
-    #define IEN_OS_WIN
-    #define IEN_OS_WIN64
-#elif defined(WIN32) || defined(_WIN32)
-    #define IEN_OS_WIN
-    #define IEN_OS_WIN32
-#endif
-
-#ifdef IEN_OS_WIN
-    #define IEN_OS_WIN_SELECT(win, other) (win)
-#else
-    #define IEN_OS_WIN_SELECT(win, other) (other)
-#endif
-
-#if defined(__unix__)
-    #define IEN_OS_UNIX
-#endif
-
-#if defined(__APPLE__)
-    #define IEN_OS_MAC
-#endif
-
-#if defined(__linux__)
-    #define IEN_OS_LINUX
-#endif
-
-#if defined(__FreeBSD__)
-    #define IEN_OS_FREEBSD
-#endif
-
-#if defined(__ANDROID__)
-    #define IEN_OS_ANDROID
-#endif
-
-//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-// COMPILER
-//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
-#if defined(_MSC_VER)
-    #define IEN_COMPILER_MSVC
-    #define IEN_COMPILER_MSVC_VER _MSC_VER
-
-#elif defined(__GNUC__) && !defined(__clang__)
-    #define IEN_COMPILER_GNU
-    #define IEN_COMPILER_GNU_VER __GNUC__
-
-#elif defined(__clang__)
-    #define IEN_COMPILER_CLANG
-    #define IEN_COMPILER_CLANG_VER __clang_major__
-
-#elif defined(__INTEL_COMPILER)
-    #define IEN_COMPILER_INTEL
-    #define IEN_COMPILER_INTEL_VER __INTEL_COMPILER
-
-#endif
-
-//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-// ARM SPECIFIC
-//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-#if defined(IEN_ARCH_ARM) || defined(IEN_ARCH_ARM64)
-    #if defined(__ARM_NEON) || defined(__ARM_NEON__)
-        #ifndef IEN_ARM_NEON
-            #define IEN_ARM_NEON
-        #endif
-    #endif
-#endif
-
-//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-// ALIGNMENT
-//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+#include <ien/bits/platform/arch.hpp>
+#include <ien/bits/platform/arm.hpp>
+#include <ien/bits/platform/c++.hpp>
+#include <ien/bits/platform/compiler.hpp>
+#include <ien/bits/platform/os.hpp>
+#include <ien/bits/platform/warnings.hpp>
 
 #include <cstddef>
 #include <cstdint>
@@ -109,46 +23,6 @@ namespace ien
         return (prtval % alignment) == 0;
     }
 }
-
-#if defined(IEN_ARCH_X86_64) || defined(IEN_ARCH_X86)
-    #define IEN_DEFAULT_ALIGNMENT 32
-#elif defined(IEN_ARCH_ARM) || defined(IEN_ARCH_ARM64)
-    #define IEN_DEFAULT_ALIGNMENT 16
-#else
-    #define IEN_DEFAULT_ALIGNMENT 32
-#endif
-
-//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-// COMPILER HINTS
-//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
-// -- Unreachable case --
-#if defined(IEN_COMPILER_MSVC)
-    #define IEN_HINT_UNREACHABLE() __assume(0)
-#elif defined(IEN_COMPILER_GNU) || defined(IEN_COMPILER_CLANG) || defined(IEN_COMPILER_INTEL)
-    #define IEN_HINT_UNREACHABLE() __builtin_unreachable()
-#else
-    #define IEN_HINT_UNREACHABLE()
-#endif
-
-//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-// C++ VERSION
-//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-#if __cplusplus >= 199711L
-    #define IEN_HAS_CPP03
-#endif
-#if __cplusplus >= 201103L
-    #define IEN_HAS_CPP11
-#endif
-#if __cplusplus >= 201402L
-    #define IEN_HAS_CPP14
-#endif
-#if __cplusplus >= 201703L
-    #define IEN_HAS_CPP17
-#endif
-#if __cplusplus >= 202002L
-    #define IEN_HAS_CPP20
-#endif
 
 //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 // PLATFORM FEATURES (x86)
@@ -191,18 +65,4 @@ namespace ien::platform::x86
     extern void force_feature(feature feat, bool enabled);
 }
 
-#endif
-
-//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-// WARNINGS
-//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\
-
-#ifdef IEN_COMPILER_MSVC
-    #define IEN_WARNINGS_DISABLE_BEGIN _Pragma("warning(push, 0)")
-    #define IEN_WARNINGS_DISABLE_END _Pragma("warning(pop)")
-#else
-    #define IEN_WARNINGS_DISABLE_BEGIN \
-        _Pragma("GCC diagnostic push") \
-        _Pragma("GCC diagnostic ignored \"-Wall\"")
-    #define IEN_WARNINGS_DISABLE_END _Pragma("GCC diagnostic pop")
 #endif
