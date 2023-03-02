@@ -10,7 +10,7 @@ namespace ien::detail
         (std::is_same_v<underlying_char_t<T>, underlying_char_t<TOther>> && ...);
 
     template<concepts::AnyStr T>
-    constexpr std::basic_string_view<underlying_char_t<T>> str_view_range(const T& str, size_t offset, size_t maxlen)
+    IEN_CPP_STDSTRING_CONSTEXPR std::basic_string_view<underlying_char_t<T>> str_view_range(const T& str, size_t offset, size_t maxlen)
     {
         using char_type = underlying_char_t<T>;
         return std::basic_string_view<char_type>(
