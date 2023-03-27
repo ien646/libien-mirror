@@ -28,4 +28,5 @@
     #endif
 #else
     #define IEN_CPP_STDVECTOR_CONSTEXPR
+    #define IEN_CPP_STDSTRING_CONSTEXPR
 #endif

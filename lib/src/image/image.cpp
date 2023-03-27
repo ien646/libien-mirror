@@ -46,7 +46,7 @@ namespace ien
 		}
 	}
 
-	constexpr bool get_alpha_channel_index(image_format fmt)
+	constexpr int get_alpha_channel_index(image_format fmt)
 	{
 		switch(fmt)
 		{
@@ -132,9 +132,7 @@ namespace ien
 		assert(width > 0 && height > 0);
 
 		image result(width, height, _format);
-		stbir_edge edgemode = STBIR_EDGE_WRAP;
-
-		stbir_resize_uint8_generic(
+		int ok = stbir_resize_uint8_generic(
 			_data,
 			(int)_width,
 			(int)_height,
@@ -143,7 +141,7 @@ namespace ien
 			width,
 			height,
 			0,
-			channel_count(),
+			(int)channel_count(),
 			get_alpha_channel_index(_format),
 			0,
 			STBIR_EDGE_WRAP,
@@ -151,6 +149,10 @@ namespace ien
 			STBIR_COLORSPACE_SRGB,
 			nullptr
 		);
+
+		if(ok == 0) {
+			throw std::logic_error("Failure resizing image!");
+		}
 		return result;
 	}
 
