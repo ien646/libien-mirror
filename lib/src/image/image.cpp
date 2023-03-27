@@ -26,6 +26,40 @@ namespace ien
 {
 	const std::string IEN_RAW_TAGGED_SIGNATURE = "IRIS";
 
+	constexpr stbir_filter filter2stbir(resize_filter f)
+	{
+		switch(f)
+		{
+		case resize_filter::BOX:
+			return STBIR_FILTER_BOX;
+		case resize_filter::CATMULL_ROM:
+			return STBIR_FILTER_CATMULLROM;
+		case resize_filter::CUBIC_SPLINE:
+			return STBIR_FILTER_CUBICBSPLINE;
+		case resize_filter::MITCHELL:
+			return STBIR_FILTER_MITCHELL;
+		case resize_filter::TRIANGLE:
+			return STBIR_FILTER_TRIANGLE;
+		case resize_filter::DEFAULT:
+		default:
+			return STBIR_FILTER_DEFAULT;
+		}
+	}
+
+	constexpr bool get_alpha_channel_index(image_format fmt)
+	{
+		switch(fmt)
+		{
+			case image_format::ABGR:
+				return 0;
+			case image_format::BGRA:
+			case image_format::RGBA:
+				return 3;
+			default:
+				return -1;
+		}
+	}
+
 	image::image(size_t width, size_t height, image_format fmt)
 		: image_data(width, height, fmt)
 	{
@@ -93,11 +127,30 @@ namespace ien
 		std::memcpy(_data, data, width * height * channel_count());
 	}
 
-	image image::resize(size_t width, size_t height) const
+	image image::resize(size_t width, size_t height, resize_filter filter) const
 	{
 		assert(width > 0 && height > 0);
+
 		image result(width, height, _format);
-		stbir_resize_uint8(_data, (int)_width, (int)_height, 0, result._data, width, height, 0, channel_count());
+		stbir_edge edgemode = STBIR_EDGE_WRAP;
+
+		stbir_resize_uint8_generic(
+			_data,
+			(int)_width,
+			(int)_height,
+			0,
+			result._data,
+			width,
+			height,
+			0,
+			channel_count(),
+			get_alpha_channel_index(_format),
+			0,
+			STBIR_EDGE_WRAP,
+			filter2stbir(filter),
+			STBIR_COLORSPACE_SRGB,
+			nullptr
+		);
 		return result;
 	}
 
