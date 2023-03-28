@@ -1,6 +1,8 @@
 #pragma once
 
 #include <ien/lang_utils.hpp>
+#include <ien/platform.hpp>
+#include <ien/bits/str_utils/common.hpp>
 
 namespace ien
 {
@@ -25,8 +27,11 @@ namespace ien
     }
 
     template<concepts::AnyStr T, concepts::AnyStrOrChar TOcurrence, concepts::AnyStrOrChar TReplacement>
-        requires (detail::is_same_underlying_char_type<T, TOcurrence, TReplacement>
-            && concepts::AnyStr<TOcurrence> || concepts::AnyStr<TReplacement>)
+        requires (
+            (detail::is_same_underlying_char_type<T, TOcurrence, TReplacement>
+                && concepts::AnyStr<TOcurrence>)
+            || concepts::AnyStr<TReplacement>
+        )
     IEN_CPP_STDSTRING_CONSTEXPR std::basic_string<underlying_char_t<T>> str_replace(
         const T& str,
         const TOcurrence& ocurrence,
