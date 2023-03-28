@@ -19,6 +19,16 @@ namespace ien
 		RAW
 	};
 
+	enum class resize_filter
+	{
+		DEFAULT,
+		BOX,
+		CATMULL_ROM,
+		CUBIC_SPLINE,
+		MITCHELL,
+		TRIANGLE
+	};
+
 	class image
 		: public image_data
 	{
@@ -30,7 +40,7 @@ namespace ien
 		image(image&& mv_src) = default;
 		image& operator=(image&& mvsrc) = default;
 
-        [[nodiscard]] image resize(size_t width, size_t height) const;
+        [[nodiscard]] image resize(size_t width, size_t height, resize_filter = resize_filter::DEFAULT) const;
 
 		void write_to_file_png(const std::string& path, int compression = 8) const;
 		void write_to_file_bmp(const std::string& path) const;
