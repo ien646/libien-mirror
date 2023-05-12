@@ -7,7 +7,7 @@ project(libien
     LANGUAGES C CXX
 )
 
-option(LIBIEN_BUILD_TESTS "Build tests" OFF)
+option(LIBIEN_BUILD_TESTS "Build tests" ON)
 option(LIBIEN_BUILD_IMAGE "Build image library" OFF)
 option(LIBIEN_BUILD_SFTP "Build sftp library" OFF)
 
@@ -42,6 +42,7 @@ if(LIBIEN_BUILD_SFTP)
 endif()
 
 if(LIBIEN_BUILD_TESTS)
+    enable_testing()
     CPMAddPackage(
         NAME catch2
         GIT_REPOSITORY "https://github.com/catchorg/Catch2"

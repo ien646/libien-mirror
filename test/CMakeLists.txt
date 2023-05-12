@@ -15,12 +15,23 @@ if(LIBIEN_BUILD_SFTP)
     # ...
 endif()
 
-add_executable(libien_tests ${LIBIEN_TEST_SOURCES})
+macro(DEFINE_TEST TAG)
+    add_executable("libien_tests_${TAG}" "${TAG}.cpp")
+    target_link_libraries("libien_tests_${TAG}" PRIVATE Catch2WithMain libien)
+    set_target_properties("libien_tests_${TAG}" PROPERTIES
+        CXX_STANDARD 20
+        CXX_STANDARD_REQUIRED ON
+        CXX_EXTENSIONS OFF
+    )
+    add_test(NAME "libien_tests_${TAG}" COMMAND "libien_tests_${TAG}")
+endmacro()
 
-set_target_properties(libien_tests PROPERTIES
-    CXX_STANDARD 20
-    CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF
-)
+DEFINE_TEST(alloc)
+DEFINE_TEST(bit_tools)
+DEFINE_TEST(lang_utils)
+DEFINE_TEST(net_utils)
+DEFINE_TEST(str_utils)
 
-target_link_libraries(libien_tests PRIVATE Catch2WithMain libien)
+if(LIBIEN_BUILD_IMAGE)
+    DEFINE_TEST(image)
+endif()
