@@ -7,7 +7,7 @@ project(libien
     LANGUAGES C CXX
 )
 
-option(LIBIEN_BUILD_TESTS "Build tests" ON)
+option(LIBIEN_BUILD_TESTS "Build tests" OFF)
 option(LIBIEN_BUILD_IMAGE "Build image library" OFF)
 option(LIBIEN_BUILD_SFTP "Build sftp library" OFF)
 
