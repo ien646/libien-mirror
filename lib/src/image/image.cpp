@@ -215,4 +215,18 @@ namespace ien
 
 		ien::write_file_binary(path, binary);
 	}
+
+	void image::flip_axis_y()
+	{
+		const size_t row_size = _width * image_format_channels(_format);
+		std::vector<uint8_t> temp_row(row_size, 0);
+		for(size_t i = 0; i < _height / 2; ++i)
+		{
+			uint8_t* row_up = _data + (row_size * i);
+			uint8_t* row_down = _data + (row_size * (_height - i - 1));
+			std::memcpy(temp_row.data(), row_up, row_size);
+			std::memcpy(row_up, row_down, row_size);
+			std::memcpy(row_down, temp_row.data(), row_size);
+		}
+	}
 }
