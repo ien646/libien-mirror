@@ -345,10 +345,6 @@ namespace ien
         {
             return std::filesystem::path(homedrive) / homepath;
         }
-        else
-        {
-            throw std::logic_error("Unable to find home directory for current user");
-        }
 #else
     #ifdef IEN_OS_UNIX
         passwd* pwd = getpwuid(getuid());

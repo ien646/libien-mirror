@@ -141,18 +141,23 @@ namespace ien
 
     /* -- Miscellaneous -- */
 
-    template<typename T>
-        requires(concepts::Pointer<T> || requires(T& v) { v.data(); })
+    template<concepts::Pointer T>
     constexpr auto* data(T& val)
     {
-        if constexpr (concepts::Pointer<T>)
-        {
-            return val;
-        }
-        else
-        {
-            return val.data();
-        }
+        return val;
+    }
+
+    template<concepts::Pointer T>
+    constexpr const auto* data(const T& val)
+    {
+        return val;
+    }
+
+    template<typename T>
+        requires(requires(T& v) { v.data(); })
+    constexpr auto* data(T& val)
+    {
+        return val.data();
     }
 
     template<typename T, typename ... TArgs>
@@ -195,62 +200,68 @@ namespace ien
 
     /// @brief Get the underlying character type of a string-like type T.
     template<concepts::AnyStrOrChar T>
-    using underlying_char_t = typename underlying_char<T>::type;
+    using underlying_char_t = typename underlying_char<T>::type;    
 
     /// @brief Obtain a data pointer for any string-like or character type
-    template<concepts::AnyStrOrChar T>
+    template<concepts::StdAnyStrStrV T>
     constexpr underlying_char_t<T>* anystr_data(T& str)
     {
-        if constexpr(concepts::StdAnyStrStrV<T>)
-        {
-            return str.data();
-        }
-        else if constexpr(concepts::AnyChar<T>)
-        {
-            return &str;
-        }
-        else
-        {
-            return &str[0];
-        }
-        IEN_HINT_UNREACHABLE();
+        return str.data();
     }
 
     /// @brief Obtain a data pointer for any string-like or character type
-    template<concepts::AnyStrOrChar T>
+    template<concepts::StdAnyStrStrV T>
     constexpr const underlying_char_t<T>* anystr_data(const T& str)
     {
-        if constexpr(concepts::StdAnyStrStrV<T>)
-        {
-            return str.data();
-        }
-        else if constexpr(concepts::AnyChar<T>)
-        {
-            return &str;
-        }
-        else
-        {
-            return &str[0];
-        }
-        IEN_HINT_UNREACHABLE();
+        return str.data();
+    }
+
+    /// @brief Obtain a data pointer for any string-like or character type
+    template<concepts::AnyChar T>
+    constexpr underlying_char_t<T>* anystr_data(T& str)
+    {
+        return &str;
+    }
+
+    /// @brief Obtain a data pointer for any string-like or character type
+    template<concepts::AnyChar T>
+    constexpr const underlying_char_t<T>* anystr_data(const T& str)
+    {
+        return &str;
+    }
+
+    /// @brief Obtain a data pointer for any string-like or character type
+    template<concepts::RawAnyStr T>
+    constexpr underlying_char_t<T>* anystr_data(T& str)
+    {
+        return &str[0];
+    }
+
+    /// @brief Obtain a data pointer for any string-like or character type
+    template<concepts::RawAnyStr T>
+    constexpr const underlying_char_t<T>* anystr_data(const T& str)
+    {
+        return &str[0];
     }
 
     /// @brief Obtain the length value for any string-like or character type
-    template<concepts::AnyStrOrChar T>
+    template<concepts::AnyChar T>
     constexpr inline size_t anystr_length(const T& str)
     {
-        if constexpr (concepts::AnyChar<T>)
-        {
-            return 1;
-        }
-        else if constexpr (concepts::StdAnyStrStrV<T>)
-        {
-            return str.size();
-        }
-        else if constexpr (concepts::RawAnyStr<T>)
-        {
-            return std::basic_string_view<raw_str_char_t<T>>(str).size();
-        }
-        IEN_HINT_UNREACHABLE();
-    };
+        return 1;
+    }
+
+    /// @brief Obtain the length value for any string-like or character type
+    template<concepts::StdAnyStrStrV T>
+    constexpr inline size_t anystr_length(const T& str)
+    {
+        return str.size();
+    }
+
+    /// @brief Obtain the length value for any string-like or character type
+    template<concepts::RawAnyStr T>
+    constexpr inline size_t anystr_length(const T& str)
+    {
+        return std::basic_string_view<raw_str_char_t<T>>(str).size();
+    }
 }

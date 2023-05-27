@@ -1,6 +1,8 @@
 #pragma once
 
+#include <ien/lang_utils.hpp>
 #include <ien/platform.hpp>
+#include <stdexcept>
 
 namespace ien
 {
@@ -20,25 +22,30 @@ namespace ien
         return std::u8string(str.begin(), str.end());
     }
 
-    template<typename TString>
-    std::wstring xstr_to_wstr(const TString& str)
+#ifdef IEN_OS_WIN
+    template <concepts::AnyStr T>
+    std::wstring xstr_to_wstr(const T& str)
     {
-        if constexpr (std::is_same_v<typename TString::value_type, char>)
+        if constexpr (std::is_same_v<underlying_char_t<T>, char>)
         {
             return str_to_wstr(str);
         }
-        else if constexpr (std::is_same_v<typename TString::value_type, char8_t>)
+        else if constexpr (std::is_same_v<underlying_char_t<T>, char8_t>)
         {
             return u8str_to_wstr(str);
         }
-        else if constexpr (std::is_same_v<typename TString::value_type, wchar_t>)
+        else if constexpr (std::is_same_v<underlying_char_t<T>, wchar_t>)
         {
             return std::wstring(str);
         }
-        return { };
+        else
+        {
+            throw std::logic_error("Unhandled xstr_to_wstr conversion");
+        }
     }
+#endif
 
-    template<concepts::AnyStr TString>
+    template <concepts::AnyStr TString>
     std::string xstr_to_str(const TString& str)
     {
         if constexpr (concepts::StdAnyStrStrV<TString>)
@@ -52,10 +59,12 @@ namespace ien
             {
                 return u8str_to_str(str);
             }
+#ifdef IEN_OS_WIN
             else if constexpr (std::is_same_v<char_type, wchar_t>)
             {
                 return wstr_to_str(str);
             }
+#endif
         }
         else if constexpr (concepts::RawAnyStr<TString>)
         {
@@ -68,10 +77,13 @@ namespace ien
             {
                 return u8str_to_str(str);
             }
+#ifdef IEN_OS_WIN
             else if constexpr (std::is_same_v<char_type, wchar_t>)
             {
                 return wstr_to_str(str);
             }
+#endif
         }
+        throw std::logic_error("Unhandled xstr_to_str conversion");
     }
-}
+} // namespace ien
