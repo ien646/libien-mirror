@@ -1,6 +1,7 @@
 set(LIBIEN_TEST_SOURCES
     "alloc.cpp"
     "bit_tools.cpp"
+    "fs_utils.cpp"
     "lang_utils.cpp"
     "net_utils.cpp"
 	"str_utils.cpp"
@@ -28,6 +29,7 @@ endmacro()
 
 DEFINE_TEST(alloc)
 DEFINE_TEST(bit_tools)
+DEFINE_TEST(fs_utils)
 DEFINE_TEST(lang_utils)
 DEFINE_TEST(net_utils)
 DEFINE_TEST(str_utils)

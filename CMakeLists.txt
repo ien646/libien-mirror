@@ -46,7 +46,7 @@ if(LIBIEN_BUILD_TESTS)
     CPMAddPackage(
         NAME catch2
         GIT_REPOSITORY "https://github.com/catchorg/Catch2"
-        GIT_TAG "v3.1.0"
+        GIT_TAG "v3.3.2"
         OPTIONS "CATCH_INSTALL_EXTRAS OFF" "CATCH_INSTALL_DOCS OFF"
     )
 endif()
