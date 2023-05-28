@@ -4,6 +4,7 @@
 #include <ien/bits/str_utils/common.hpp>
 
 #include <cinttypes>
+#include <limits>
 #include <optional>
 
 namespace ien

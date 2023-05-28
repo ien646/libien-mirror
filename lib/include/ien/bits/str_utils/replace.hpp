@@ -4,6 +4,8 @@
 #include <ien/platform.hpp>
 #include <ien/bits/str_utils/common.hpp>
 
+#include <limits>
+
 namespace ien
 {
     template<concepts::StdAnyStrStrV T, concepts::AnyChar TOcurrence, concepts::AnyChar TReplacement>
