@@ -64,5 +64,7 @@ namespace ien
 	extern std::string get_file_directory(const std::wstring& path);
 #endif
 
+	extern std::string get_current_user_homedir();
+
  	extern std::string format_timestamp_iso8601(time_t ts);
 }
