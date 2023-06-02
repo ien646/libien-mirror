@@ -6,3 +6,4 @@
 #include <ien/bits/str_utils/indices_of.hpp>
 #include <ien/bits/str_utils/replace.hpp>
 #include <ien/bits/str_utils/split.hpp>
+#include <ien/bits/str_utils/trim.hpp>

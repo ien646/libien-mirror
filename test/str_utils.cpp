@@ -1,6 +1,7 @@
 #include <ien/str_utils.hpp>
 
 #include <catch2/catch_test_macros.hpp>
+#include <string>
 
 TEST_CASE("split")
 {
@@ -77,5 +78,20 @@ TEST_CASE("replace (str)")
 		std::string str = "aaa bbb";
 		std::string res = ien::str_replace(str, ' ', '-');
 		REQUIRE(res == "aaa-bbb");
+	};
+};
+
+TEST_CASE("trim (str)")
+{
+	SECTION("trim")
+	{
+		std::string str = "  hello  ";
+		REQUIRE(ien::str_trim(str) == "hello");
+
+		str = "hello   ";
+		REQUIRE(ien::str_trim(str) == "hello");
+
+		str = "    ";
+		REQUIRE(ien::str_trim(str) == "");
 	};
 };
