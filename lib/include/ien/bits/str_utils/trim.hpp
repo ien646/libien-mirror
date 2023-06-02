@@ -13,7 +13,7 @@ namespace ien
         size_t len = anystr_length(str);
         if(len == 0)
         {
-            return T{};
+            return std::basic_string<underlying_char_t<T>>{};
         }
 
         size_t start_index = 0;
@@ -26,7 +26,7 @@ namespace ien
         
         if(end_index <= start_index)
         {
-            return T{};
+            return std::basic_string<underlying_char_t<T>>{};
         }
 
         while(end_index > start_index && str[end_index] == ch)
