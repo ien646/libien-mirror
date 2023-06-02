@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ien/lang_utils.hpp"
 #include <ien/bits/str_utils/common.hpp>
 
 #include <limits>
@@ -73,7 +74,7 @@ namespace ien
         return detail::str_split<false>(str, delim, offset, maxlen);
     }
 
-    template<concepts::StdAnyStr T, concepts::AnyStrOrChar TDelim>
+    template<concepts::StdAnyStrStrV T, concepts::AnyStrOrChar TDelim>
         requires detail::is_same_underlying_char_type<T, TDelim>
     IEN_CPP_STDVECTOR_CONSTEXPR std::vector<std::basic_string_view<underlying_char_t<T>>> str_splitv(
         const T& str,
