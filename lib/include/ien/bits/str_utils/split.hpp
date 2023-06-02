@@ -73,7 +73,7 @@ namespace ien
         return detail::str_split<false>(str, delim, offset, maxlen);
     }
 
-    template<concepts::AnyStr T, concepts::AnyStrOrChar TDelim>
+    template<concepts::StdAnyStr T, concepts::AnyStrOrChar TDelim>
         requires detail::is_same_underlying_char_type<T, TDelim>
     IEN_CPP_STDVECTOR_CONSTEXPR std::vector<std::basic_string_view<underlying_char_t<T>>> str_splitv(
         const T& str,
@@ -81,6 +81,17 @@ namespace ien
         size_t offset = 0,
         size_t maxlen = std::numeric_limits<size_t>::max())
     {
-        return detail::str_split<true>(std::basic_string_view(str), delim, offset, maxlen);
+        return detail::str_split<true>(std::basic_string_view(str.begin(), str.end()), delim, offset, maxlen);
+    }
+
+    template<concepts::RawAnyStr T, concepts::AnyStrOrChar TDelim>
+        requires detail::is_same_underlying_char_type<T, TDelim>
+    IEN_CPP_STDVECTOR_CONSTEXPR std::vector<std::basic_string_view<underlying_char_t<T>>> str_splitv(
+        const T& str,
+        const TDelim& delim,
+        size_t offset = 0,
+        size_t maxlen = std::numeric_limits<size_t>::max())
+    {
+        return detail::str_split<true>(std::basic_string_view(str, anystr_length(str)), delim, offset, maxlen);
     }
 }

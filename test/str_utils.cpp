@@ -34,6 +34,37 @@ TEST_CASE("split")
 	REQUIRE(segments4[2] == "c");
 };
 
+TEST_CASE("splitv")
+{
+	std::string str0 = "a b c";
+	auto segments0 = ien::str_splitv(str0, ' ');
+	REQUIRE(segments0.size() == 3);
+	REQUIRE((std::string)segments0[0] == "a");
+	REQUIRE((std::string)segments0[1] == "b");
+	REQUIRE((std::string)segments0[2] == "c");
+
+	std::string str1;
+	auto segments1 = ien::str_splitv(str1, 'a');
+	REQUIRE(segments1.empty());
+
+	std::string str2 = "a b c";
+	auto segments2 = ien::str_splitv(str0, 'c');
+	REQUIRE(segments2.size() == 1);
+	REQUIRE((std::string)segments2[0] == "a b ");
+
+	auto segments3 = ien::str_splitv("a b c", ' ');
+	REQUIRE(segments3.size() == 3);
+	REQUIRE((std::string)segments3[0] == "a");
+	REQUIRE((std::string)segments3[1] == "b");
+	REQUIRE((std::string)segments3[2] == "c");
+
+	auto segments4 = ien::str_splitv("a b c", " ");
+	REQUIRE(segments4.size() == 3);
+	REQUIRE((std::string)segments4[0] == "a");
+	REQUIRE((std::string)segments4[1] == "b");
+	REQUIRE((std::string)segments4[2] == "c");
+};
+
 TEST_CASE("replace (char)")
 {
 	std::string str = " a b c ";
