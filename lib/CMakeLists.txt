@@ -3,6 +3,7 @@ add_library(libien
     "src/base64.cpp"
     "src/fs_utils.cpp"
     "src/io_utils.cpp"
+    "src/messagebox.cpp"
     "src/net_utils.cpp"
     "src/platform.cpp"
     "src/str_utils.cpp"
