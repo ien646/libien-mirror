@@ -199,7 +199,7 @@ namespace ien
 		binary.resize(header_size + image_size);
 
 		memcpy(binary.data() + offset, IEN_RAW_TAGGED_SIGNATURE.data(), IEN_RAW_TAGGED_SIGNATURE.size());
-		offset += sizeof(IEN_RAW_TAGGED_SIGNATURE.size());
+		offset += IEN_RAW_TAGGED_SIGNATURE.size();
 
 		memcpy(binary.data() + offset, reinterpret_cast<char*>(&width), sizeof(width));
 		offset += sizeof(width);
