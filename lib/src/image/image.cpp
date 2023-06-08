@@ -97,7 +97,7 @@ namespace ien
 			uint32_t height = 0;
 			uint8_t format = 0;
 
-			fd.read(signature.data(), sizeof(signature));
+			fd.read(signature.data(), signature.size());
 			if(signature != IEN_RAW_TAGGED_SIGNATURE)
 			{
 				throw std::logic_error(fmt::format("Invalid tagged raw image signature for image '{}'", path));
