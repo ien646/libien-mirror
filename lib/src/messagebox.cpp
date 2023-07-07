@@ -5,7 +5,7 @@
 #include <fmt/format.h>
 
 #if defined(IEN_OS_WIN)
-    #include <Windows.h>
+    #include <windows.h>
 #elif defined(IEN_OS_LINUX)
     #include <cstdlib>
 #else
