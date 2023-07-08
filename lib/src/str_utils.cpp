@@ -32,7 +32,7 @@ namespace ien
         std::wstring wstr((str.size() + 1) * sizeof(wchar_t), L'\0');
         int ok = MultiByteToWideChar(
             CP_UTF8,
-            NULL,
+            static_cast<DWORD>(NULL),
             str.data(),
             static_cast<int>(str.size()),
             wstr.data(),
@@ -50,7 +50,8 @@ namespace ien
         std::wstring wstr((u8str.size() + 1) * sizeof(wchar_t), L'\0');
         int ok = MultiByteToWideChar(
             CP_UTF8,
-            NULL, reinterpret_cast<const char*>(u8str.data()),
+            static_cast<DWORD>(NULL),
+            reinterpret_cast<const char*>(u8str.data()),
             static_cast<int>(u8str.size()),
             wstr.data(),
             static_cast<int>(wstr.size()));

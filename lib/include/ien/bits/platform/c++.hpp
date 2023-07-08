@@ -20,9 +20,12 @@
 
 // -- constexpr std::vector/std::string --
 #ifdef IEN_HAS_CPP20
-    #if (defined(IEN_COMPILER_MSVC) && IEN_COMPILER_MSVC_VER >= 1930) \
-    || (defined(IEN_COMPILER_GNU) && IEN_COMPILER_GNU_VER >= 12) \
-    || (defined(IEN_COMPILER_CLANG) && IEN_COMPILER_CLANG_VER >= 15)
+    #ifdef IEN_MINGW
+        #define IEN_CPP_STDVECTOR_CONSTEXPR
+        #define IEN_CPP_STDSTRING_CONSTEXPR
+    #elif(defined(IEN_COMPILER_MSVC) && IEN_COMPILER_MSVC_VER >= 1930) \
+        || (defined(IEN_COMPILER_GNU) && IEN_COMPILER_GNU_VER >= 12) \
+        || (defined(IEN_COMPILER_CLANG) && IEN_COMPILER_CLANG_VER >= 15)
         #define IEN_CPP_STDVECTOR_CONSTEXPR constexpr
         #define IEN_CPP_STDSTRING_CONSTEXPR constexpr
     #endif

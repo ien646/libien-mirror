@@ -343,10 +343,10 @@ namespace ien
         const char* homepath = std::getenv("HOMEPATH");
         if (homedrive && homepath)
         {
-            return std::filesystem::path(homedrive) / homepath;
+            return wstr_to_str((std::filesystem::path(homedrive) / homepath).wstring());
         }
 #else
-    #ifdef IEN_OS_UNIX
+    #ifdef IEN_POSIX
         passwd* pwd = getpwuid(getuid());
         if(pwd)
         {
@@ -357,9 +357,9 @@ namespace ien
         if (home)
         {
             return home;
-        }
-        throw std::logic_error("Unable to find home directory for current user");
+        }        
 #endif
+        throw std::logic_error("Unable to find home directory for current user");
     }
 
     std::string format_timestamp_iso8601(time_t ts)
