@@ -4,8 +4,9 @@
 .vscode/
 .*/
 
-build/
+build*/
 cmake-build*/
 html/
 latex/
 out/
+CMakeLists.txt.user
