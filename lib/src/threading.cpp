@@ -3,7 +3,7 @@
 #include <ien/platform.hpp>
 
 #if defined(IEN_OS_WIN)
-    #include <Windows.h>
+    #include <windows.h>
 #elif defined(IEN_OS_UNIX)
     #include <pthread.h>
 #else
