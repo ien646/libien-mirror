@@ -21,3 +21,7 @@
 #else
     #define IEN_HINT_UNREACHABLE()
 #endif
+
+#if defined(__MINGW32__)
+    #define IEN_MINGW
+#endif
