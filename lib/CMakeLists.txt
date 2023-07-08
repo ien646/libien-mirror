@@ -22,6 +22,10 @@ if(LIBIEN_BUILD_IMAGE)
     target_compile_definitions(libien PUBLIC "LIBIEN_BUILD_IMAGE")
 endif()
 
+if(MINGW)
+    target_link_libraries(libien PRIVATE ws2_32)
+endif()
+
 if(LIBIEN_BUILD_SFTP)
     target_sources(libien PRIVATE
         "src/sftp/client.cpp"
@@ -29,7 +33,6 @@ if(LIBIEN_BUILD_SFTP)
     target_link_libraries(libien PRIVATE libssh2)
     target_compile_definitions(libien PUBLIC "LIBIEN_BUILD_SFTP")
 endif()
-
 
 set_target_properties(libien PROPERTIES
     CXX_STANDARD 20
