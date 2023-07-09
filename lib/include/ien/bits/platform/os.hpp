@@ -33,3 +33,10 @@
 #if defined(__ANDROID__)
     #define IEN_OS_ANDROID
 #endif
+
+#if __has_include(<unistd.h>)
+    #include <unistd.h>
+    #ifdef _POSIX_VERSION
+        #define IEN_POSIX
+    #endif
+#endif
