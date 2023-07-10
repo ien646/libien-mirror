@@ -5,6 +5,9 @@
 #include <ien/platform.hpp>
 #include <ien/str_utils.hpp>
 
+#include <fmt/chrono.h>
+#include <fmt/format.h>
+
 #include <sys/stat.h>
 
 #ifdef IEN_POSIX
@@ -20,7 +23,6 @@
 #include <array>
 #include <cstdlib>
 #include <filesystem>
-#include <format>
 #include <stdexcept>
 namespace fs = std::filesystem;
 
@@ -369,7 +371,7 @@ namespace ien
 
     std::string format_timestamp_iso8601(time_t ts)
     {
-        auto tp = std::chrono::system_clock::time_point(std::chrono::seconds(ts));
-        return std::format("{:%F %T %z}", tp);
+        std::chrono::time_point tp = std::chrono::system_clock::time_point(std::chrono::seconds(ts));
+        return fmt::format(std::locale::classic(), "{:%F %T}", tp);
     }
 } // namespace ien
