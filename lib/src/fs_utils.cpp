@@ -5,7 +5,10 @@
 #include <ien/str_utils.hpp>
 
 #include <sys/stat.h>
-#include <unistd.h>
+
+#if IEN_POSIX
+    #include <unistd.h>
+#endif
 
 #if __has_include(<utime.h>)
     #include <utime.h>
