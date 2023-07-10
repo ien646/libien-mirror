@@ -6,7 +6,7 @@
 
 #include <sys/stat.h>
 
-#if IEN_POSIX
+#ifdef IEN_POSIX
     #include <unistd.h>
 #endif
 
