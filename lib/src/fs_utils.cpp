@@ -1,3 +1,4 @@
+#include <chrono>
 #include <cstdlib>
 #include <ien/fs_utils.hpp>
 
@@ -19,6 +20,7 @@
 #include <array>
 #include <cstdlib>
 #include <filesystem>
+#include <format>
 #include <stdexcept>
 namespace fs = std::filesystem;
 
@@ -367,10 +369,7 @@ namespace ien
 
     std::string format_timestamp_iso8601(time_t ts)
     {
-        const std::string formatstr = "%F %T %z";
-        std::tm* ltime = std::localtime(&ts);
-        std::array<char, 64> buff;
-        size_t bytes = std::strftime(buff.data(), 64, formatstr.c_str(), ltime);
-        return std::string(buff.data(), bytes);
+        auto tp = std::chrono::system_clock::time_point(std::chrono::seconds(ts));
+        return std::format("{:%F %T %z}", tp);
     }
 } // namespace ien
