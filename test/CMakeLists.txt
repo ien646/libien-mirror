@@ -1,5 +1,5 @@
 set(LIBIEN_TEST_SOURCES
-    "alloc.cpp"
+    "arithmetic.cpp"
     "bit_tools.cpp"
     "fs_utils.cpp"
     "lang_utils.cpp"
@@ -27,7 +27,7 @@ macro(DEFINE_TEST TAG)
     add_test(NAME "libien_tests_${TAG}" COMMAND "libien_tests_${TAG}")
 endmacro()
 
-DEFINE_TEST(alloc)
+DEFINE_TEST(arithmetic)
 DEFINE_TEST(bit_tools)
 DEFINE_TEST(fs_utils)
 DEFINE_TEST(lang_utils)
