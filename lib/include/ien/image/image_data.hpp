@@ -53,5 +53,7 @@ namespace ien
         void cast_format(image_format target_format);
 
         void shuffle(const image_shuffle&);
+
+        float absolute_difference(const image_data& other) const;
     };
 }

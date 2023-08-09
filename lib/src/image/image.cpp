@@ -229,4 +229,9 @@ namespace ien
 			std::memcpy(row_down, temp_row.data(), row_size);
 		}
 	}
+
+	float image::absolute_difference(const image& other) const
+	{
+		return image_data::absolute_difference(other);
+	}
 }

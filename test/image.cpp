@@ -1,4 +1,6 @@
+#include "catch2/catch_approx.hpp"
 #include "catch2/catch_message.hpp"
+#include "ien/image/image_format.hpp"
 #include <ien/image/image.hpp>
 
 #include <catch2/catch_test_macros.hpp>
@@ -88,5 +90,56 @@ TEST_CASE("image::shuffle")
             INFO(i);
             REQUIRE(img.data()[i] == rg_data_shuffled[i]);
         }
+    };
+};
+
+const uint8_t ad_rgba_data0[] = {
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0
+};
+
+const uint8_t ad_rgba_data1[] = {
+    255, 255, 255, 255,
+    255, 255, 255, 255,
+    255, 255, 255, 255,
+    255, 255, 255, 255
+};
+
+const uint8_t ad_rgba_data2[] = {
+    254, 254, 254, 254,
+    254, 254, 254, 254,
+    254, 254, 254, 254,
+    254, 254, 254, 254
+};
+
+TEST_CASE("absolute_difference")
+{
+    SECTION("absolute_difference_0-1")
+    {
+        ien::image img0(ad_rgba_data0, 2, 2, ien::image_format::RGBA);
+        ien::image img1(ad_rgba_data1, 2, 2, ien::image_format::RGBA);
+
+        float diff = img0.absolute_difference(img1);
+        REQUIRE(diff == Catch::Approx(255.0F / 255));
+    };
+
+    SECTION("absolute_difference_1-2")
+    {
+        ien::image img1(ad_rgba_data1, 2, 2, ien::image_format::RGBA);
+        ien::image img2(ad_rgba_data2, 2, 2, ien::image_format::RGBA);
+
+        float diff = img1.absolute_difference(img2);
+        REQUIRE(diff == Catch::Approx(1.0F / 255).margin(0.000001F));
+    };
+
+    SECTION("absolute_difference_0-2")
+    {
+        ien::image img0(ad_rgba_data0, 2, 2, ien::image_format::RGBA);
+        ien::image img2(ad_rgba_data2, 2, 2, ien::image_format::RGBA);
+
+        float diff = img0.absolute_difference(img2);
+        REQUIRE(diff == Catch::Approx(254.0F / 255).margin(0.000001F));
     };
 };
