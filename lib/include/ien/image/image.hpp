@@ -49,5 +49,7 @@ namespace ien
 		void write_to_file_raw_tagged(const std::string& path) const;
 
 		void flip_axis_y();
+
+		float absolute_difference(const image& other) const;
 	};
 }
