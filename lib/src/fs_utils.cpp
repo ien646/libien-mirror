@@ -42,7 +42,7 @@ using utimbuf_t = struct utimbuf;
 
 namespace ien
 {
-    template <typename TPath>
+    template <concepts::AnyStr TPath>
     stat_t _get_stat(const TPath& path)
     {
         stat_t s = {};
@@ -54,37 +54,37 @@ namespace ien
         return s;
     }
 
-    template <typename TPath>
+    template <concepts::AnyStr TPath>
     size_t _get_file_size(const TPath& path)
     {
         return _get_stat(path).st_size;
     }
 
-    template <typename TPath>
+    template <concepts::AnyStr TPath>
     time_t _get_atime(const TPath& path)
     {
         return _get_stat(path).st_atime;
     }
 
-    template <typename TPath>
+    template <concepts::AnyStr TPath>
     time_t _get_mtime(const TPath& path)
     {
         return _get_stat(path).st_mtime;
     }
 
-    template <typename TPath>
+    template <concepts::AnyStr TPath>
     bool _file_exists(const TPath& path)
     {
         return _get_stat(path).st_mode & S_IFREG;
     }
 
-    template <typename TPath>
+    template <concepts::AnyStr TPath>
     bool _dir_exists(const TPath& path)
     {
         return (_get_stat(path).st_mode & S_IFDIR);
     }
 
-    template <typename TPath>
+    template <concepts::AnyStr TPath>
     bool _set_mtime(const TPath& path, time_t mtime)
     {
         if (mtime > std::numeric_limits<int>::max())
@@ -103,7 +103,7 @@ namespace ien
 #endif
     }
 
-    template <typename TPath>
+    template <concepts::AnyStr TPath>
     bool _set_atime(const TPath& path, time_t atime)
     {
         if (atime > std::numeric_limits<int>::max())
