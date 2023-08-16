@@ -19,8 +19,8 @@ set(CPM_SOURCE_CACHE ${CMAKE_SOURCE_DIR}/.cache)
 if(LIBIEN_BUILD_SFTP)
     CPMAddPackage(
         NAME libssh2
-        GIT_REPOSITORY "https://github.com/libssh2/libssh2"
-        GIT_TAG "libssh2-1.11.0"
+        GIT_REPOSITORY "https://github.com/ien646/libssh2"
+        GIT_TAG "fix-windows-macro-redefinitions"
         DOWNLOAD_ONLY YES
     )
     # Turn off libssh2's annoying warning bullshit
