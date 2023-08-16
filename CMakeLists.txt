@@ -9,7 +9,7 @@ project(libien
 
 option(LIBIEN_BUILD_TESTS "Build tests" OFF)
 option(LIBIEN_BUILD_IMAGE "Build image library" OFF)
-option(LIBIEN_BUILD_SFTP "Build sftp library" OFF)
+option(LIBIEN_BUILD_SFTP "Build sftp library" ON)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -20,25 +20,10 @@ if(LIBIEN_BUILD_SFTP)
     CPMAddPackage(
         NAME libssh2
         GIT_REPOSITORY "https://github.com/ien646/libssh2"
-        GIT_TAG "fix-windows-macro-redefinitions"
-        DOWNLOAD_ONLY YES
+        GIT_TAG "libssh2-1.11.0__FIX_CMAKE"
+        OPTIONS "BUILD_SHARED_LIBS OFF"
+        SYSTEM
     )
-    # Turn off libssh2's annoying warning bullshit
-    set(BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
-    set(BUILD_TESTING OFF CACHE BOOL "Build tests" FORCE)
-    file(READ ${libssh2_SOURCE_DIR}/CMakeLists.txt __LIBSSH2_CMAKELISTS)
-    string(REPLACE "include(max_warnings)" "#include(max_warnings)" __LIBSSH2_CMAKELISTS ${__LIBSSH2_CMAKELISTS})
-    file(WRITE ${libssh2_SOURCE_DIR}/CMakeLists.txt ${__LIBSSH2_CMAKELISTS})
-    if(MSVC)
-        set_directory_properties(${libssh2_SOURCE_DIR}
-            APPEND PROPERTY LANGUAGE C
-            APPEND PROPERTY COMPILE_OPTIONS "/wo4267" # disable size_t implicit cast warnings
-            APPEND PROPERTY COMPILE_OPTIONS "/wo4068" # disable GCC pragma warnings
-        )
-    else()
-        set_directory_properties(${libssh2_SOURCE_DIR} APPEND PROPERTY COMPILE_OPTIONS "-w")
-    endif()
-    add_subdirectory(${libssh2_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/libssh2)
 endif()
 
 if(LIBIEN_BUILD_TESTS)

@@ -30,7 +30,7 @@ if(LIBIEN_BUILD_SFTP)
     target_sources(libien PRIVATE
         "src/sftp/client.cpp"
     )
-    target_link_libraries(libien PRIVATE libssh2)
+    target_link_libraries(libien PRIVATE libssh2_static)
     target_compile_definitions(libien PUBLIC "LIBIEN_BUILD_SFTP")
 endif()
 
