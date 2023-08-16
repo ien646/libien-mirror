@@ -21,7 +21,10 @@ if(LIBIEN_BUILD_SFTP)
         NAME libssh2
         GIT_REPOSITORY "https://github.com/ien646/libssh2"
         GIT_TAG "libssh2-1.11.0__FIX_CMAKE"
-        OPTIONS "BUILD_SHARED_LIBS OFF"
+        OPTIONS 
+            "BUILD_SHARED_LIBS OFF"
+            "BUILD_EXAMPLES OFF"
+            "BUILD_TESTING OFF"
         SYSTEM
     )
 endif()
