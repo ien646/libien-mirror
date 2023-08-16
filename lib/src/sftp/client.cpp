@@ -39,7 +39,7 @@ namespace ien::sftp
         LIBSSH2_SFTP_HANDLE* _handle = nullptr;
 
     public:
-        unique_sftp_handle(LIBSSH2_SFTP* session, const std::string& remote_path, unsigned long flags, long mode = NULL)
+        unique_sftp_handle(LIBSSH2_SFTP* session, const std::string& remote_path, unsigned long flags, long mode = 0)
         {
             _handle = libssh2_sftp_open(session, remote_path.c_str(), flags, mode);
         }
