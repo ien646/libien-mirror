@@ -4,14 +4,16 @@
 #include <ien/bits/str_utils/common.hpp>
 
 #include <limits>
+#include <string_view>
 
 namespace ien::detail
 {
+    template<typename TChar, bool WantsStrView>
+    using string_or_stringview = std::conditional_t<WantsStrView, std::basic_string_view<TChar>, std::basic_string<TChar>>;
+
     template<bool StrView, concepts::AnyStr T, concepts::AnyStrOrChar TDelim>
         requires is_same_underlying_char_type<T, TDelim>
-    IEN_CPP_STDVECTOR_CONSTEXPR std::vector<std::conditional_t<StrView,
-                                   std::basic_string_view<underlying_char_t<T>>,
-                                   std::basic_string<underlying_char_t<T>>>>
+    IEN_CPP_STDVECTOR_CONSTEXPR std::vector<string_or_stringview<underlying_char_t<T>, StrView>>
     str_split(
         const T& str,
         const TDelim& delim,
