@@ -23,10 +23,12 @@
     #include <ien/win32/winsock2.h>
     #include <ien/win32/ws2tcpip.h>
     #pragma comment(lib, "ws2_32.lib")
+    #define GET_LAST_SOCKET_ERROR() std::string(strerror(WSAGetLastError()))
 #else
     #include <netdb.h>
     #include <arpa/inet.h>
     #include <sys/socket.h>
+    #define GET_LAST_SOCKET_ERROR() std::string(strerror(errno))
 #endif
 
 namespace ien::sftp
@@ -39,7 +41,7 @@ namespace ien::sftp
         LIBSSH2_SFTP_HANDLE* _handle = nullptr;
 
     public:
-        unique_sftp_handle(LIBSSH2_SFTP* session, const std::string& remote_path, unsigned long flags, long mode = NULL)
+        unique_sftp_handle(LIBSSH2_SFTP* session, const std::string& remote_path, unsigned long flags, long mode = 0)
         {
             _handle = libssh2_sftp_open(session, remote_path.c_str(), flags, mode);
         }
@@ -313,8 +315,7 @@ namespace ien::sftp
 
         if (int err = connect(_socket, reinterpret_cast<sockaddr*>(&sin), sizeof(sockaddr_in)))
         {
-            std::string desc = strerror(errno);
-            throw std::logic_error("Unable to initialize socket connection: " + desc);
+            throw std::logic_error("Unable to initialize socket connection: " + GET_LAST_SOCKET_ERROR());
         }
     }
 
