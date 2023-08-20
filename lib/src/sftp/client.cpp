@@ -313,7 +313,7 @@ namespace ien::sftp
 
         if (int err = connect(_socket, reinterpret_cast<sockaddr*>(&sin), sizeof(sockaddr_in)))
         {
-            std::string desc = strerror(err);
+            std::string desc = strerror(errno);
             throw std::logic_error("Unable to initialize socket connection: " + desc);
         }
     }
