@@ -4,8 +4,8 @@ set(LIBIEN_TEST_SOURCES
     "fs_utils.cpp"
     "lang_utils.cpp"
     "net_utils.cpp"
-	"str_utils.cpp"
-    "lang_utils.cpp"
+    "serialization.cpp"
+	"str_utils.cpp"    
 )
 
 if(LIBIEN_BUILD_IMAGE)
@@ -32,8 +32,11 @@ DEFINE_TEST(bit_tools)
 DEFINE_TEST(fs_utils)
 DEFINE_TEST(lang_utils)
 DEFINE_TEST(net_utils)
+DEFINE_TEST(serialization)
 DEFINE_TEST(str_utils)
 
 if(LIBIEN_BUILD_IMAGE)
     DEFINE_TEST(image)
 endif()
+
+file(COPY test_data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

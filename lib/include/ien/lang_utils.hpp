@@ -72,6 +72,9 @@ namespace ien
         template<typename T> concept AnyChar =
             CChar<T> || UnicodeChar<T>;
 
+        template<typename T> concept Enum = 
+            std::is_enum_v<T>;
+
         template<typename T> concept Integral =
             std::is_integral_v<T>;
 

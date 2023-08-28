@@ -1,6 +1,7 @@
 #include <ien/image/image_data.hpp>
 #include <ien/image/image_format.hpp>
 
+#include <ien/alloc.hpp>
 #include <ien/platform.hpp>
 
 #include <cassert>
@@ -13,6 +14,9 @@
     #include <emmintrin.h>
 #endif
 
+
+#define IEN_IMAGE_DATA_ALLOC_ALIGNMENT 32 //avx
+
 namespace ien
 {
     image_data::image_data(size_t w, size_t h, image_format fmt)
@@ -22,7 +26,7 @@ namespace ien
     {
         assert(w > 0 && h > 0);
         size_t alloc_sz = w * h * channel_count();
-        _data = (uint8_t*)malloc(alloc_sz);
+        _data = (uint8_t*)ien::aligned_alloc(alloc_sz, IEN_IMAGE_DATA_ALLOC_ALIGNMENT);
         if (_data == nullptr)
         {
             throw std::bad_alloc();
@@ -38,7 +42,7 @@ namespace ien
     {
         if (_data != nullptr)
         {
-            free(_data);
+            ien::aligned_free(_data);
         }
         _data = nullptr;
         _width = 0;
