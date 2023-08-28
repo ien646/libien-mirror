@@ -1,15 +1,15 @@
+#include <cstdint>
 #include <ien/image/image_data.hpp>
 #include <ien/image/image_format.hpp>
 #include <ien/image/image.hpp>
 
 #include <ien/io_utils.hpp>
 #include <ien/platform.hpp>
-
-#define STBI_WINDOWS_UTF8
-#define STBIW_WINDOWS_UTF8
+#include <ien/serialization.hpp>
 
 #include <fmt/format.h>
 
+#include <span>
 #include <stb_image.h>
 #include <stb_image_resize.h>
 #include <stb_image_write.h>
@@ -74,7 +74,6 @@ namespace ien
 		{
 			int dummy;
 			int w, h;
-
 			_data = stbi_load(path.c_str(), &w, &h, &dummy, channel_count());
 			if (_data == nullptr)
 			{
@@ -191,29 +190,14 @@ namespace ien
 		uint32_t height = (uint32_t)_height;
 		uint8_t fmt = static_cast<uint8_t>(format());
 
-		std::vector<uint8_t> binary;
+		ien::serializer serializer;
+		serializer.serialize(IEN_RAW_TAGGED_SIGNATURE);
+		serializer.serialize(width);
+		serializer.serialize(height);
+		serializer.serialize(fmt);
+		serializer.serialize(std::span<uint8_t>(_data, size()));
 
-		size_t offset = 0;
-		size_t header_size = IEN_RAW_TAGGED_SIGNATURE.size() + sizeof(width) + sizeof(height) + sizeof(fmt);
-		size_t image_size = size();
-		binary.resize(header_size + image_size);
-
-		memcpy(binary.data() + offset, IEN_RAW_TAGGED_SIGNATURE.data(), IEN_RAW_TAGGED_SIGNATURE.size());
-		offset += IEN_RAW_TAGGED_SIGNATURE.size();
-
-		memcpy(binary.data() + offset, reinterpret_cast<char*>(&width), sizeof(width));
-		offset += sizeof(width);
-
-		memcpy(binary.data() + offset, reinterpret_cast<char*>(&height), sizeof(height));
-		offset += sizeof(height);
-
-		memcpy(binary.data() + offset, reinterpret_cast<char*>(&fmt), sizeof(fmt));
-		offset += sizeof(fmt);
-
-		// Copy image data into binary
-		memcpy(binary.data() + offset, _data, image_size);
-
-		ien::write_file_binary(path, binary);
+		ien::write_file_binary(path, serializer.data());
 	}
 
 	void image::flip_axis_y()
