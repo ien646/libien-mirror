@@ -12,6 +12,7 @@ option(LIBIEN_BUILD_IMAGE "Build image library" OFF)
 option(LIBIEN_BUILD_SFTP "Build sftp library" OFF)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 
 include(cmake/CPM.cmake)
 set(CPM_SOURCE_CACHE ${CMAKE_SOURCE_DIR}/.cache)
@@ -42,7 +43,7 @@ endif()
 CPMAddPackage(
     NAME fmt
     GIT_REPOSITORY "https://github.com/fmtlib/fmt"
-    GIT_TAG "9.1.0"
+    GIT_TAG "10.1.1"
 )
 
 add_subdirectory("third-party")

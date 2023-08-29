@@ -7,6 +7,10 @@
 #include <span>
 #include <type_traits>
 
+#ifndef IEN_SERIALIZE_CONTAINER_SIZE_T
+    #define IEN_SERIALIZE_CONTAINER_SIZE_T uint32_t
+#endif
+
 namespace ien
 {
     template <typename T>
@@ -14,21 +18,6 @@ namespace ien
     {
         void serialize(const T& t, serializer_inserter& inserter) const = delete;
     };
-
-    namespace detail
-    {
-        template<typename TContainer>
-        void serialize_container(const TContainer& container, serializer_inserter& inserter)
-        {
-            ien::value_serializer<typename TContainer::size_type>{}.serialize(container.size(), inserter);
-
-            ien::value_serializer<typename TContainer::value_type> serializer;
-            for (size_t i = 0; i < container.size(); ++i)
-            {
-                serializer.serialize(container[i], inserter);
-            }
-        }
-    }
 
     template <concepts::Integral T>
     struct value_serializer<T>
@@ -41,6 +30,21 @@ namespace ien
             }
         }
     };
+
+    namespace detail
+    {
+        template <typename TContainer>
+        void serialize_container(const TContainer& container, serializer_inserter& inserter)
+        {
+            ien::value_serializer<IEN_SERIALIZE_CONTAINER_SIZE_T>{}.serialize(container.size(), inserter);
+
+            ien::value_serializer<typename TContainer::value_type> serializer;
+            for (size_t i = 0; i < container.size(); ++i)
+            {
+                serializer.serialize(container[i], inserter);
+            }
+        }
+    } // namespace detail
 
     template <concepts::FloatingPoint T>
     struct value_serializer<T>
