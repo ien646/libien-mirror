@@ -87,7 +87,7 @@ namespace ien
         }
     }
 
-    template<bool Binary, typename TPath, typename TVal = char>
+    template<bool Binary, typename TVal, typename TPath>
         requires(concepts::AnyStr<TPath>)
     std::optional<std::conditional_t<Binary, std::vector<TVal>, std::basic_string<TVal>>> read_file(const TPath& path)
     {
@@ -109,18 +109,18 @@ namespace ien
         return result;
     }
 
-    template<typename TPath, typename TChar = char>
+    template<typename TChar = char, typename TPath>
         requires(concepts::AnyStr<TPath>)
     std::optional<std::basic_string<TChar>> read_file_text(const TPath& path)
     {
-        return read_file<false>(path);
+        return read_file<false, TChar>(path);
     }
 
-    template<typename TPath, typename TVal = char>
+    template<typename TVal = uint8_t, typename TPath>
         requires(concepts::AnyStr<TPath>)
     std::optional<std::vector<TVal>> read_file_binary(const TPath& path)
     {
-        return read_file<true>(path);
+        return read_file<true, TVal>(path);
     }
 
     template<typename TPath, typename TChar>
@@ -136,7 +136,7 @@ namespace ien
         return true;
     }
 
-    template<typename TPath, typename TContainer, typename TChar = char>
+    template<typename TChar = uint8_t, typename TPath, typename TContainer>
         requires (concepts::AnyStr<TPath>)
     bool write_file_binary(const TPath& path, const TContainer& data)
     {

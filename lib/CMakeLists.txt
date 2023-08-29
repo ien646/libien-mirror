@@ -38,6 +38,7 @@ set_target_properties(libien PROPERTIES
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
     CXX_EXTENSIONS OFF
+    CXX_CLANG_TIDY clang-tidy
 )
 
 target_compile_definitions(libien PRIVATE _CRT_SECURE_NO_WARNINGS)
