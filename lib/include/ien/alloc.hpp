@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <cstdint>
 
+#include <cstdlib>
 #include <ien/arithmetic.hpp>
 #include <ien/platform.hpp>
 
@@ -14,7 +15,11 @@ namespace ien::detail
     {
         assert(is_power_of_2(alignment));
         bytes = bytes + (alignment - (bytes % alignment));
-        return IEN_OS_WIN_SELECT(_aligned_malloc, ::aligned_alloc)(bytes, alignment);
+        #ifdef IEN_OS_WIN
+            return _aligned_malloc(bytes, alignment);
+        #else
+            return ::aligned_alloc(alignment, bytes);
+        #endif
     }
 
     inline void aligned_free(void* ptr)
