@@ -13,6 +13,7 @@ namespace ien::detail
     [[nodiscard]] inline void* aligned_alloc(size_t bytes, size_t alignment)
     {
         assert(is_power_of_2(alignment));
+        bytes = bytes + (alignment - (bytes % alignment));
         return IEN_OS_WIN_SELECT(_aligned_malloc, ::aligned_alloc)(bytes, alignment);
     }
 
