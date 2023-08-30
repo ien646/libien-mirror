@@ -28,12 +28,14 @@ namespace ien::stb
 
     [[nodiscard]] inline void* aligned_alloc(size_t bytes, size_t alignment)
     {
-        assert(is_power_of_2(alignment));        
+        assert(is_power_of_2(alignment));
+        bytes = bytes + (alignment - (bytes % alignment));
 #ifdef _MSC_VER
-            return _aligned_malloc(bytes, alignment);
+        auto ptr = _aligned_malloc(bytes, alignment);
 #else
-            return ::aligned_alloc(bytes, alignment);
+        auto ptr = ::aligned_alloc(alignment, bytes);
 #endif
+        return ptr;
     }
 
     inline void aligned_free(void* ptr)
@@ -46,14 +48,14 @@ namespace ien::stb
 #endif
     }
 
-    [[nodiscard]] inline void* aligned_realloc(void* ptr, size_t len, size_t alignment)
+    [[nodiscard]] inline void* aligned_realloc(void* ptr, size_t bytes, size_t alignment)
     {
         assert(is_power_of_2(alignment));
 #ifdef _MSC_VER
-        return _aligned_realloc(ptr, len, alignment);
+        return _aligned_realloc(ptr, bytes, alignment);
 #else
         aligned_free(ptr);
-        return aligned_alloc(len, alignment);
+        return aligned_alloc(bytes, alignment);
 #endif
     }
 } // namespace ien::stb
