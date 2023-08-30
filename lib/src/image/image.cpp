@@ -92,7 +92,7 @@ namespace ien
             _data = stbi_load(path.c_str(), &w, &h, &dummy, channel_count());
             if (_data == nullptr)
             {
-                throw std::logic_error(fmt::format("Unable to open image at '{}'", path));
+                throw std::logic_error(fmt::format("Unable to open image at '{}' ({})", path, stbi_failure_reason()));
             }
 
             _width = (size_t)w;
@@ -220,7 +220,7 @@ namespace ien
         uint8_t fmt = static_cast<uint8_t>(format());
 
         ien::serializer serializer;
-        serializer.serialize(IEN_RAW_TAGGED_SIGNATURE);
+        serializer.serialize_buffer(IEN_RAW_TAGGED_SIGNATURE.data(), IEN_RAW_TAGGED_SIGNATURE.size());
         serializer.serialize(width);
         serializer.serialize(height);
         serializer.serialize(fmt);
