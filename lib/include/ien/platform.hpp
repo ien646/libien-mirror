@@ -12,7 +12,7 @@
 
 namespace ien
 {
-    template<typename T>
+    template <typename T>
     constexpr bool is_ptr_aligned(const T* ptr, size_t alignment)
     {
         if (ptr == nullptr)
@@ -22,7 +22,7 @@ namespace ien
         const uintptr_t prtval = reinterpret_cast<uintptr_t>(ptr);
         return (prtval % alignment) == 0;
     }
-}
+} // namespace ien
 
 //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 // PLATFORM FEATURES (x86)
@@ -30,31 +30,46 @@ namespace ien
 
 #if defined(IEN_ARCH_X86) || defined(IEN_ARCH_X86_64)
 
-#define IEN_SSE_ALIGNMENT 16
-#define IEN_AVX_ALIGNMENT 32
-#define IEN_SSE_VECSIZE 32
-#define IEN_AVX_VECSIZE 64
+    #define IEN_SSE_ALIGNMENT 16
+    #define IEN_AVX_ALIGNMENT 32
+    #define IEN_SSE_VECSIZE 32
+    #define IEN_AVX_VECSIZE 64
 
-#include <iostream>
+    #include <iostream>
 namespace ien::platform::x86
 {
     enum class feature : int
     {
-        ABM, ADX,
-        AES, AVX2,
-        AVX512BW, AVX512CD,
-        AVX512DQ, AVX512ER,
-        AVX512F, AVX512IFMA,
-        AVX512PF, AVX512VBMI,
-        AVX512VL, AVX,
-        BMI1, BMI2,
-        FMA3, FMA4,
-        MMX, PREFETCHWT1,
-        RDRAND, SHA,
-        SSE2, SSE3,
-        SSE41, SSE42,
-        SSE4a, SSE,
-        SSSE3, x64,
+        ABM,
+        ADX,
+        AES,
+        AVX2,
+        AVX512BW,
+        AVX512CD,
+        AVX512DQ,
+        AVX512ER,
+        AVX512F,
+        AVX512IFMA,
+        AVX512PF,
+        AVX512VBMI,
+        AVX512VL,
+        AVX,
+        BMI1,
+        BMI2,
+        FMA3,
+        FMA4,
+        MMX,
+        PREFETCHWT1,
+        RDRAND,
+        SHA,
+        SSE2,
+        SSE3,
+        SSE41,
+        SSE42,
+        SSE4a,
+        SSE,
+        SSSE3,
+        x64,
         XOP
     };
 
@@ -63,6 +78,14 @@ namespace ien::platform::x86
 
     /// @brief Artificially set the availability of the provided cpu feature
     extern void force_feature(feature feat, bool enabled);
-}
+} // namespace ien::platform::x86
 
+#endif
+
+#if defined(IEN_COMPILER_GNU) || defined(IEN_COMPILER_CLANG) || defined(IEN_COMPILER_INTEL)
+    #define IEN_PACKED_STRUCT_BEGIN(name) struct __attribute__((__packed__)) name
+    #define IEN_PACKED_STRUCT_END()
+#elif defined(IEN_COMPILER_MSVC)
+    #define IEN_PACKED_STRUCT_BEGIN(name) __pragma(pack(push, 1)) struct name
+    #define IEN_PACKED_STRUCT_END() __pragma(pack(pop))
 #endif

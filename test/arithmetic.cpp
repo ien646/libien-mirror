@@ -19,6 +19,7 @@ TEST_CASE("safe_*")
         uint8_t val_a = 128;
         int val_b = 2;
         int vmul = ien::safe_mul<int>(val_a, val_b);
+        REQUIRE(vmul == 256);
     }
 };
 
