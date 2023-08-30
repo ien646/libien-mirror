@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstring>
 #include <ien/lang_utils.hpp>
 
 #include <ien/bits/serialization/deserializer_iterator.hpp>
@@ -81,7 +82,7 @@ namespace ien
             {
                 for (size_t i = 0; i < len; ++i)
                 {
-                    dst[i] = ien::value_deserializer<uint8_t>{}.deserialize(_iterator);
+                    dst[i] = ien::value_deserializer<T>{}.deserialize(_iterator);
                 }
             }
             else
@@ -89,7 +90,7 @@ namespace ien
                 deserializer_iterator it = _iterator;
                 for (size_t i = 0; i < len; ++i)
                 {
-                    dst[i] = ien::value_deserializer<uint8_t>{}.deserialize(it);
+                    dst[i] = ien::value_deserializer<T>{}.deserialize(it);
                 }
             }
         }
@@ -97,5 +98,34 @@ namespace ien
         inline const uint8_t* data() const { return _iterator.data(); }
         inline size_t length() const { return _iterator.length(); }
         inline size_t position() const { return _iterator.position(); }
+
+    private:
+        inline void deserialize_into_buffer_uint8(uint8_t* dst, size_t len)
+        {
+            auto pos = _iterator.position();
+            auto data = _iterator.data();
+            if ((_iterator.position() + len) > length())
+            {
+                throw std::logic_error("Attempt to deserialize out of bounds data");
+            }
+
+            for (size_t i = 0; i < len; ++i)
+            {
+                std::memcpy(dst, data, len);
+            }
+        }
     };
+
+    template<>
+    inline void ien::deserializer::deserialize_into_buffer<uint8_t, true>(uint8_t* dst, size_t len)
+    {
+        deserialize_into_buffer_uint8(dst, len);
+        _iterator.advance(len);
+    }
+
+    template<>
+    inline void ien::deserializer::deserialize_into_buffer<uint8_t, false>(uint8_t* dst, size_t len)
+    {
+        deserialize_into_buffer_uint8(dst, len);
+    }
 } // namespace ien

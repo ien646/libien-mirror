@@ -137,7 +137,7 @@ namespace ien
 
             _width = (size_t)width;
             _height = (size_t)height;
-            _format = static_cast<image_format>(format);		
+            _format = static_cast<image_format>(format);
 			
 			auto bytes = deserializer.deserialize<SERIALIZE_CONTAINER_SIZE_T>();
 			_data = reinterpret_cast<uint8_t*>(malloc(bytes));
