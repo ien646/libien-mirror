@@ -12,7 +12,6 @@ option(LIBIEN_BUILD_IMAGE "Build image library" OFF)
 option(LIBIEN_BUILD_SFTP "Build sftp library" OFF)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 
 include(cmake/CPM.cmake)
 set(CPM_SOURCE_CACHE ${CMAKE_SOURCE_DIR}/.cache)
