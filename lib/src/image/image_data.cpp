@@ -14,8 +14,7 @@
     #include <emmintrin.h>
 #endif
 
-
-#define IEN_IMAGE_DATA_ALLOC_ALIGNMENT 32 //avx
+#define IEN_IMAGE_DATA_ALLOC_ALIGNMENT 32 // avx
 
 namespace ien
 {
@@ -199,6 +198,9 @@ namespace ien
         const uint8_t* px_a0 = data();
         const uint8_t* px_b0 = other.data();
 
+        assert(ien::is_ptr_aligned(px_a0, 16));
+        assert(ien::is_ptr_aligned(px_b0, 16));
+
         const __m128 vmul_div255 = _mm_set1_ps(1.0F / 255);
         const __m128 vand_fpsign = _mm_set1_ps(std::bit_cast<float>(~0x80000000));
         const __m128 vmul_div3 = _mm_set1_ps(1.0F / 3);
@@ -301,6 +303,17 @@ namespace ien
         }
 #endif
         return accum / pixel_count();
+    }
+
+    void image_data::flip_axis_y()
+    {
+        const size_t row_size = _width * image_format_channels(_format);
+        for (size_t i = 0; i < _height / 2; ++i)
+        {
+            uint8_t* row_up = _data + (row_size * i);
+            uint8_t* row_down = _data + (row_size * (_height - i - 1));
+            std::swap_ranges(row_up, row_up + row_size, row_down);
+        }
     }
 
 } // namespace ien
