@@ -1,11 +1,10 @@
-add_library(libien    
+add_library(libien
     "src/base64.cpp"
     "src/fs_utils.cpp"
     "src/io_utils.cpp"
     "src/messagebox.cpp"
     "src/net_utils.cpp"
-    "src/platform.cpp"
-    "src/serialization.cpp"
+    "src/platform.cpp"    
     "src/str_utils.cpp"
     "src/threading.cpp"
     "src/win32/windows.cpp"

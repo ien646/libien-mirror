@@ -13,7 +13,7 @@
 
 #ifndef IEN_COMPILER_MSVC
     // https://github.com/01org/linux-sgx/blob/master/common/inc/internal/linux/cpuid_gnu.h
-    void __cpuidex(int cpuid[4], int func_id, int subfunc_id)
+    void __cpuidex(int* cpuid, int func_id, int subfunc_id)
     {
         #if defined(IEN_ARCH_X86_64)
             asm volatile ("cpuid"
@@ -103,10 +103,10 @@ namespace ien::platform::x86
 
         std::array<int, 4> info;
         W32_CPUID(info.data(), 0);
-        int nIds = info[0];
+        const int nIds = info[0];
 
         W32_CPUID(info.data(), 0x80000000);
-        unsigned nExIds = info[0];
+        const unsigned nExIds = info[0];
 
         //  Detect Features
         if (nIds >= 0x00000001)
