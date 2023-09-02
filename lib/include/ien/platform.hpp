@@ -89,3 +89,19 @@ namespace ien::platform::x86
     #define IEN_PACKED_STRUCT_BEGIN(name) __pragma(pack(push, 1)) struct name
     #define IEN_PACKED_STRUCT_END() __pragma(pack(pop))
 #endif
+
+#ifdef IEN_COMPILER_MSVC
+    #define IEN_PUSH_FAST_FLOAT                                                                                        \
+        _Pragma("float_control(push)");                                                                                \
+        _Pragma("float_control(precise, off)");                                                                        \
+        _Pragma("float_control(except, off)");                                                                         \
+        _Pragma("fp_contract(on)")
+
+    #define IEN_POP_FAST_FLOAT _Pragma("float_control(pop)")
+#else
+    #define IEN_PUSH_FAST_FLOAT                                                                                        \
+        _Pragma("GCC push_options");                                                                                   \
+        _Pragma("GCC optimize (\"fast-math\")")
+
+    #define IEN_POP_FAST_FLOAT _Pragma("GCC pop_options")
+#endif
