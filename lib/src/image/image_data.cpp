@@ -203,7 +203,7 @@ namespace ien
 
         const __m128 vmul_div255 = _mm_set1_ps(1.0F / 255);
         const __m128 vand_fpsign = _mm_set1_ps(std::bit_cast<float>(~0x80000000));
-        const __m128 vmul_div3 = _mm_set1_ps(1.0F / 3);
+        const __m128 vmul_div3 = _mm_set1_ps(1.0F / 3);       
 
         for (size_t i = 0; i < (pixel_count() - (pixel_count() % 4)); i += 4)
         {
