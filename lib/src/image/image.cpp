@@ -159,7 +159,7 @@ namespace ien
         assert(width > 0 && height > 0);
 
         image result(width, height, _format);
-        int ok = stbir_resize_uint8_generic(
+        const int ok = stbir_resize_uint8_generic(
             _data,
             (int)_width,
             (int)_height,
@@ -188,7 +188,7 @@ namespace ien
     {
         assert(!path.empty());
         assert(compression > 0);
-        int aux = stbi_write_png_compression_level;
+        const int aux = stbi_write_png_compression_level;
         stbi_write_png_compression_level = compression;
         stbi_write_png(path.c_str(), (int)_width, (int)_height, channel_count(), _data, (int)(_width * channel_count()));
         stbi_write_png_compression_level = aux;
@@ -215,9 +215,9 @@ namespace ien
     void image::write_to_file_raw_tagged(const std::string& path) const
     {
         assert(!path.empty());
-        uint32_t width = (uint32_t)_width;
-        uint32_t height = (uint32_t)_height;
-        uint8_t fmt = static_cast<uint8_t>(format());
+        const uint32_t width = (uint32_t)_width;
+        const uint32_t height = (uint32_t)_height;
+        const uint8_t fmt = static_cast<uint8_t>(format());
 
         ien::serializer serializer;
         serializer.serialize_buffer(IEN_RAW_TAGGED_SIGNATURE.data(), IEN_RAW_TAGGED_SIGNATURE.size());
