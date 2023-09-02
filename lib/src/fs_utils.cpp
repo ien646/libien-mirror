@@ -364,7 +364,7 @@ namespace ien
         if (home)
         {
             return home;
-        }        
+        }
 #endif
         throw std::logic_error("Unable to find home directory for current user");
     }

@@ -1,4 +1,4 @@
-#include "ien/bits/serialization/value_deserializers.hpp"
+#include <algorithm>
 #include <cstdint>
 #include <ien/image/image.hpp>
 #include <ien/image/image_data.hpp>
@@ -224,23 +224,14 @@ namespace ien
         serializer.serialize(width);
         serializer.serialize(height);
         serializer.serialize(fmt);
-        serializer.serialize(std::span<uint8_t>(_data, size()));
+        serializer.serialize(std::span(_data, size()));
 
         ien::write_file_binary(path, serializer.data());
     }
 
     void image::flip_axis_y()
     {
-        const size_t row_size = _width * image_format_channels(_format);
-        std::vector<uint8_t> temp_row(row_size, 0);
-        for (size_t i = 0; i < _height / 2; ++i)
-        {
-            uint8_t* row_up = _data + (row_size * i);
-            uint8_t* row_down = _data + (row_size * (_height - i - 1));
-            std::memcpy(temp_row.data(), row_up, row_size);
-            std::memcpy(row_up, row_down, row_size);
-            std::memcpy(row_down, temp_row.data(), row_size);
-        }
+        image_data::flip_axis_y();
     }
 
     float image::absolute_difference(const image& other) const
