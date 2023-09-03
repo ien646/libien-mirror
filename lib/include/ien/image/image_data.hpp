@@ -24,9 +24,9 @@ namespace ien
         constexpr image_data() {};
         image_data(size_t w, size_t h, image_format fmt);
         image_data(const image_data&) = delete;
-        image_data(image_data&& mvsrc);
+        image_data(image_data&& mvsrc) noexcept;
         virtual ~image_data();
-        image_data& operator=(image_data&& mvsrc);
+        image_data& operator=(image_data&& mvsrc) noexcept;
 
         inline size_t width() const { return _width; }
 		inline size_t height() const { return _height; }
