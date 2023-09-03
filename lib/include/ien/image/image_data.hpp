@@ -55,5 +55,7 @@ namespace ien
         void shuffle(const image_shuffle&);
 
         float absolute_difference(const image_data& other) const;
+
+        void flip_axis_y();
     };
 }
