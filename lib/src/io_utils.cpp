@@ -53,9 +53,9 @@ namespace ien
 
     long unique_file_descriptor::file_size()
     {
-        long previous_pos = current_position();
+        const long previous_pos = current_position();
         move_to_end();
-        long result = current_position();
+        const long result = current_position();
         set_position(previous_pos);
         return result;
     }

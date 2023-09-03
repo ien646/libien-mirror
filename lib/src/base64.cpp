@@ -67,14 +67,14 @@ const std::array<int32_t, 256> b64i = {
 std::vector<uint8_t> ien::base64::decode(const uint8_t* data, size_t len)
 {
     unsigned char* p = (unsigned char*)data;
-    int pad = len > 0 && (len % 4 || p[len - 1] == '=');
+    const int pad = len > 0 && (len % 4 || p[len - 1] == '=');
     const size_t L = ((len + 3) / 4 - pad) * 4;
     std::vector<uint8_t> result;
     result.resize(L / 4 * 3 + pad, '\0');
 
     for (size_t i = 0, j = 0; i < L; i += 4)
     {
-        int n = b64i[p[i]] << 18 | b64i[p[i + 1]] << 12 | b64i[p[i + 2]] << 6 | b64i[p[i + 3]];
+        const int n = b64i[p[i]] << 18 | b64i[p[i + 1]] << 12 | b64i[p[i + 2]] << 6 | b64i[p[i + 3]];
         result[j++] = n >> 16;
         result[j++] = n >> 8 & 0xFF;
         result[j++] = n & 0xFF;
