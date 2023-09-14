@@ -24,7 +24,7 @@ namespace ien
         , _format(fmt)
     {
         assert(w > 0 && h > 0);
-        size_t alloc_sz = w * h * channel_count();
+        const size_t alloc_sz = w * h * channel_count();
         _data = (uint8_t*)ien::aligned_alloc(alloc_sz, IEN_IMAGE_DATA_ALLOC_ALIGNMENT);
         if (_data == nullptr)
         {
@@ -32,7 +32,7 @@ namespace ien
         }
     }
 
-    image_data::image_data(image_data&& mvsrc)
+    image_data::image_data(image_data&& mvsrc) noexcept
     {
         *this = std::move(mvsrc);
     }
@@ -48,7 +48,7 @@ namespace ien
         _height = 0;
     }
 
-    image_data& image_data::operator=(image_data&& mvsrc)
+    image_data& image_data::operator=(image_data&& mvsrc) noexcept
     {
         _width = mvsrc._width;
         _height = mvsrc._height;
@@ -203,20 +203,20 @@ namespace ien
 
         const __m128 vmul_div255 = _mm_set1_ps(1.0F / 255);
         const __m128 vand_fpsign = _mm_set1_ps(std::bit_cast<float>(~0x80000000));
-        const __m128 vmul_div3 = _mm_set1_ps(1.0F / 3);
+        const __m128 vmul_div3 = _mm_set1_ps(1.0F / 3);       
 
         for (size_t i = 0; i < (pixel_count() - (pixel_count() % 4)); i += 4)
         {
             const uint8_t* px_a = px_a0 + (i * 4);
             const uint8_t* px_b = px_b0 + (i * 4);
 
-            __m128i va_r_u32 = _mm_set_epi8(0, 0, 0, px_a[0], 0, 0, 0, px_a[4], 0, 0, 0, px_a[8], 0, 0, 0, px_a[12]);
-            __m128i va_g_u32 = _mm_set_epi8(0, 0, 0, px_a[1], 0, 0, 0, px_a[5], 0, 0, 0, px_a[9], 0, 0, 0, px_a[13]);
-            __m128i va_b_u32 = _mm_set_epi8(0, 0, 0, px_a[2], 0, 0, 0, px_a[6], 0, 0, 0, px_a[10], 0, 0, 0, px_a[14]);
+            const __m128i va_r_u32 = _mm_set_epi8(0, 0, 0, px_a[0], 0, 0, 0, px_a[4], 0, 0, 0, px_a[8], 0, 0, 0, px_a[12]);
+            const __m128i va_g_u32 = _mm_set_epi8(0, 0, 0, px_a[1], 0, 0, 0, px_a[5], 0, 0, 0, px_a[9], 0, 0, 0, px_a[13]);
+            const __m128i va_b_u32 = _mm_set_epi8(0, 0, 0, px_a[2], 0, 0, 0, px_a[6], 0, 0, 0, px_a[10], 0, 0, 0, px_a[14]);
 
-            __m128i vb_r_u32 = _mm_set_epi8(0, 0, 0, px_b[0], 0, 0, 0, px_b[4], 0, 0, 0, px_b[8], 0, 0, 0, px_b[12]);
-            __m128i vb_g_u32 = _mm_set_epi8(0, 0, 0, px_b[1], 0, 0, 0, px_b[5], 0, 0, 0, px_b[9], 0, 0, 0, px_b[13]);
-            __m128i vb_b_u32 = _mm_set_epi8(0, 0, 0, px_b[2], 0, 0, 0, px_b[6], 0, 0, 0, px_b[10], 0, 0, 0, px_b[14]);
+            const __m128i vb_r_u32 = _mm_set_epi8(0, 0, 0, px_b[0], 0, 0, 0, px_b[4], 0, 0, 0, px_b[8], 0, 0, 0, px_b[12]);
+            const __m128i vb_g_u32 = _mm_set_epi8(0, 0, 0, px_b[1], 0, 0, 0, px_b[5], 0, 0, 0, px_b[9], 0, 0, 0, px_b[13]);
+            const __m128i vb_b_u32 = _mm_set_epi8(0, 0, 0, px_b[2], 0, 0, 0, px_b[6], 0, 0, 0, px_b[10], 0, 0, 0, px_b[14]);
 
             __m128 va_r_f32 = _mm_cvtepi32_ps(va_r_u32);
             __m128 va_g_f32 = _mm_cvtepi32_ps(va_g_u32);
@@ -242,23 +242,22 @@ namespace ien
             vdiff_g_f32 = _mm_and_ps(vdiff_g_f32, vand_fpsign);
             vdiff_b_f32 = _mm_and_ps(vdiff_b_f32, vand_fpsign);
 
-            __m128 vdiff_rgb_f32 = _mm_add_ps(_mm_add_ps(vdiff_r_f32, vdiff_g_f32), vdiff_b_f32);
-            __m128 vdiff_avg_f32 = _mm_mul_ps(vdiff_rgb_f32, vmul_div3);
+            const __m128 vdiff_rgb_f32 = _mm_add_ps(_mm_add_ps(vdiff_r_f32, vdiff_g_f32), vdiff_b_f32);
+            const __m128 vdiff_avg_f32 = _mm_mul_ps(vdiff_rgb_f32, vmul_div3);
 
-            __m128 vdiff_avg_f32_01 = _mm_add_ps(
+            const __m128 vdiff_avg_f32_01 = _mm_add_ps(
                 vdiff_avg_f32,
                 _mm_shuffle_ps(vdiff_avg_f32, vdiff_avg_f32, _MM_SHUFFLE(1, 1, 1, 1))
             );
 
-            __m128 vdiff_avg_f32_23 = _mm_add_ps(
+            const __m128 vdiff_avg_f32_23 = _mm_add_ps(
                 _mm_shuffle_ps(vdiff_avg_f32, vdiff_avg_f32, _MM_SHUFFLE(2, 2, 2, 2)),
                 _mm_shuffle_ps(vdiff_avg_f32, vdiff_avg_f32, _MM_SHUFFLE(3, 3, 3, 3))
             );
 
-            __m128 vdiff_avg_f32_0123 = _mm_add_ps(vdiff_avg_f32_01, vdiff_avg_f32_23);
+            const __m128 vdiff_avg_f32_0123 = _mm_add_ps(vdiff_avg_f32_01, vdiff_avg_f32_23);
 
-            float v = _mm_cvtss_f32(vdiff_avg_f32_0123);
-            accum += v;
+            accum += _mm_cvtss_f32(vdiff_avg_f32_0123);
         }
 
         // Non vectorizable remainder
@@ -266,19 +265,19 @@ namespace ien
         {
             const uint8_t* px_a = data() + (i * 4);
             const uint8_t* px_b = other.data() + (i * 4);
-            float ra = (float)px_a[0] / 255;
-            float ga = (float)px_a[1] / 255;
-            float ba = (float)px_a[2] / 255;
+            const float ra = (float)px_a[0] / 255;
+            const float ga = (float)px_a[1] / 255;
+            const float ba = (float)px_a[2] / 255;
 
-            float rb = (float)px_b[0] / 255;
-            float gb = (float)px_b[1] / 255;
-            float bb = (float)px_b[2] / 255;
+            const float rb = (float)px_b[0] / 255;
+            const float gb = (float)px_b[1] / 255;
+            const float bb = (float)px_b[2] / 255;
 
-            float dr = std::abs(ra - rb);
-            float dg = std::abs(ga - gb);
-            float db = std::abs(ba - bb);
+            const float dr = std::abs(ra - rb);
+            const float dg = std::abs(ga - gb);
+            const float db = std::abs(ba - bb);
 
-            float davg = (dr + dg + db) / 3;
+            const float davg = (dr + dg + db) / 3;
             accum += davg;
         }
 #else
