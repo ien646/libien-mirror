@@ -5,7 +5,6 @@ add_library(libien
     "src/messagebox.cpp"
     "src/net_utils.cpp"
     "src/platform.cpp"
-    "src/serialization.cpp"
     "src/str_utils.cpp"
     "src/threading.cpp"
     "src/win32/windows.cpp"
