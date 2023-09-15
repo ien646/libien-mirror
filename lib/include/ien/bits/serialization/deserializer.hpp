@@ -33,8 +33,6 @@ namespace ien
             return ien::value_deserializer<T>{}.deserialize(_iterator);
         }
 
-        inline void advance(size_t bytes) { _iterator.advance(bytes); }
-
         template <typename T, bool Advance = true>
         void deserialize_into_buffer(T* dst, size_t len)
         {
@@ -61,11 +59,6 @@ namespace ien
             }
         }
 
-        inline const uint8_t* data() const { return _iterator.data(); }
-        inline size_t length() const { return _iterator.length(); }
-        inline size_t position() const { return _iterator.position(); }
-
-    private:
         void deserialize_into_buffer_uint8(uint8_t* dst, size_t len)
         {
             if ((_iterator.position() + len) > length())
@@ -79,6 +72,12 @@ namespace ien
                 std::memcpy(dst, data, len);
             }
         }
+
+        inline void advance(size_t bytes) { _iterator.advance(bytes); }
+
+        inline const uint8_t* data() const { return _iterator.data(); }
+        inline size_t length() const { return _iterator.length(); }
+        inline size_t position() const { return _iterator.position(); }
     };
 
     template <>

@@ -39,7 +39,7 @@ namespace ien
 
         #elif defined(IEN_OS_LINUX)
 
-            pthread_t self = pthread_self();
+            const pthread_t self = pthread_self();
             sched_param sparam;
             int policy;
             pthread_getschedparam(self, &policy, &sparam);
