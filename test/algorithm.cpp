@@ -35,6 +35,41 @@ struct deletable_object
     ~deletable_object() { deleted = true; }
 };
 
+struct move_tracking_object
+{
+    int value = -1;
+    bool moved_into = false;
+    bool moved_from = false;
+    bool deleted = false;
+
+    constexpr move_tracking_object(int v)
+        : value(v)
+    {
+    }
+
+    move_tracking_object(move_tracking_object&& o)
+        : moved_into(true)
+        , deleted(o.deleted)
+        , moved_from(o.moved_from)
+        , value(o.value)
+    {
+        o.moved_from = true;
+    }
+
+    move_tracking_object& operator=(move_tracking_object&& o)
+    {
+        moved_into = true;
+        deleted = o.deleted;
+        moved_from = o.moved_from;
+        value = o.value;
+        o.moved_from = true;
+
+        return *this;
+    }
+
+    ~move_tracking_object() { deleted = true; }
+};
+
 template <template <typename...> typename TSrc, template <typename...> typename TDst>
 void test_method(std::function<void(TSrc<deletable_object>&, int)> add_func)
 {
@@ -82,4 +117,30 @@ TEST_CASE("algorithm")
         test_method<std::deque, std::list>(push_back_func);
         test_method<std::list, std::list>(push_back_func);
     };
+
+    SECTION("erase_unsorted")
+    {
+        std::vector<move_tracking_object> vec;
+        for (size_t i = 0; i < 10; ++i)
+        {
+            vec.emplace_back(move_tracking_object{(int)i});
+        }
+
+        for(auto& v : vec)
+        {
+            v.moved_into = false;
+        }
+
+        move_tracking_object& olast = vec.back();
+        ien::erase_unsorted(vec, 5);
+
+        REQUIRE(vec.size() == 9);
+        REQUIRE(vec[5].value == 9);
+        REQUIRE(vec[5].moved_into);
+        for(size_t i = 6; i < vec.size(); ++i)
+        {
+            REQUIRE(!vec[i].moved_from);
+            REQUIRE(!vec[i].moved_into);
+        }
+    }
 };

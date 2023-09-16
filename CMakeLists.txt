@@ -30,7 +30,6 @@ if(LIBIEN_BUILD_SFTP)
 endif()
 
 if(LIBIEN_BUILD_TESTS)
-    enable_testing()
     CPMAddPackage(
         NAME catch2
         GIT_REPOSITORY "https://github.com/catchorg/Catch2"
