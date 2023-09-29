@@ -19,8 +19,8 @@ set(CPM_SOURCE_CACHE ${CMAKE_SOURCE_DIR}/.cache)
 if(LIBIEN_BUILD_SFTP)
     CPMAddPackage(
         NAME libssh2
-        GIT_REPOSITORY "https://github.com/ien646/libssh2"
-        GIT_TAG "libssh2-1.11.0__FIX_CMAKE"
+        GIT_REPOSITORY "https://github.com/libssh2/libssh2"
+        GIT_TAG "master"
         OPTIONS 
             "BUILD_SHARED_LIBS OFF"
             "BUILD_EXAMPLES OFF"

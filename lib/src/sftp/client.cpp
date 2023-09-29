@@ -186,7 +186,7 @@ namespace ien::sftp
         const std::string temp_path = remote_path + TEMP_SUFFIX;
 
         {
-            auto mode = 0x777;
+            auto mode = LIBSSH2_SFTP_S_IRWXU | LIBSSH2_SFTP_S_IRWXG | LIBSSH2_SFTP_S_IRWXO;
             auto flags = LIBSSH2_FXF_READ | LIBSSH2_FXF_CREAT | LIBSSH2_FXF_WRITE;
             unique_sftp_handle handle(_sftp_session, temp_path.c_str(), flags, mode);
             if (!handle)
@@ -227,7 +227,7 @@ namespace ien::sftp
 
     bool client::create_directory(const std::string& path) const
     {
-        if (int err = libssh2_sftp_mkdir(_sftp_session, path.c_str(), 755))
+        if (int err = libssh2_sftp_mkdir(_sftp_session, path.c_str(), LIBSSH2_SFTP_S_IRWXU | LIBSSH2_SFTP_S_IRWXG | LIBSSH2_SFTP_S_IRWXO))
         {
             return false;
         }
