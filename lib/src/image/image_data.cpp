@@ -4,6 +4,7 @@
 #include <ien/alloc.hpp>
 #include <ien/platform.hpp>
 
+#include <bit>
 #include <cassert>
 #include <cstdlib>
 #include <new>
