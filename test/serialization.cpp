@@ -1,8 +1,9 @@
-#include <bit>
-#include <cstdint>
 #include <ien/serialization.hpp>
 
 #include <catch2/catch_test_macros.hpp>
+
+#include <bit>
+#include <cstdint>
 #include <string>
 #include <vector>
 
