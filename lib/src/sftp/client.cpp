@@ -178,11 +178,6 @@ namespace ien::sftp
             throw std::logic_error("Unable to open local file for reading: " + local_path);
         }
 
-        if (fd.file_size() == 0)
-        {
-            return;
-        }
-
         const std::string temp_path = remote_path + TEMP_SUFFIX;
 
         {
