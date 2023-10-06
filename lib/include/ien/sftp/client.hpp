@@ -2,6 +2,8 @@
 
 #include <ien/sftp/types.hpp>
 
+#include <functional>
+
 namespace ien::sftp
 {
     struct client_params
@@ -35,8 +37,8 @@ namespace ien::sftp
 
         [[nodiscard]] directory_listing list_directory(const std::string& remote_path) const;
 
-        void get_file(const std::string& remote_path, const std::string& local_path) const;
-        void put_file(const std::string& local_path, const std::string& remote_path) const;
+        void get_file(const std::string& remote_path, const std::string& local_path, std::function<void(int64_t)> progress_callback = {}) const;
+        void put_file(const std::string& local_path, const std::string& remote_path, std::function<void(int64_t)> progress_callback = {}) const;
 
         void create_directory(const std::string& path) const;
 
