@@ -1,22 +1,26 @@
 #include <ien/sftp/client.hpp>
+#include <ien/sftp/sftp_error.hpp>
 
-#include <ien/net_utils.hpp>
 #include <ien/io_utils.hpp>
+#include <ien/net_utils.hpp>
 #include <ien/platform.hpp>
+
+#include <fmt/format.h>
 
 #include <libssh2.h>
 #include <libssh2_sftp.h>
 
 #include <array>
 #include <climits>
+#include <functional>
 #include <iterator>
 #include <limits>
 #include <stdexcept>
 
 #ifdef IEN_COMPILER_MSVC
     // Disable size_t cast warnings from libssh2
-    #pragma warning (push)
-    #pragma warning (disable: 4267)
+    #pragma warning(push)
+    #pragma warning(disable : 4267)
 #endif
 
 #ifdef IEN_OS_WIN
@@ -25,11 +29,31 @@
     #pragma comment(lib, "ws2_32.lib")
     #define GET_LAST_SOCKET_ERROR() std::string(strerror(WSAGetLastError()))
 #else
-    #include <netdb.h>
     #include <arpa/inet.h>
+    #include <netdb.h>
     #include <sys/socket.h>
     #define GET_LAST_SOCKET_ERROR() std::string(strerror(errno))
 #endif
+
+void throw_sftp_error(const std::string& msg, int error_code, LIBSSH2_SFTP* session)
+{
+    if (error_code == LIBSSH2_ERROR_SFTP_PROTOCOL)
+    {
+        unsigned long sftp_err = libssh2_sftp_last_error(session);
+        throw std::logic_error(fmt::format("{} | SFTP protocol error: {}", msg, ien::sftp::error_to_string(sftp_err)));
+    }
+    throw std::logic_error(msg);
+}
+
+void _wrap_sftp_call(std::function<int()> func, const std::string& errormsg, LIBSSH2_SFTP* session)
+{
+    if (int err = func())
+    {
+        throw_sftp_error(errormsg, err, session);
+    }
+}
+
+#define wrap_sftp_call(func, errormsg) _wrap_sftp_call([&]() { return func; }, errormsg, _sftp_session)
 
 namespace ien::sftp
 {
@@ -46,27 +70,26 @@ namespace ien::sftp
             _handle = libssh2_sftp_open(session, remote_path.c_str(), flags, mode);
         }
 
-        ~unique_sftp_handle()
-        {
-            libssh2_sftp_close_handle(_handle);
-        }
+        ~unique_sftp_handle() { libssh2_sftp_close_handle(_handle); }
 
-        operator bool() const { return _handle != nullptr; }
+        inline bool is_valid() const { return _handle != nullptr; }
+
+        operator bool() const { return is_valid(); }
         operator LIBSSH2_SFTP_HANDLE*() { return _handle; }
     };
 
     client::client(client_params params)
         : _params(std::move(params))
-    #ifdef IEN_OS_WIN
+#ifdef IEN_OS_WIN
         , _wsadata(new WSADATA)
-    #endif
+#endif
     {
-    #ifdef IEN_OS_WIN
+#ifdef IEN_OS_WIN
         if (int err = WSAStartup(MAKEWORD(2, 0), _wsadata))
         {
             throw std::logic_error("WSAStartup failed with error: " + std::to_string(err));
         }
-    #endif
+#endif
         init_address();
         init_socket();
         init_ssh_session();
@@ -75,9 +98,9 @@ namespace ien::sftp
 
     client::~client()
     {
-    #ifdef IEN_OS_WIN
+#ifdef IEN_OS_WIN
         delete _wsadata;
-    #endif
+#endif
     }
 
     bool client::file_exists(const std::string& remote_path) const
@@ -178,6 +201,11 @@ namespace ien::sftp
             throw std::logic_error("Unable to open local file for reading: " + local_path);
         }
 
+        if(fd.file_size() == 0)
+        {
+            throw std::logic_error("File is 0 bytes");
+        }
+
         const std::string temp_path = remote_path + TEMP_SUFFIX;
 
         {
@@ -189,7 +217,8 @@ namespace ien::sftp
                 throw std::logic_error("Unable to get handle for temporary remote file: " + temp_path);
             }
 
-            std::vector<char> buff(3000000, 0);
+            std::vector<char> buff(1024 * 1024, 0);
+            std::fill(buff.begin(), buff.end(), 0);
             while (true)
             {
                 ssize_t bytes_read = fd.read(buff.data(), buff.size());
@@ -199,7 +228,11 @@ namespace ien::sftp
                 ssize_t total_written = 0;
                 while (total_written < bytes_read)
                 {
-                    ssize_t bytes_written = libssh2_sftp_write(handle, buff.data() + total_written, bytes_read - total_written);
+                    ssize_t bytes_written = libssh2_sftp_write(
+                        handle,
+                        buff.data() + total_written,
+                        bytes_read - total_written
+                    );
                     if (bytes_written < 0)
                     {
                         throw std::logic_error("Failure writing to file: " + remote_path);
@@ -211,22 +244,28 @@ namespace ien::sftp
 
         if (file_exists(remote_path))
         {
-            libssh2_sftp_unlink(_sftp_session, remote_path.c_str());
+            wrap_sftp_call(
+                libssh2_sftp_unlink(_sftp_session, remote_path.c_str()),
+                fmt::format("Unable to remove previous original file: {}", remote_path)
+            );
         }
 
-        if (int err = libssh2_sftp_rename(_sftp_session, temp_path.c_str(), remote_path.c_str()))
-        {
-            throw std::logic_error("Unable to rename temporary file to: " + remote_path);
-        }
+        wrap_sftp_call(
+            libssh2_sftp_rename(_sftp_session, temp_path.c_str(), remote_path.c_str()),
+            fmt::format("Unable to rename temporary file from '{}' to '{}'", temp_path, remote_path)
+        );
     }
 
-    bool client::create_directory(const std::string& path) const
+    void client::create_directory(const std::string& path) const
     {
-        if (int err = libssh2_sftp_mkdir(_sftp_session, path.c_str(), LIBSSH2_SFTP_S_IRWXU | LIBSSH2_SFTP_S_IRWXG | LIBSSH2_SFTP_S_IRWXO))
-        {
-            return false;
-        }
-        return true;
+        wrap_sftp_call(
+            libssh2_sftp_mkdir(
+                _sftp_session,
+                path.c_str(),
+                LIBSSH2_SFTP_S_IRWXU | LIBSSH2_SFTP_S_IRWXG | LIBSSH2_SFTP_S_IRWXO
+            ),
+            "Unable to create directory: " + path
+        );
     }
 
     void client::clean_temp_files(const directory_listing& listing) const
@@ -235,7 +274,14 @@ namespace ien::sftp
         {
             if (is_temp_file(entry))
             {
-                libssh2_sftp_unlink(_sftp_session, entry.path.c_str());
+                try
+                {
+                    remove_file(entry.path);
+                }
+                catch(const std::exception& ex)
+                {
+                    std::cout << ex.what() << std::endl;
+                }
             }
         }
     }
@@ -243,10 +289,10 @@ namespace ien::sftp
     file_info client::get_file_info(const std::string& remote_path) const
     {
         LIBSSH2_SFTP_ATTRIBUTES attrs = {};
-        if (int err = libssh2_sftp_stat(_sftp_session, remote_path.c_str(), &attrs))
-        {
-            throw std::logic_error("Failure obtaining file stat: " + remote_path);
-        }
+        wrap_sftp_call(
+            libssh2_sftp_stat(_sftp_session, remote_path.c_str(), &attrs),
+            "Failure obtaining file stat: " + remote_path
+        );
 
         file_info result = {};
         result.atime = attrs.atime;
@@ -258,6 +304,11 @@ namespace ien::sftp
         return result;
     }
 
+    void client::remove_file(const std::string& remote_path) const
+    {
+        wrap_sftp_call(libssh2_sftp_unlink(_sftp_session, remote_path.c_str()), "Unable to remove file: " + remote_path);
+    }
+
     void client::set_atime(const std::string& remote_path, unsigned long atime) const
     {
         file_info finfo = get_file_info(remote_path);
@@ -266,7 +317,10 @@ namespace ien::sftp
         attrs.flags = LIBSSH2_SFTP_ATTR_ACMODTIME;
         attrs.atime = atime;
         attrs.mtime = finfo.mtime;
-        libssh2_sftp_setstat(_sftp_session, remote_path.c_str(), &attrs);
+        wrap_sftp_call(
+            libssh2_sftp_setstat(_sftp_session, remote_path.c_str(), &attrs),
+            "Unable to set stat for file: " + remote_path
+        );
     }
 
     void client::set_mtime(const std::string& remote_path, unsigned long mtime) const
@@ -281,7 +335,10 @@ namespace ien::sftp
         attrs.flags = LIBSSH2_SFTP_ATTR_ACMODTIME;
         attrs.atime = finfo.atime;
         attrs.mtime = mtime;
-        libssh2_sftp_setstat(_sftp_session, remote_path.c_str(), &attrs);
+        wrap_sftp_call(
+            libssh2_sftp_setstat(_sftp_session, remote_path.c_str(), &attrs),
+            "Unable to set stat for file: " + remote_path
+        );
     }
 
     // -- private --
@@ -289,7 +346,7 @@ namespace ien::sftp
     void client::init_address()
     {
         const auto addr = resolve_hostname_ipv4(_params.hostname);
-        if(addr)
+        if (addr)
         {
             _address = *addr;
         }
@@ -342,8 +399,8 @@ namespace ien::sftp
             throw std::logic_error("Unable to initialize sftp session");
         }
     }
-}
+} // namespace ien::sftp
 
 #ifdef IEN_COMPILER_MSVC
-    #pragma warning (pop)
+    #pragma warning(pop)
 #endif
