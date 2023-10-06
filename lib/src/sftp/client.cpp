@@ -2,6 +2,7 @@
 #include <ien/sftp/sftp_error.hpp>
 
 #include <ien/io_utils.hpp>
+#include <ien/memory.hpp>
 #include <ien/net_utils.hpp>
 #include <ien/platform.hpp>
 
@@ -123,6 +124,12 @@ namespace ien::sftp
     directory_listing client::list_directory(const std::string& remote_path) const
     {
         directory_listing result = {};
+        result.basedir = remote_path;
+        if(result.basedir.ends_with("/") || result.basedir.ends_with("\\"))
+        {
+            result.basedir = result.basedir.substr(0, result.basedir.size() - 1);
+        }
+
         LIBSSH2_SFTP_HANDLE* handle = libssh2_sftp_opendir(_sftp_session, remote_path.c_str());
         if (!handle)
         {
@@ -276,7 +283,9 @@ namespace ien::sftp
             {
                 try
                 {
-                    remove_file(entry.path);
+                    const auto fullpath = listing.basedir + "/" + entry.path;
+                    std::cout << "Removing stale temporary file: " << fullpath << std::endl;
+                    remove_file(fullpath);
                 }
                 catch(const std::exception& ex)
                 {
@@ -288,7 +297,8 @@ namespace ien::sftp
 
     file_info client::get_file_info(const std::string& remote_path) const
     {
-        LIBSSH2_SFTP_ATTRIBUTES attrs = {};
+        LIBSSH2_SFTP_ATTRIBUTES attrs;
+        zero_memory(&attrs);
         wrap_sftp_call(
             libssh2_sftp_stat(_sftp_session, remote_path.c_str(), &attrs),
             "Failure obtaining file stat: " + remote_path
@@ -313,7 +323,8 @@ namespace ien::sftp
     {
         file_info finfo = get_file_info(remote_path);
 
-        LIBSSH2_SFTP_ATTRIBUTES attrs = {};
+        LIBSSH2_SFTP_ATTRIBUTES attrs;
+        zero_memory(&attrs);
         attrs.flags = LIBSSH2_SFTP_ATTR_ACMODTIME;
         attrs.atime = atime;
         attrs.mtime = finfo.mtime;
@@ -331,7 +342,8 @@ namespace ien::sftp
         }
         file_info finfo = get_file_info(remote_path);
 
-        LIBSSH2_SFTP_ATTRIBUTES attrs = {};
+        LIBSSH2_SFTP_ATTRIBUTES attrs;
+        zero_memory(&attrs);
         attrs.flags = LIBSSH2_SFTP_ATTR_ACMODTIME;
         attrs.atime = finfo.atime;
         attrs.mtime = mtime;
