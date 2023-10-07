@@ -25,11 +25,11 @@ namespace ien::sftp
 {
     struct file_info
     {
-        size_t size;
-        unsigned long mtime;
-        unsigned long atime;
-        unsigned long uid;
-        unsigned long gid;
+        size_t size = 0;
+        unsigned long mtime = 0;
+        unsigned long atime = 0;
+        unsigned long uid = 0;
+        unsigned long gid = 0;
     };
 
     struct file_entry
@@ -40,6 +40,7 @@ namespace ien::sftp
 
     struct directory_listing
     {
+        std::string basedir;
         std::vector<file_entry> files;
         std::vector<std::string> directories;
     };
