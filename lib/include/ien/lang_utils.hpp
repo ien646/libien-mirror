@@ -138,15 +138,12 @@ namespace ien
 
         template <typename T>
         concept IterableContainer = requires(T c) {
-            typename T::value_type;
             c.begin();
             c.end();
-            c.size();
         };
 
         template <typename T>
         concept FlatContainer = requires(T c) {
-            typename T::value_type;
             c.begin();
             c.end();
             c.data();

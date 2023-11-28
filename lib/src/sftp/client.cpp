@@ -2,6 +2,7 @@
 #include <ien/sftp/sftp_error.hpp>
 
 #include <ien/io_utils.hpp>
+#include <ien/memory.hpp>
 #include <ien/net_utils.hpp>
 #include <ien/platform.hpp>
 
@@ -123,6 +124,12 @@ namespace ien::sftp
     directory_listing client::list_directory(const std::string& remote_path) const
     {
         directory_listing result = {};
+        result.basedir = remote_path;
+        if(result.basedir.ends_with("/") || result.basedir.ends_with("\\"))
+        {
+            result.basedir = result.basedir.substr(0, result.basedir.size() - 1);
+        }
+
         LIBSSH2_SFTP_HANDLE* handle = libssh2_sftp_opendir(_sftp_session, remote_path.c_str());
         if (!handle)
         {
@@ -162,7 +169,7 @@ namespace ien::sftp
         return result;
     }
 
-    void client::get_file(const std::string& remote_path, const std::string& local_path) const
+    void client::get_file(const std::string& remote_path, const std::string& local_path, std::function<void(int64_t)> progress_callback) const
     {
         ien::unique_file_descriptor fd(local_path, "wb");
         if (!fd.is_valid())
@@ -177,14 +184,17 @@ namespace ien::sftp
         }
 
         ssize_t bytes_read = 0;
-        std::vector<char> buff(300000, 0);
+        ssize_t total_read = 0;
+        std::vector<char> buff(4096 * 1024, 0);
         do
         {
-            bytes_read = libssh2_sftp_read(handle, buff.data(), buff.size());
+            bytes_read = libssh2_sftp_read(handle, buff.data(), buff.size());            
             if (bytes_read > 0)
             {
                 fd.write(buff.data(), bytes_read);
             }
+            total_read += bytes_read;
+            progress_callback(total_read);
         } while (bytes_read > 0);
 
         if (bytes_read < 0)
@@ -193,7 +203,7 @@ namespace ien::sftp
         }
     }
 
-    void client::put_file(const std::string& local_path, const std::string& remote_path) const
+    void client::put_file(const std::string& local_path, const std::string& remote_path, std::function<void(int64_t)> progress_callback) const
     {
         ien::unique_file_descriptor fd(local_path, "rb");
         if (!fd.is_valid())
@@ -217,8 +227,9 @@ namespace ien::sftp
                 throw std::logic_error("Unable to get handle for temporary remote file: " + temp_path);
             }
 
-            std::vector<char> buff(1024 * 1024, 0);
+            std::vector<char> buff(4096 * 1024, 0);
             std::fill(buff.begin(), buff.end(), 0);
+            ssize_t total_progress = 0;
             while (true)
             {
                 ssize_t bytes_read = fd.read(buff.data(), buff.size());
@@ -238,6 +249,8 @@ namespace ien::sftp
                         throw std::logic_error("Failure writing to file: " + remote_path);
                     }
                     total_written += bytes_written;
+                    total_progress += total_written;
+                    progress_callback(total_progress);
                 }
             }
         }
@@ -276,7 +289,9 @@ namespace ien::sftp
             {
                 try
                 {
-                    remove_file(entry.path);
+                    const auto fullpath = listing.basedir + "/" + entry.path;
+                    std::cout << "Removing stale temporary file: " << fullpath << std::endl;
+                    remove_file(fullpath);
                 }
                 catch(const std::exception& ex)
                 {
@@ -288,7 +303,8 @@ namespace ien::sftp
 
     file_info client::get_file_info(const std::string& remote_path) const
     {
-        LIBSSH2_SFTP_ATTRIBUTES attrs = {};
+        LIBSSH2_SFTP_ATTRIBUTES attrs;
+        zero_memory(&attrs);
         wrap_sftp_call(
             libssh2_sftp_stat(_sftp_session, remote_path.c_str(), &attrs),
             "Failure obtaining file stat: " + remote_path
@@ -313,7 +329,8 @@ namespace ien::sftp
     {
         file_info finfo = get_file_info(remote_path);
 
-        LIBSSH2_SFTP_ATTRIBUTES attrs = {};
+        LIBSSH2_SFTP_ATTRIBUTES attrs;
+        zero_memory(&attrs);
         attrs.flags = LIBSSH2_SFTP_ATTR_ACMODTIME;
         attrs.atime = atime;
         attrs.mtime = finfo.mtime;
@@ -331,7 +348,8 @@ namespace ien::sftp
         }
         file_info finfo = get_file_info(remote_path);
 
-        LIBSSH2_SFTP_ATTRIBUTES attrs = {};
+        LIBSSH2_SFTP_ATTRIBUTES attrs;
+        zero_memory(&attrs);
         attrs.flags = LIBSSH2_SFTP_ATTR_ACMODTIME;
         attrs.atime = finfo.atime;
         attrs.mtime = mtime;
