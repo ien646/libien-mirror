@@ -4,21 +4,28 @@ add_library(libien
     "src/io_utils.cpp"
     "src/messagebox.cpp"
     "src/net_utils.cpp"
-    "src/platform.cpp"    
+    "src/platform.cpp"
     "src/str_utils.cpp"
     "src/threading.cpp"
     "src/win32/windows.cpp"
 )
 add_library(libien::libien ALIAS libien)
 
-if(LIBIEN_BUILD_IMAGE)
-    target_sources(libien PRIVATE
+if(LIBIEN_BUILD_IMAGE OR LIBIEN_BUILD_FONTS)
+target_sources(libien PRIVATE 
         "src/image/image_data.cpp"
         "src/image/image.cpp"
         "src/image/image_ycbcr.cpp"
     )
-    target_link_libraries(libien PRIVATE stb)
     target_compile_definitions(libien PUBLIC "LIBIEN_BUILD_IMAGE")
+    if(LIBIEN_BUILD_FONTS)
+        target_sources(libien PRIVATE 
+            "src/fonts/ttf_font.cpp"
+        )
+        target_compile_definitions(libien PUBLIC "LIBIEN_BUILD_FONTS")
+    endif()
+    
+    target_link_libraries(libien PRIVATE stb)
 endif()
 
 if(MINGW)
