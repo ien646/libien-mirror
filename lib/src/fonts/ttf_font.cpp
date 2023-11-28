@@ -24,15 +24,24 @@ namespace ien
 
         for(const auto& bc : baked_chars)
         {
-            baked_char elem;
-            elem.x0 = bc.x0;
-            elem.x1 = bc.x1;
-            elem.y0 = bc.y0;
-            elem.y1 = bc.x1;
-            elem.xadvance = bc.xadvance;
-            elem.xoff = bc.xoff;
-            elem.yoff = bc.yoff;
+            ttf_font_char_info elem;
+            elem.position.x0 = bc.x0;
+            elem.position.x1 = bc.x1;
+            elem.position.y0 = bc.y0;
+            elem.position.y1 = bc.x1;
+            elem.x_advance = bc.xadvance;
+            elem.offset.x = bc.xoff;
+            elem.offset.y = bc.yoff;
             _char_info.push_back(elem);
         }
+    }
+
+    const ttf_font_char_info& ttf_font::get_char_info(uint32_t ch) const
+    {
+        if(_char_info.size() >= ch)
+        {
+            throw std::logic_error("Character not present");
+        }
+        return _char_info.at(ch);
     }
 }
