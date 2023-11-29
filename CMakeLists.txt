@@ -10,6 +10,8 @@ project(libien
 option(LIBIEN_BUILD_TESTS "Build tests" OFF)
 option(LIBIEN_BUILD_IMAGE "Build image library" OFF)
 option(LIBIEN_BUILD_SFTP "Build sftp library" OFF)
+option(LIBIEN_BUILD_FONTS "Build fonts library" OFF)
+option(LIBIEN_ENABLE_PLAYGROUND "Enable playground executable" OFF)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -49,4 +51,8 @@ add_subdirectory("lib")
 
 if(LIBIEN_BUILD_TESTS)
     add_subdirectory("test")
+endif()
+
+if(LIBIEN_ENABLE_PLAYGROUND)
+    add_subdirectory("playground")
 endif()
