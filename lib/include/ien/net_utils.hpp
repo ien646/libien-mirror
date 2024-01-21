@@ -18,8 +18,8 @@ namespace ien
         using socket_t = int;
     #endif
 
-    extern bool is_ipv4_address(const std::string& str);
-    extern bool is_ipv6_address(const std::string& str);
-    extern std::optional<std::string> resolve_hostname_ipv4(const std::string& host);
-    extern std::optional<std::string> resolve_hostname_ipv6(const std::string& host);
+    bool is_ipv4_address(const std::string& str);
+    bool is_ipv6_address(const std::string& str);
+    std::optional<std::string> resolve_hostname_ipv4(const std::string& host);
+    std::optional<std::string> resolve_hostname_ipv6(const std::string& host);
 }
