@@ -59,39 +59,4 @@ namespace ien
         set_position(previous_pos);
         return result;
     }
-
-    long unique_file_descriptor::current_position()
-    {
-        return std::ftell(value);
-    }
-
-    void unique_file_descriptor::set_position(long pos)
-    {
-        std::fseek(value, pos, SEEK_SET);
-    }
-
-    void unique_file_descriptor::move_position(long offset)
-    {
-        std::fseek(value, offset, SEEK_CUR);
-    }
-
-    void unique_file_descriptor::move_to_start()
-    {
-        std::fseek(value, 0, SEEK_SET);
-    }
-
-    void unique_file_descriptor::move_to_end()
-    {
-        std::fseek(value, 0, SEEK_END);
-    }
-
-    size_t unique_file_descriptor::read(void* target_buffer, size_t count, size_t elem_size)
-    {
-        return std::fread(target_buffer, elem_size, count, value);
-    }
-
-    void unique_file_descriptor::write(const void* source_buffer, size_t count, size_t elem_size)
-    {
-        std::fwrite(source_buffer, elem_size, count, value);
-    }
 }

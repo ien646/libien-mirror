@@ -28,5 +28,5 @@
 
 namespace ien::win32
 {
-	extern std::vector<std::wstring> get_cmdline_wargs();
+	std::vector<std::wstring> get_cmdline_wargs();
 }

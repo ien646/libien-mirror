@@ -74,10 +74,10 @@ namespace ien::platform::x86
     };
 
     /// @brief Query availability of provided cpu feature
-    extern bool get_feature(feature feat);
+    bool get_feature(feature feat);
 
     /// @brief Artificially set the availability of the provided cpu feature
-    extern void force_feature(feature feat, bool enabled);
+    void force_feature(feature feat, bool enabled);
 } // namespace ien::platform::x86
 
 #endif

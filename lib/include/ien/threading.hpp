@@ -13,5 +13,5 @@ namespace ien
         VERY_HIGH
     };
 
-    extern void set_current_thread_priority(thread_priority priority);
+    void set_current_thread_priority(thread_priority priority);
 }

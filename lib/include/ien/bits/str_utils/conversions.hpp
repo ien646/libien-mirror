@@ -7,9 +7,9 @@
 namespace ien
 {
 #ifdef IEN_OS_WIN
-    extern std::string wstr_to_str(std::wstring_view wstr);
-    extern std::wstring str_to_wstr(std::string_view wstr);
-    extern std::wstring u8str_to_wstr(std::u8string_view wstr);
+    std::string wstr_to_str(std::wstring_view wstr);
+    std::wstring str_to_wstr(std::string_view wstr);
+    std::wstring u8str_to_wstr(std::u8string_view wstr);
 #endif
 
     inline std::string u8str_to_str(std::u8string_view u8str)
