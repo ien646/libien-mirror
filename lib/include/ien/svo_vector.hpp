@@ -111,7 +111,8 @@ namespace ien
             }
             else
             {
-                return std::move(_heap_data);
+                const auto result = std::move(_heap_data);
+                return result;
             }
         }
 
