@@ -226,7 +226,7 @@ TEST_CASE("replace (str)")
 
 TEST_CASE("trim (str)")
 {
-    SECTION("trim")
+    SECTION("str_trim")
     {
         std::string str = "  hello  ";
         REQUIRE(ien::str_trim(str) == "hello");
@@ -236,5 +236,29 @@ TEST_CASE("trim (str)")
 
         str = "    ";
         REQUIRE(ien::str_trim(str) == "");
+    };
+
+	SECTION("str_ltrim")
+    {
+        std::string str = "  hello  ";
+        REQUIRE(ien::str_ltrim(str) == "hello  ");
+
+        str = "hello   ";
+        REQUIRE(ien::str_ltrim(str) == "hello   ");
+
+        str = "    ";
+        REQUIRE(ien::str_ltrim(str) == "");
+    };
+
+	SECTION("str_rtrim")
+    {
+        std::string str = "  hello  ";
+        REQUIRE(ien::str_rtrim(str) == "  hello");
+
+        str = "hello   ";
+        REQUIRE(ien::str_rtrim(str) == "hello");
+
+        str = "    ";
+        REQUIRE(ien::str_rtrim(str) == "");
     };
 };
