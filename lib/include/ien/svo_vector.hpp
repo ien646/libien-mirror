@@ -19,8 +19,6 @@ namespace ien
         std::vector<T> _heap_data;
 
     public:
-        constexpr svo_vector() {}
-
         void push_back(const T& elem)
         {
             if (!is_heap_allocated())
