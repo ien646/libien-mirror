@@ -2,10 +2,15 @@
 
 #include <ctime>
 #include <ien/fs_utils.hpp>
+#include <ien/platform.hpp>
 
 #include <chrono>
 #include <cstdio>
 #include <string>
+
+#ifdef IEN_OS_WIN
+    #define timegm _mkgmtime
+#endif
 
 TEST_CASE("fs_utils")
 {
@@ -30,7 +35,7 @@ TEST_CASE("fs_utils")
                 tm.tm_hour = 1;
                 tm.tm_min = 3;
                 tm.tm_sec = 4;
-                std::time_t time = std::mktime(&tm);
+                std::time_t time = timegm(&tm);
                 REQUIRE(time == mtime);
             };
         };

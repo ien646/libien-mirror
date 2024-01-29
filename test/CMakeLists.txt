@@ -2,11 +2,12 @@ set(LIBIEN_TEST_SOURCES
     "algorithm.cpp"
     "arithmetic.cpp"
     "bit_tools.cpp"
-    "fs_utils.cpp"
+    #"fs_utils.cpp"
     "lang_utils.cpp"
     "net_utils.cpp"
     "serialization.cpp"
 	"str_utils.cpp"    
+    "svo_vector.cpp"
 )
 
 if(LIBIEN_BUILD_IMAGE)
