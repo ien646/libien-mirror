@@ -66,7 +66,7 @@ namespace ien
                 throw std::logic_error("Attempt to deserialize out of bounds data");
             }
 
-            const uint8_t* data = _iterator.data();
+            const uint8_t* data = _iterator.data() + _iterator.position();
             for (size_t i = 0; i < len; ++i)
             {
                 std::memcpy(dst, data, len);
