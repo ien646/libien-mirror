@@ -26,7 +26,7 @@ namespace ien
     {
         assert(w > 0 && h > 0);
         const size_t alloc_sz = w * h * channel_count();
-        _data = (uint8_t*)ien::aligned_alloc(alloc_sz, IEN_IMAGE_DATA_ALLOC_ALIGNMENT);
+        _data = (uint8_t*)malloc(alloc_sz, IEN_IMAGE_DATA_ALLOC_ALIGNMENT);
         if (_data == nullptr)
         {
             throw std::bad_alloc();
@@ -42,7 +42,7 @@ namespace ien
     {
         if (_data != nullptr)
         {
-            ien::aligned_free(_data);
+            free(_data);
         }
         _data = nullptr;
         _width = 0;
