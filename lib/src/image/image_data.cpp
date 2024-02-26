@@ -51,6 +51,11 @@ namespace ien
 
     image_data& image_data::operator=(image_data&& mvsrc) noexcept
     {
+        if (_data != nullptr)
+        {
+            free(_data);
+        }
+        
         _width = mvsrc._width;
         _height = mvsrc._height;
         _data = mvsrc._data;
