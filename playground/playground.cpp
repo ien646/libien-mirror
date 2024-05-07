@@ -1,6 +1,6 @@
+#include <ien/serialization.hpp>
+
 int main()
 {
-    ien::serializer ser;
-    ser.serialize<int>(0);
-    ser.serialize()
+    return 0;
 }

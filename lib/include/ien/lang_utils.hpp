@@ -182,7 +182,9 @@ namespace ien
         return val.data();
     }
 
+    /// @brief Obtain the first value in function arguments that has the same type as T
     template <typename T, typename... TArgs>
+        requires(std::is_same_v<T, TArgs> || ...)
     constexpr T select_template(TArgs... args)
     {
         return std::get<T>(std::tuple<TArgs...>(args...));
