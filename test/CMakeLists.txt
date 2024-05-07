@@ -3,6 +3,7 @@ set(LIBIEN_TEST_SOURCES
     "arithmetic.cpp"
     "bit_tools.cpp"
     #"fs_utils.cpp"
+    "initializers.cpp"
     "lang_utils.cpp"
     "net_utils.cpp"
     "serialization.cpp"
