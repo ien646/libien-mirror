@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ien/lang_utils.hpp"
+#include <ien/lang_utils.hpp>
 #include <ien/bits/str_utils/common.hpp>
 
 #include <limits>
