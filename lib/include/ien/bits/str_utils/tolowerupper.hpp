@@ -20,12 +20,12 @@ namespace ien
     template<concepts::StdAnyStrStrV T>
     std::basic_string<ien::underlying_char_t<T>> str_tolower(const T& str)
     {
-        return detail::str_tox(str, std::tolower);
+        return detail::str_tox(str, static_cast<int(*)(int)>(std::tolower));
     }
 
     template<concepts::StdAnyStrStrV T>
     std::basic_string<ien::underlying_char_t<T>> str_toupper(const T& str)
     {
-        return detail::str_tox(str, std::toupper);
+        return detail::str_tox(str, static_cast<int(*)(int)>(std::toupper));
     }
 }
