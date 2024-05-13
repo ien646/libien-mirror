@@ -2,6 +2,7 @@
 
 #include <ien/lang_utils.hpp>
 #include <ien/bits/str_utils/common.hpp>
+#include <ien/bits/str_utils/index_of.hpp>
 
 #include <limits>
 
