@@ -10,7 +10,7 @@ namespace ien
         TIndex result = std::min(index, container.size() - 1);
         if constexpr (std::is_signed_v<TIndex>)
         {
-            result = std::max(0, result);
+            result = std::max(static_cast<TIndex>(0), result);
         }
         return result;
     }
