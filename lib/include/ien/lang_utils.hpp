@@ -139,7 +139,11 @@ namespace ien
         template <typename T>
         concept IterableContainer = requires(T c) {
             c.begin();
-            c.end();
+        };
+
+        template<typename T>
+        concept SizedContainer = IterableContainer<T> && requires(T c) {
+            c.size();
         };
 
         template <typename T>
