@@ -23,6 +23,15 @@ namespace ien
     template <typename T, typename... TArgs>
     constexpr bool is_one_of_v = is_one_of<T, TArgs...>::value;
 
+    template <typename TTo, typename... TFrom>
+    struct all_convertible_to
+    {
+        static constexpr bool value = (std::is_convertible_v<TTo, TFrom> && ...);
+    };
+
+    template <typename TTo, typename... TFrom>
+    constexpr bool all_convertible_to_v = all_convertible_to<TTo, TFrom...>::value;
+
     template <typename>
     struct template_params
     {
@@ -137,14 +146,10 @@ namespace ien
         concept AnyStrOrChar = AnyStr<T> || AnyChar<T>;
 
         template <typename T>
-        concept IterableContainer = requires(T c) {
-            c.begin();
-        };
+        concept IterableContainer = requires(T c) { c.begin(); };
 
-        template<typename T>
-        concept SizedContainer = IterableContainer<T> && requires(T c) {
-            c.size();
-        };
+        template <typename T>
+        concept SizedContainer = IterableContainer<T> && requires(T c) { c.size(); };
 
         template <typename T>
         concept FlatContainer = requires(T c) {
@@ -155,14 +160,14 @@ namespace ien
         };
 
         template <typename T>
-        concept RandomAccessContainer = requires (T c) { c[0]; } || requires(T c) { c.at(0); };
+        concept RandomAccessContainer = requires(T c) { c[0]; } || requires(T c) { c.at(0); };
 
         template <typename T>
         concept HasPopBack = requires(T t) { t.pop_back(); };
 
         template <typename T>
         concept HasPushBack = requires(T t) { typename std::remove_cvref_t<T>::value_type; } &&
-                              requires(T t, typename std::remove_cvref_t<T>::value_type v) { t.push_back(v); };        
+                              requires(T t, typename std::remove_cvref_t<T>::value_type v) { t.push_back(v); };
     } // namespace concepts
 
     /* -- Miscellaneous -- */
