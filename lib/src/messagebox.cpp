@@ -2,8 +2,6 @@
 
 #include <ien/platform.hpp>
 
-#include <fmt/format.h>
-
 #if defined(IEN_OS_WIN)
     #include <windows.h>
 #elif defined(IEN_OS_LINUX)
@@ -11,6 +9,8 @@
 #else
     #include <iostream>
 #endif
+
+#include <format>
 
 namespace ien
 {
@@ -35,17 +35,17 @@ namespace ien
 #elif defined(IEN_OS_LINUX)
     bool show_error_messagebox(const std::string& text)
     {
-        return std::system(fmt::format("zenity --error --text=\"{}\" --title=Error", text).c_str()) == 0;
+        return std::system(std::format("zenity --error --text=\"{}\" --title=Error", text).c_str()) == 0;
     }
 
     bool show_warning_messagebox(const std::string& text)
     {
-        return std::system(fmt::format("zenity --warning --text=\"{}\" --title=Warning", text).c_str()) == 0;
+        return std::system(std::format("zenity --warning --text=\"{}\" --title=Warning", text).c_str()) == 0;
     }
 
     bool show_info_messagebox(const std::string& text)
     {
-        return std::system(fmt::format("zenity --info --text=\"{}\" --title=Info", text).c_str()) == 0;
+        return std::system(std::format("zenity --info --text=\"{}\" --title=Info", text).c_str()) == 0;
     }
 #else
     bool show_error_messagebox(const std::string& text)
