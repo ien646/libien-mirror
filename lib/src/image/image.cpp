@@ -8,8 +8,6 @@
 #include <ien/platform.hpp>
 #include <ien/serialization.hpp>
 
-#include <fmt/format.h>
-
 #include <stb_image.h>
 #include <stb_image_resize.h>
 #include <stb_image_write.h>
@@ -17,10 +15,8 @@
 #include <array>
 #include <cassert>
 #include <cstring>
-#include <filesystem>
-#include <fstream>
+#include <format>
 #include <optional>
-#include <span>
 #include <stdexcept>
 #include <string>
 #include <sys/types.h>
@@ -92,7 +88,7 @@ namespace ien
             _data = stbi_load(path.c_str(), &w, &h, &dummy, channel_count());
             if (_data == nullptr)
             {
-                throw std::logic_error(fmt::format("Unable to open image at '{}' ({})", path, stbi_failure_reason()));
+                throw std::logic_error(std::format("Unable to open image at '{}' ({})", path, stbi_failure_reason()));
             }
 
             _width = (size_t)w;
@@ -103,7 +99,7 @@ namespace ien
             std::optional<std::vector<uint8_t>> data = ien::read_file_binary(path);
             if (!data)
             {
-                throw std::logic_error(fmt::format("Unable to open image file at '{}'", path));
+                throw std::logic_error(std::format("Unable to open image file at '{}'", path));
             }
 
             if (data->size() < sizeof(raw_tagged_image_header))
