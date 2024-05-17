@@ -3,7 +3,8 @@
 #include <ien/platform.hpp>
 
 #if defined(IEN_OS_WIN)
-    #include <windows.h>
+    #include <ien/win32/windows.h>
+    #include <ien/str_utils.hpp>
 #elif defined(IEN_OS_LINUX)
     #include <cstdlib>
 #else
@@ -17,19 +18,22 @@ namespace ien
 #ifdef IEN_OS_WIN
     bool show_error_messagebox(const std::string& text)
     {
-        MessageBox(NULL, text.c_str(), "Error", MB_OK | MB_ICONERROR);
+        std::wstring wtext = ien::str_to_wstr(text);
+        MessageBoxW(NULL, wtext.c_str(), L"Error", MB_OK | MB_ICONERROR);
         return true;
     }
 
     bool show_warning_messagebox(const std::string& text)
     {
-        MessageBox(NULL, text.c_str(), "Error", MB_OK | MB_ICONWARNING);
+        std::wstring wtext = ien::str_to_wstr(text);
+        MessageBoxW(NULL, wtext.c_str(), L"Error", MB_OK | MB_ICONWARNING);
         return true;
     }
 
     bool show_info_messagebox(const std::string& text)
     {
-        MessageBox(NULL, text.c_str(), "Error", MB_OK | MB_ICONINFORMATION);
+        std::wstring wtext = ien::str_to_wstr(text);
+        MessageBoxW(NULL, wtext.c_str(), L"Error", MB_OK | MB_ICONINFORMATION);
         return true;
     }
 #elif defined(IEN_OS_LINUX)
