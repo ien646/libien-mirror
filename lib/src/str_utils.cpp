@@ -9,6 +9,11 @@ namespace ien
 #ifdef IEN_OS_WIN
     std::string wstr_to_str(std::wstring_view wstr)
     {
+        if(wstr.empty())
+        {
+            return {};
+        }
+
         std::string str((wstr.size() + 1) * 2, '\0');
         int ok = WideCharToMultiByte(
             CP_UTF8,
@@ -29,6 +34,11 @@ namespace ien
 
     std::wstring str_to_wstr(std::string_view str)
     {
+        if(str.empty())
+        {
+            return {};
+        }
+
         std::wstring wstr((str.size() + 1) * sizeof(wchar_t), L'\0');
         int ok = MultiByteToWideChar(
             CP_UTF8,
@@ -47,6 +57,11 @@ namespace ien
 
     std::wstring u8str_to_wstr(std::u8string_view u8str)
     {
+        if(u8str.empty())
+        {
+            return {};
+        }
+        
         std::wstring wstr((u8str.size() + 1) * sizeof(wchar_t), L'\0');
         int ok = MultiByteToWideChar(
             CP_UTF8,
