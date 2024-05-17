@@ -243,7 +243,7 @@ namespace ien
         {
             const auto row_width = image_format_channels(_format) * w;
             uint8_t* row_dst_ptr = result.data() + (py * row_width);
-            const uint8_t* row_src_ptr = data() + (py * image_format_channels(_format) * width()) + x;
+            const uint8_t* row_src_ptr = data() + (py * image_format_channels(_format) * width()) + (x * image_format_channels(_format));
             std::memcpy(row_dst_ptr, row_src_ptr, row_width);
         }
         return result;
