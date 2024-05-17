@@ -10,6 +10,10 @@ namespace ien
     std::string wstr_to_str(std::wstring_view wstr);
     std::wstring str_to_wstr(std::string_view wstr);
     std::wstring u8str_to_wstr(std::u8string_view wstr);
+
+    std::string wstr_to_str(wchar_t wstr);
+    std::wstring str_to_wstr(char str);
+    std::wstring u8str_to_wstr(char8_t u8str);
 #endif
 
     inline std::string u8str_to_str(std::u8string_view u8str)
@@ -23,7 +27,7 @@ namespace ien
     }
 
 #ifdef IEN_OS_WIN
-    template <concepts::AnyStr T>
+    template <concepts::AnyStrOrChar T>
     std::wstring xstr_to_wstr(const T& str)
     {
         if constexpr (std::is_same_v<underlying_char_t<T>, char>)
@@ -45,45 +49,24 @@ namespace ien
     }
 #endif
 
-    template <concepts::AnyStr TString>
+    template <concepts::AnyStrOrChar TString>
     std::string xstr_to_str(const TString& str)
     {
-        if constexpr (concepts::StdAnyStrStrV<TString>)
+        using char_type = underlying_char_t<TString>;
+        if constexpr (std::is_same_v<char_type, char>)
         {
-            using char_type = typename TString::value_type;
-            if constexpr (std::is_same_v<char_type, char>)
-            {
-                return std::string(str);
-            }
-            else if constexpr (std::is_same_v<char_type, char8_t>)
-            {
-                return u8str_to_str(str);
-            }
-#ifdef IEN_OS_WIN
-            else if constexpr (std::is_same_v<char_type, wchar_t>)
-            {
-                return wstr_to_str(str);
-            }
-#endif
+            return std::string(str);
         }
-        else if constexpr (concepts::RawAnyStr<TString>)
+        else if constexpr (std::is_same_v<char_type, char8_t>)
         {
-            using char_type = raw_str_char_t<TString>;
-            if constexpr (std::is_same_v<char_type, char>)
-            {
-                return std::string(str);
-            }
-            else if constexpr (std::is_same_v<char_type, char8_t>)
-            {
-                return u8str_to_str(str);
-            }
-#ifdef IEN_OS_WIN
-            else if constexpr (std::is_same_v<char_type, wchar_t>)
-            {
-                return wstr_to_str(str);
-            }
-#endif
+            return u8str_to_str(str);
         }
+#ifdef IEN_OS_WIN
+        else if constexpr (std::is_same_v<char_type, wchar_t>)
+        {
+            return wstr_to_str(str);
+        }
+#endif
         throw std::logic_error("Unhandled xstr_to_str conversion");
     }
 } // namespace ien
