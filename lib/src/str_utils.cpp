@@ -54,12 +54,28 @@ namespace ien
             reinterpret_cast<const char*>(u8str.data()),
             static_cast<int>(u8str.size()),
             wstr.data(),
-            static_cast<int>(wstr.size()));
+            static_cast<int>(wstr.size())
+        );
         if (!ok)
         {
             throw std::logic_error("Failure converting string to wide-string");
         }
         return std::wstring(wstr.c_str());
     }
+
+    std::string wstr_to_str(wchar_t wstr)
+    {
+        return wstr_to_str(std::wstring_view(&wstr, 1));
+    }
+
+    std::wstring str_to_wstr(char str)
+    {
+        return str_to_wstr(std::string_view(&str, 1));
+    }
+
+    std::wstring u8str_to_wstr(char8_t u8str)
+    {
+        return u8str_to_wstr(std::u8string_view(&u8str, 1));
+    }
 #endif
-}
+} // namespace ien
