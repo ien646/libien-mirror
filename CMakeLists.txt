@@ -40,12 +40,6 @@ if(LIBIEN_BUILD_TESTS)
     )
 endif()
 
-CPMAddPackage(
-    NAME fmt
-    GIT_REPOSITORY "https://github.com/fmtlib/fmt"
-    GIT_TAG "10.1.1"
-)
-
 add_subdirectory("third-party")
 add_subdirectory("lib")
 

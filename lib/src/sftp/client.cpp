@@ -6,13 +6,12 @@
 #include <ien/net_utils.hpp>
 #include <ien/platform.hpp>
 
-#include <fmt/format.h>
-
 #include <libssh2.h>
 #include <libssh2_sftp.h>
 
 #include <array>
 #include <climits>
+#include <format>
 #include <functional>
 #include <iterator>
 #include <limits>
@@ -41,7 +40,7 @@ void throw_sftp_error(const std::string& msg, int error_code, LIBSSH2_SFTP* sess
     if (error_code == LIBSSH2_ERROR_SFTP_PROTOCOL)
     {
         unsigned long sftp_err = libssh2_sftp_last_error(session);
-        throw std::logic_error(fmt::format("{} | SFTP protocol error: {}", msg, ien::sftp::error_to_string(sftp_err)));
+        throw std::logic_error(std::format("{} | SFTP protocol error: {}", msg, ien::sftp::error_to_string(sftp_err)));
     }
     throw std::logic_error(msg);
 }
@@ -259,13 +258,13 @@ namespace ien::sftp
         {
             wrap_sftp_call(
                 libssh2_sftp_unlink(_sftp_session, remote_path.c_str()),
-                fmt::format("Unable to remove previous original file: {}", remote_path)
+                std::format("Unable to remove previous original file: {}", remote_path)
             );
         }
 
         wrap_sftp_call(
             libssh2_sftp_rename(_sftp_session, temp_path.c_str(), remote_path.c_str()),
-            fmt::format("Unable to rename temporary file from '{}' to '{}'", temp_path, remote_path)
+            std::format("Unable to rename temporary file from '{}' to '{}'", temp_path, remote_path)
         );
     }
 
