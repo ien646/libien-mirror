@@ -234,4 +234,18 @@ namespace ien
     {
         return image_data::absolute_difference(other);
     }
+
+    ien::image image::copy_rect(size_t x, size_t y, size_t w, size_t h) const
+    {
+        ien::image result(w, h, _format);
+
+        for(size_t py = 0; py < h; ++py)
+        {
+            const auto row_width = image_format_channels(_format) * w;
+            uint8_t* row_dst_ptr = result.data() + (py * row_width);
+            const uint8_t* row_src_ptr = data() + (py * image_format_channels(_format) * width()) + x;
+            std::memcpy(row_dst_ptr, row_src_ptr, row_width);
+        }
+        return result;
+    }
 } // namespace ien

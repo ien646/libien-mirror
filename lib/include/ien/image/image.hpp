@@ -51,5 +51,7 @@ namespace ien
 		void flip_axis_y();
 
 		float absolute_difference(const image& other) const;
+
+		[[nodiscard]] ien::image copy_rect(size_t x, size_t y, size_t w, size_t h) const; 
 	};
 }

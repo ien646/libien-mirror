@@ -7,6 +7,7 @@
 #include <bit>
 #include <cassert>
 #include <cstdlib>
+#include <cstring>
 #include <new>
 #include <stdexcept>
 #include <utility>
@@ -319,6 +320,5 @@ namespace ien
             uint8_t* row_down = _data + (row_size * (_height - i - 1));
             std::swap_ranges(row_up, row_up + row_size, row_down);
         }
-    }
-
+    }    
 } // namespace ien
