@@ -12,6 +12,7 @@ option(LIBIEN_BUILD_IMAGE "Build image library" OFF)
 option(LIBIEN_BUILD_SFTP "Build sftp library" OFF)
 option(LIBIEN_BUILD_FONTS "Build fonts library" OFF)
 option(LIBIEN_ENABLE_PLAYGROUND "Enable playground executable" OFF)
+option(LIBIEN_PUBLIC_STB "Set stb library as public" OFF)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
