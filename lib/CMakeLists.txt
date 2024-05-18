@@ -25,7 +25,11 @@ target_sources(libien PRIVATE
         target_compile_definitions(libien PUBLIC "LIBIEN_BUILD_FONTS")
     endif()
     
-    target_link_libraries(libien PRIVATE stb)
+    if(LIBIEN_PUBLIC_STB)
+        target_link_libraries(libien PUBLIC stb)
+    else()
+        target_link_libraries(libien PRIVATE stb)
+    endif()
 endif()
 
 if(MINGW)
