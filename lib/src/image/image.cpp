@@ -153,6 +153,7 @@ namespace ien
     image image::resize(size_t width, size_t height, resize_filter filter) const
     {
         assert(width > 0 && height > 0);
+        assert(width <= _width && height <= _height);
 
         image result(width, height, _format);
         const int ok = stbir_resize_uint8_generic(
@@ -237,6 +238,9 @@ namespace ien
 
     ien::image image::copy_rect(size_t x, size_t y, size_t w, size_t h) const
     {
+        assert(w + x <= width());
+        assert(h + y <= height());
+        
         ien::image result(w, h, _format);
 
         for(size_t py = 0; py < h; ++py)
