@@ -67,4 +67,6 @@ namespace ien
 	std::string get_current_user_homedir();
 
  	std::string format_timestamp_iso8601(time_t ts);
+
+	bool exists_in_envpath(const std::string& path);
 }
