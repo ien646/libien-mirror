@@ -33,8 +33,8 @@ using utimbuf_t = struct utimbuf;
 #endif
 
 #ifdef IEN_OS_UNIX
-    #include <sys/types.h>
     #include <pwd.h>
+    #include <sys/types.h>
 #endif
 
 namespace ien
@@ -352,7 +352,7 @@ namespace ien
 #else
     #ifdef IEN_POSIX
         passwd* pwd = getpwuid(getuid());
-        if(pwd)
+        if (pwd)
         {
             return pwd->pw_dir;
         }
@@ -370,5 +370,30 @@ namespace ien
     {
         std::chrono::time_point tp = std::chrono::system_clock::time_point(std::chrono::seconds(ts));
         return std::format(std::locale::classic(), "{:%F %T}", tp);
+    }
+
+    bool exists_in_envpath(const std::string& path)
+    {
+        if (path.empty())
+        {
+            return false;
+        }
+
+        const auto envpath = std::getenv("PATH");
+        if (!envpath)
+        {
+            return false;
+        }
+
+        const auto path_lines = ien::str_splitv(envpath, ':');
+        for (const auto& line : path_lines)
+        {
+            const auto test_path = std::string(line) + (line.ends_with('/') || line.ends_with('\\') ? "" : "/") + path;
+            if(std::filesystem::exists(test_path))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 } // namespace ien
