@@ -167,7 +167,7 @@ namespace ien::sftp
 
     void client::get_file(const std::string& remote_path, const std::string& local_path, std::function<void(int64_t)> progress_callback) const
     {
-        ien::unique_file_descriptor fd(local_path, "wb");
+        ien::unique_file_descriptor fd(local_path, unique_file_descriptor_mode::WRITE_BINARY);
         if (!fd.is_valid())
         {
             throw std::logic_error("Unable to open local file for writing: " + local_path);
@@ -201,7 +201,7 @@ namespace ien::sftp
 
     void client::put_file(const std::string& local_path, const std::string& remote_path, std::function<void(int64_t)> progress_callback) const
     {
-        ien::unique_file_descriptor fd(local_path, "rb");
+        ien::unique_file_descriptor fd(local_path, unique_file_descriptor_mode::READ_BINARY);
         if (!fd.is_valid())
         {
             throw std::logic_error("Unable to open local file for reading: " + local_path);
