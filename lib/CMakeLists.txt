@@ -9,6 +9,8 @@ add_library(libien
     "src/str_utils.cpp"
     "src/threading.cpp"
     "src/win32/windows.cpp"
+
+    "src/bits/io_utils/unique_file_descriptor.cpp"
 )
 add_library(libien::libien ALIAS libien)
 
