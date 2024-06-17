@@ -334,17 +334,17 @@ namespace ien
     }
 #endif
 
-    std::string get_current_user_homedir()
+     std::string get_current_user_homedir()
     {
 #ifdef IEN_OS_WIN
-        const char* userprofile = std::getenv("USERPROFILE");
+        const wchar_t* userprofile = _wgetenv("USERPROFILE");
         if (userprofile)
         {
             return userprofile;
         }
 
-        const char* homedrive = std::getenv("HOMEDRIVE");
-        const char* homepath = std::getenv("HOMEPATH");
+        const wchar_t* homedrive = _wgetenv("HOMEDRIVE");
+        const wchar_t* homepath = _wgetenv("HOMEPATH");
         if (homedrive && homepath)
         {
             return wstr_to_str((std::filesystem::path(homedrive) / homepath).wstring());
