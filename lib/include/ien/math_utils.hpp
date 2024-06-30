@@ -4,22 +4,13 @@
 
 namespace ien
 {
-    template <
-        concepts::Arithmetic TValue,
-        concepts::Arithmetic TRange0,
-        concepts::Arithmetic TRange1,
-        concepts::Arithmetic TRange2,
-        concepts::Arithmetic TRange3,
-        concepts::FloatingPoint TIntermediate = double>
-        requires(ien::all_convertible_to_v<TValue, TRange0, TRange1, TRange2, TRange3>)
-    TValue remap(TValue value, TRange0 source_start, TRange1 source_end, TRange2 output_start, TRange3 output_end)
+    constexpr float remap(float value, float source_start, float source_end, float output_start, float output_end)
     {
-        const auto val = static_cast<TIntermediate>(value);
-        const auto src_st = static_cast<TIntermediate>(source_start);
-        const auto src_en = static_cast<TIntermediate>(source_end);
-        const auto out_st = static_cast<TIntermediate>(output_start);
-        const auto out_en = static_cast<TIntermediate>(output_end);
+        return output_start + (output_end - output_start) * ((value - source_start) / (source_end - source_start));
+    }
 
-        return out_st + (out_en - out_st) * ((val - src_st) / (src_en - src_st));
+    constexpr double remapd(double value, double source_start, double source_end, double output_start, double output_end)
+    {
+        return output_start + (output_end - output_start) * ((value - source_start) / (source_end - source_start));
     }
 } // namespace ien
