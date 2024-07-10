@@ -15,4 +15,10 @@ namespace ien
 
         return generate(std::make_index_sequence<Len>());
     }
+
+    template <typename T, typename... Args>
+    constexpr std::array<T, sizeof...(Args)> make_array(Args&&... args)
+    {
+        return { std::forward<Args>(args)... };
+    }
 } // namespace ien
