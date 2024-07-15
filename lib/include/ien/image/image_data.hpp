@@ -56,6 +56,6 @@ namespace ien
 
         float absolute_difference(const image_data& other) const;
 
-        void flip_axis_y();        
+        void flip_axis_y();
     };
 }
