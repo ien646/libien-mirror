@@ -141,7 +141,7 @@ namespace ien
         }
     }
 
-    image::image(const unsigned char* data, size_t width, size_t height, image_format format)
+    image::image(const void* data, size_t width, size_t height, image_format format)
         : image_data(width, height, format)
     {
         assert(data != nullptr);

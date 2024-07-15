@@ -35,7 +35,7 @@ namespace ien
 	public:
 		image(size_t width, size_t height, image_format = image_format::RGBA);
 		explicit image(const std::string& path, image_format fmt = image_format::RGBA, image_load_mode load_mode = image_load_mode::IMAGE);
-		image(const unsigned char* data, size_t width, size_t height, image_format format);
+		image(const void* data, size_t width, size_t height, image_format format);
 		image(const image& cp_src) = delete;
 		image(image&& mv_src) = default;
 		image& operator=(image&& mvsrc) = default;
