@@ -48,6 +48,10 @@ namespace ien
 	std::string get_file_directory(const std::u8string& path);
 	std::string get_file_directory(const std::filesystem::path& path);
 
+	std::string remove_trailing_dir_separator(const std::string& path);
+	std::string remove_trailing_dir_separator(const std::u8string& path);
+	std::string remove_trailing_dir_separator(const std::filesystem::path& path);
+
 #ifdef IEN_OS_WIN
 	size_t get_file_size(const std::wstring& path);
 	time_t get_file_atime(const std::wstring& path);
@@ -62,11 +66,12 @@ namespace ien
 	std::string get_file_name(const std::wstring& path);
 	std::string get_file_extension(const std::wstring& path);
 	std::string get_file_directory(const std::wstring& path);
+	std::string remove_trailing_dir_separator(const std::wstring& path);
 #endif
 
 	std::string get_current_user_homedir();
 
  	std::string format_timestamp_iso8601(time_t ts);
 
-	bool exists_in_envpath(const std::string& path);
+	bool exists_in_envpath(const std::string& path);	
 }
