@@ -15,7 +15,6 @@
     #include <sys/utime.h>
 #endif
 
-#include <array>
 #include <chrono>
 #include <cstdlib>
 #include <filesystem>
@@ -322,7 +321,7 @@ namespace ien
 #endif
         return u8str_to_str(path);
     }
-}
+} // namespace ien
 
 std::string remove_trailing_dir_separator(const std::filesystem::path& path)
 {
@@ -386,7 +385,7 @@ std::string get_file_directory(const std::wstring& path)
 }
 std::string remove_trailing_dir_separator(const std::wstring& path)
 {
-    if(path.ends_with('/') || path.ends_with('\\'))
+    if (path.ends_with('/') || path.ends_with('\\'))
     {
         return wstr_to_str(path.substr(0, path.size() - 1));
     }
@@ -457,4 +456,3 @@ bool exists_in_envpath(const std::string& path)
     }
     return false;
 }
-} // namespace ien
