@@ -321,136 +321,136 @@ namespace ien
 #endif
         return u8str_to_str(path);
     }
-} // namespace ien
 
-std::string remove_trailing_dir_separator(const std::filesystem::path& path)
-{
+    std::string remove_trailing_dir_separator(const std::filesystem::path& path)
+    {
 #ifdef IEN_OS_WIN
-    const auto wpath = path.wstring();
-    if (wpath.ends_with(L'/') || wpath.ends_with(L'\\'))
-    {
-        return wstr_to_str(wpath.substr(0, wpath.size() - 1));
-    }
-    return wstr_to_str(wpath);
-#else
-    const auto spath = path.string();
-    if (spath.ends_with('/'))
-    {
-        return spath.substr(0, spath.size() - 1);
-    }
-    return spath;
-#endif
-}
-
-#ifdef IEN_OS_WIN
-size_t get_file_size(const std::wstring& path)
-{
-    return _get_file_size(path);
-}
-time_t get_file_atime(const std::wstring& path)
-{
-    return _get_atime(path);
-}
-time_t get_file_mtime(const std::wstring& path)
-{
-    return _get_mtime(path);
-}
-bool set_file_atime(const std::wstring& path, time_t atime)
-{
-    return _set_atime(path, atime);
-}
-bool set_file_mtime(const std::wstring& path, time_t mtime)
-{
-    return _set_mtime(path, mtime);
-}
-bool file_exists(const std::wstring& path)
-{
-    return _file_exists(path);
-}
-bool directory_exists(const std::wstring& path)
-{
-    return _dir_exists(path);
-}
-std::string get_file_name(const std::wstring& path)
-{
-    return wstr_to_str(fs::path(path).filename().wstring());
-}
-std::string get_file_extension(const std::wstring& path)
-{
-    return wstr_to_str(fs::path(path).extension().wstring());
-}
-std::string get_file_directory(const std::wstring& path)
-{
-    return wstr_to_str(fs::path(path).parent_path().wstring());
-}
-std::string remove_trailing_dir_separator(const std::wstring& path)
-{
-    if (path.ends_with('/') || path.ends_with('\\'))
-    {
-        return wstr_to_str(path.substr(0, path.size() - 1));
-    }
-    return wstr_to_str(path);
-}
-
-#endif
-
-std::string get_current_user_homedir()
-{
-#ifdef IEN_OS_WIN
-    const wchar_t* userprofile = _wgetenv(L"USERPROFILE");
-    if (userprofile)
-    {
-        return userprofile;
-    }
-
-    const wchar_t* homedrive = _wgetenv(L"HOMEDRIVE");
-    const wchar_t* homepath = _wgetenv(L"HOMEPATH");
-    if (homedrive && homepath)
-    {
-        return wstr_to_str((std::filesystem::path(homedrive) / homepath).wstring());
-    }
-#elifdef IEN_POSIX
-    passwd* pwd = getpwuid(getuid());
-    if (pwd)
-    {
-        return pwd->pw_dir;
-    }
-    const char* home = std::getenv("HOME");
-    if (home)
-    {
-        return home;
-    }
-#endif
-    throw std::logic_error("Unable to find home directory for current user");
-}
-
-std::string format_timestamp_iso8601(time_t ts)
-{
-    std::chrono::time_point tp = std::chrono::system_clock::time_point(std::chrono::seconds(ts));
-    return std::format(std::locale::classic(), "{:%F %T}", tp);
-}
-
-bool exists_in_envpath(const std::string& path)
-{
-    if (path.empty())
-    {
-        return false;
-    }
-
-    const auto envpath = std::getenv("PATH");
-    if (!envpath)
-    {
-        return false;
-    }
-
-    const auto path_lines = ien::str_splitv(envpath, ':');
-    for (const auto& line : path_lines)
-    {
-        const auto test_path = std::string(line) + (line.ends_with('/') || line.ends_with('\\') ? "" : "/") + path;
-        if (std::filesystem::exists(test_path))
+        const auto wpath = path.wstring();
+        if (wpath.ends_with(L'/') || wpath.ends_with(L'\\'))
         {
-            return true;
+            return wstr_to_str(wpath.substr(0, wpath.size() - 1));
         }
+        return wstr_to_str(wpath);
+#else
+        const auto spath = path.string();
+        if (spath.ends_with('/'))
+        {
+            return spath.substr(0, spath.size() - 1);
+        }
+        return spath;
+#endif
     }
-    return false;
-}
+
+#ifdef IEN_OS_WIN
+    size_t get_file_size(const std::wstring& path)
+    {
+        return _get_file_size(path);
+    }
+    time_t get_file_atime(const std::wstring& path)
+    {
+        return _get_atime(path);
+    }
+    time_t get_file_mtime(const std::wstring& path)
+    {
+        return _get_mtime(path);
+    }
+    bool set_file_atime(const std::wstring& path, time_t atime)
+    {
+        return _set_atime(path, atime);
+    }
+    bool set_file_mtime(const std::wstring& path, time_t mtime)
+    {
+        return _set_mtime(path, mtime);
+    }
+    bool file_exists(const std::wstring& path)
+    {
+        return _file_exists(path);
+    }
+    bool directory_exists(const std::wstring& path)
+    {
+        return _dir_exists(path);
+    }
+    std::string get_file_name(const std::wstring& path)
+    {
+        return wstr_to_str(fs::path(path).filename().wstring());
+    }
+    std::string get_file_extension(const std::wstring& path)
+    {
+        return wstr_to_str(fs::path(path).extension().wstring());
+    }
+    std::string get_file_directory(const std::wstring& path)
+    {
+        return wstr_to_str(fs::path(path).parent_path().wstring());
+    }
+    std::string remove_trailing_dir_separator(const std::wstring& path)
+    {
+        if (path.ends_with('/') || path.ends_with('\\'))
+        {
+            return wstr_to_str(path.substr(0, path.size() - 1));
+        }
+        return wstr_to_str(path);
+    }
+
+#endif
+
+    std::string get_current_user_homedir()
+    {
+#ifdef IEN_OS_WIN
+        const wchar_t* userprofile = _wgetenv(L"USERPROFILE");
+        if (userprofile)
+        {
+            return userprofile;
+        }
+
+        const wchar_t* homedrive = _wgetenv(L"HOMEDRIVE");
+        const wchar_t* homepath = _wgetenv(L"HOMEPATH");
+        if (homedrive && homepath)
+        {
+            return wstr_to_str((std::filesystem::path(homedrive) / homepath).wstring());
+        }
+#elif defined(IEN_POSIX)
+        passwd* pwd = getpwuid(getuid());
+        if (pwd)
+        {
+            return pwd->pw_dir;
+        }
+        const char* home = std::getenv("HOME");
+        if (home)
+        {
+            return home;
+        }
+#endif
+        throw std::logic_error("Unable to find home directory for current user");
+    }
+
+    std::string format_timestamp_iso8601(time_t ts)
+    {
+        std::chrono::time_point tp = std::chrono::system_clock::time_point(std::chrono::seconds(ts));
+        return std::format(std::locale::classic(), "{:%F %T}", tp);
+    }
+
+    bool exists_in_envpath(const std::string& path)
+    {
+        if (path.empty())
+        {
+            return false;
+        }
+
+        const auto envpath = std::getenv("PATH");
+        if (!envpath)
+        {
+            return false;
+        }
+
+        const auto path_lines = ien::str_splitv(envpath, ':');
+        for (const auto& line : path_lines)
+        {
+            const auto test_path = std::string(line) + (line.ends_with('/') || line.ends_with('\\') ? "" : "/") + path;
+            if (std::filesystem::exists(test_path))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+} // namespace ien
