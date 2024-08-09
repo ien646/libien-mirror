@@ -409,14 +409,12 @@ std::string get_current_user_homedir()
     {
         return wstr_to_str((std::filesystem::path(homedrive) / homepath).wstring());
     }
-#else
-    #ifdef IEN_POSIX
+#elifdef IEN_POSIX
     passwd* pwd = getpwuid(getuid());
     if (pwd)
     {
         return pwd->pw_dir;
     }
-    #endif
     const char* home = std::getenv("HOME");
     if (home)
     {
