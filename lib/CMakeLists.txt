@@ -16,7 +16,6 @@ add_library(libien::libien ALIAS libien)
 
 if(LIBIEN_BUILD_IMAGE OR LIBIEN_BUILD_FONTS)
 target_sources(libien PRIVATE 
-        "src/image/image_data.cpp"
         "src/image/image.cpp"
         "src/image/image_ycbcr.cpp"
     )
