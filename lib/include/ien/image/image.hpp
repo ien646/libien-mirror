@@ -46,6 +46,7 @@ namespace ien
         image(const image& cp_src) = delete;
         image(image&& mv_src) = default;
         image& operator=(image&& mvsrc) = default;
+        virtual ~image();
 
         [[nodiscard]] image resize(size_t width, size_t height, resize_filter = resize_filter::DEFAULT) const;
 
