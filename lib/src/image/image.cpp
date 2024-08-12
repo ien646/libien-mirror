@@ -137,6 +137,25 @@ namespace ien
         std::memcpy(_data, data, width * height * channel_count());
     }
 
+    image::image(image&& mv_src) noexcept
+    {
+        *this = std::move(mv_src);
+    }
+
+    image& image::operator=(image&& mvsrc) noexcept
+    {
+        _data = mvsrc._data;
+        _width = mvsrc._width;
+        _height = mvsrc._height;
+        _format = mvsrc._format;
+
+        mvsrc._data = 0;
+        mvsrc._width = 0;
+        mvsrc._height = 0;
+
+        return *this;
+    }
+
     image image::resize(size_t width, size_t height, resize_filter filter) const
     {
         assert(width > 0 && height > 0);
@@ -144,19 +163,19 @@ namespace ien
 
         image result(width, height, _format);
         const int ok = stbir_resize(
-            _data,
-            (int)_width,
-            (int)_height,
-            0,
-            result._data,
-            width,
-            height,
-            0,
-            static_cast<stbir_pixel_layout>(channel_count()),
-            stbir_datatype::STBIR_TYPE_UINT8,
-            stbir_edge::STBIR_EDGE_WRAP,
-            static_cast<stbir_filter>(filter)
-        ) != 0;
+                           _data,
+                           (int)_width,
+                           (int)_height,
+                           0,
+                           result._data,
+                           width,
+                           height,
+                           0,
+                           static_cast<stbir_pixel_layout>(channel_count()),
+                           stbir_datatype::STBIR_TYPE_UINT8,
+                           stbir_edge::STBIR_EDGE_WRAP,
+                           static_cast<stbir_filter>(filter)
+                       ) != 0;
 
         if (ok == 0)
         {
