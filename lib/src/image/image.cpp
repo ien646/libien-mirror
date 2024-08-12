@@ -66,6 +66,7 @@ namespace ien
         , _height(height)
         , _format(fmt)
     {
+        _data = reinterpret_cast<uint8_t*>(malloc(_width * _height * image_format_channels(_format)));
         assert(width > 0 && height > 0);
     }
 
@@ -133,11 +134,25 @@ namespace ien
         }
     }
 
+    image::~image()
+    {
+        if(_data != nullptr)
+        {
+            free(_data);
+        }
+        _width = 0;
+        _height = 0;
+    }
+
     image::image(const void* data, size_t width, size_t height, image_format format)
-        : image(width, height, format)
+        : _width(width)
+        , _height(height)
+        , _format(format)
     {
         assert(data != nullptr);
         assert(width > 0 && height > 0);
+
+        _data = reinterpret_cast<uint8_t*>(malloc(_width * _height * image_format_channels(_format)));
 
         std::memcpy(_data, data, width * height * channel_count());
     }
