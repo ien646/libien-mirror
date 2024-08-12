@@ -13,7 +13,7 @@ IEN_WARNINGS_DISABLE_BEGIN
     #include "../include/stb_image.h"
 
     #define STB_IMAGE_RESIZE_IMPLEMENTATION
-    #include "../include/stb_image_resize.h"
+    #include "../include/stb_image_resize2.h"
 
     #define STB_IMAGE_WRITE_IMPLEMENTATION
     #include "../include/stb_image_write.h"
