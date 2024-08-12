@@ -268,7 +268,7 @@ namespace ien
         return result;
     }
 
-    image image::cast_format(image_format target_format)
+    image image::cast_format(image_format target_format) const
     {
         if (_format == target_format)
         {
