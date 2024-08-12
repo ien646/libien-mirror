@@ -239,10 +239,9 @@ namespace ien
 
         for (size_t py = 0; py < h; ++py)
         {
-            uint8_t* row_dst_ptr = result.data() + (py * image_format_channels(_format) * w);
-            const uint8_t* row_src_ptr = data() + (py * image_format_channels(_format) * width()) +
-                                         (x * image_format_channels(_format));
-            std::memcpy(row_dst_ptr, row_src_ptr, (py * image_format_channels(_format) * w));
+            uint8_t* row_dst_ptr = result.data(0, py);
+            const uint8_t* row_src_ptr = data(x, y + py);
+            std::memcpy(row_dst_ptr, row_src_ptr, image_format_channels(_format) * w);
         }
         return result;
     }
