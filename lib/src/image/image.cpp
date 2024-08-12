@@ -119,6 +119,7 @@ namespace ien
         if (_data != nullptr)
         {
             free(_data);
+            _data = nullptr;
         }
         _width = 0;
         _height = 0;
