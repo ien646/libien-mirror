@@ -468,4 +468,35 @@ namespace ien
             std::swap_ranges(row_up, row_up + row_size, row_down);
         }
     }
+
+    image image::pad(uint32_t x, uint32_t y, uint32_t rgba) const
+    {
+        image result(_width + x, _height + x, _format);
+        const auto source_row_size = _width * image_format_channels(_format);
+
+        for(size_t row = 0; row < _height; ++row)
+        {
+            auto* target_ptr = result.data(0, row);
+            std::memcpy(target_ptr, data(0, row), source_row_size);
+            for(size_t i = 0; i < image_format_channels(_format); ++i)
+            {
+                target_ptr[source_row_size + i] = rgba >> (8 * (3 - i));
+            }
+        }
+
+        std::vector<uint8_t> padded_row_data;
+        padded_row_data.resize((_width + x) * image_format_channels(_format));
+
+        for(size_t i = 0; i < padded_row_data.size(); ++i)
+        {
+            padded_row_data[i] = rgba >> (8 * (3 - i));
+        }
+
+        for(size_t i = 0; i < y; ++i)
+        {
+            std::memcpy(result.data(0, _height + i), padded_row_data.data(), padded_row_data.size());
+        }
+
+        return result;
+    }
 } // namespace ien

@@ -92,6 +92,8 @@ namespace ien
 
         void flip_axis_y();
 
+        image pad(uint32_t x, uint32_t y, uint32_t rgba) const;
+
     protected:
         uint8_t* _data = nullptr;
         size_t _width = 0;
