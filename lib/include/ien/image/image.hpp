@@ -45,8 +45,8 @@ namespace ien
         );
         image(const void* data, size_t width, size_t height, image_format format);
         image(const image& cp_src) = delete;
-        image(image&& mv_src) = default;
-        image& operator=(image&& mvsrc) = default;
+        image(image&& mv_src) noexcept;
+        image& operator=(image&& mvsrc) noexcept;
         virtual ~image();
 
         [[nodiscard]] image resize(size_t width, size_t height, resize_filter = resize_filter::DEFAULT) const;
