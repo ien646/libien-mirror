@@ -8,7 +8,7 @@
 #include <ien/serialization.hpp>
 
 #include <stb_image.h>
-#include <stb_image_resize.h>
+#include <stb_image_resize2.h>
 #include <stb_image_write.h>
 
 #include <array>
@@ -40,26 +40,6 @@ namespace ien
     };
 #pragma pack(pop)
     static_assert(sizeof(raw_tagged_image_header) == 13);
-
-    constexpr stbir_filter filter2stbir(resize_filter f)
-    {
-        switch (f)
-        {
-        case resize_filter::BOX:
-            return STBIR_FILTER_BOX;
-        case resize_filter::CATMULL_ROM:
-            return STBIR_FILTER_CATMULLROM;
-        case resize_filter::CUBIC_SPLINE:
-            return STBIR_FILTER_CUBICBSPLINE;
-        case resize_filter::MITCHELL:
-            return STBIR_FILTER_MITCHELL;
-        case resize_filter::TRIANGLE:
-            return STBIR_FILTER_TRIANGLE;
-        case resize_filter::DEFAULT:
-        default:
-            return STBIR_FILTER_DEFAULT;
-        }
-    }
 
     image::image(size_t width, size_t height, image_format fmt)
         : _width(width)
@@ -136,7 +116,7 @@ namespace ien
 
     image::~image()
     {
-        if(_data != nullptr)
+        if (_data != nullptr)
         {
             free(_data);
         }
@@ -163,7 +143,7 @@ namespace ien
         assert(width <= _width && height <= _height);
 
         image result(width, height, _format);
-        const int ok = stbir_resize_uint8_generic(
+        const int ok = stbir_resize(
             _data,
             (int)_width,
             (int)_height,
@@ -172,14 +152,11 @@ namespace ien
             width,
             height,
             0,
-            (int)channel_count(),
-            3,
-            0,
-            STBIR_EDGE_WRAP,
-            filter2stbir(filter),
-            STBIR_COLORSPACE_SRGB,
-            nullptr
-        );
+            static_cast<stbir_pixel_layout>(channel_count()),
+            stbir_datatype::STBIR_TYPE_UINT8,
+            stbir_edge::STBIR_EDGE_WRAP,
+            static_cast<stbir_filter>(filter)
+        ) != 0;
 
         if (ok == 0)
         {
@@ -250,7 +227,7 @@ namespace ien
         return result;
     }
 
-        image image::extract_channel(size_t channel_index) const
+    image image::extract_channel(size_t channel_index) const
     {
         assert(channel_index <= 4);
         if (channel_index >= channel_count())
