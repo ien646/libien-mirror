@@ -21,4 +21,20 @@ namespace ien
     {
         return { std::forward<Args>(args)... };
     }
+
+    namespace detail
+    {
+        template <typename T, typename TResult>
+        constexpr bool is_convertible_or_invoke_result = std::is_convertible_v<T, TResult> ||
+                                                         (std::is_invocable_v<T> &&
+                                                          std::is_convertible_v<std::invoke_result_t<T>, TResult>)
+    }
+
+    template <typename TResult, typename TA, typename TB>
+        requires(detail::is_convertible_or_invoke_result<TA, TResult> && detail::is_convertible_or_invoke_result<TB, TResult>)
+    TResult conditional_init(bool cond, TA&& a, TB&& b)
+    {
+        return cond ? (std::is_invocable_v<TA> ? a() : std::forward<TA>(a))
+                    : (std::is_invocable_v<TB> ? b() : std::forward<TB>(b));
+    }
 } // namespace ien
