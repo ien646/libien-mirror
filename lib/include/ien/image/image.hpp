@@ -85,7 +85,7 @@ namespace ien
 
         image extract_channel(size_t channel_index) const;
 
-        image cast_format(image_format target_format);
+        image cast_format(image_format target_format) const;
 
         void shuffle(const image_shuffle&);
 
