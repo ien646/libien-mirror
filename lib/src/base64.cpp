@@ -5,7 +5,7 @@
 
 const std::string b64charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-std::string ien::base64::encode(const uint8_t *src, size_t len)
+std::string ien::base64::encode(const void* src, size_t len)
 {
     uint8_t* out;
     uint8_t* pos;
@@ -16,16 +16,19 @@ std::string ien::base64::encode(const uint8_t *src, size_t len)
 
     olen = 4 * ((len + 2) / 3); /* 3-byte blocks to 4-byte */
 
-    if (olen < len) { return { }; }
+    if (olen < len)
+    {
+        return {};
+    }
 
     std::string result;
     result.resize(olen);
     out = (unsigned char*)&result[0];
 
-    end = src + len;
-    in = src;
+    end = reinterpret_cast<const uint8_t*>(src) + len;
+    in = reinterpret_cast<const uint8_t*>(src);
     pos = out;
-    while(end - in >= 3)
+    while (end - in >= 3)
     {
         *pos++ = b64charset[in[0] >> 2];
         *pos++ = b64charset[((in[0] & 0x03) << 4) | (in[1] >> 4)];
@@ -34,15 +37,17 @@ std::string ien::base64::encode(const uint8_t *src, size_t len)
         in += 3;
     }
 
-    if (end - in) {
+    if (end - in)
+    {
         *pos++ = b64charset[in[0] >> 2];
-        if (end - in == 1) {
+        if (end - in == 1)
+        {
             *pos++ = b64charset[(in[0] & 0x03) << 4];
             *pos++ = '=';
         }
-        else {
-            *pos++ = b64charset[((in[0] & 0x03) << 4) |
-                (in[1] >> 4)];
+        else
+        {
+            *pos++ = b64charset[((in[0] & 0x03) << 4) | (in[1] >> 4)];
             *pos++ = b64charset[(in[1] & 0x0f) << 2];
         }
         *pos++ = '=';
@@ -50,23 +55,17 @@ std::string ien::base64::encode(const uint8_t *src, size_t len)
     return result;
 }
 
-const std::array<int32_t, 256> b64i = {
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  62, 63, 62, 62, 63,
-    52, 53, 54, 55, 56, 57, 58, 59, 60, 61,  0,  0,
-    0,  0,  0,  0,  0,  0,  1,  2,  3,  4,  5,  6,
-    7,  8,  9,  10, 11, 12, 13, 14, 15, 16, 17, 18,
-    19, 20, 21, 22, 23, 24, 25,  0, 0,  0,  0, 63,
-    0,  26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36,
-    37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48,
-    49, 50, 51
-};
+const std::array<int32_t, 256> b64i = { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+                                        0,  0,  0,  0,  0,  0,  0,  62, 63, 62, 62, 63, 52, 53, 54, 55, 56, 57,
+                                        58, 59, 60, 61, 0,  0,  0,  0,  0,  0,  0,  0,  1,  2,  3,  4,  5,  6,
+                                        7,  8,  9,  10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+                                        25, 0,  0,  0,  0,  63, 0,  26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36,
+                                        37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51 };
 
-std::vector<uint8_t> ien::base64::decode(const uint8_t* data, size_t len)
+std::vector<uint8_t> ien::base64::decode(const void* data, size_t len)
 {
-    unsigned char* p = (unsigned char*)data;
+    const unsigned char* p = reinterpret_cast<const uint8_t*>(data);
     const int pad = len > 0 && (len % 4 || p[len - 1] == '=');
     const size_t L = ((len + 3) / 4 - pad) * 4;
     std::vector<uint8_t> result;

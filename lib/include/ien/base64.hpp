@@ -5,6 +5,6 @@
 
 namespace ien::base64
 {
-    std::string encode(const uint8_t* src, size_t len);
-    std::vector<uint8_t> decode(const uint8_t* data, size_t len);
+    std::string encode(const void* src, size_t len);
+    std::vector<uint8_t> decode(const void* data, size_t len);
 }
