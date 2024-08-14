@@ -100,4 +100,6 @@ namespace ien
         size_t _height = 0;
         image_format _format = image_format::RGBA;
     };
+
+    bool is_valid_image_file(const std::string& path);
 } // namespace ien
