@@ -31,10 +31,30 @@ namespace ien
     }
 
     template <typename TResult, typename TA, typename TB>
-        requires(detail::is_convertible_or_invoke_result<TA, TResult> && detail::is_convertible_or_invoke_result<TB, TResult>)
+        requires(detail::is_convertible_or_invoke_result<TA, TResult>() && detail::is_convertible_or_invoke_result<TB, TResult>())
     TResult conditional_init(bool cond, TA&& a, TB&& b)
     {
-        return cond ? (std::is_invocable_v<TA> ? a() : std::forward<TA>(a))
-                    : (std::is_invocable_v<TB> ? b() : std::forward<TB>(b));
+        if(cond)
+        {
+            if constexpr (std::is_invocable_v<TA>)
+            {
+                return a();
+            }
+            else
+            {
+                return std::forward<TA>(a);
+            }
+        }
+        else
+        {
+            if constexpr (std::is_invocable_v<TB>)
+            {
+                return b();
+            }
+            else
+            {
+                return std::forward<TB>(b);
+            }
+        }
     }
 } // namespace ien
