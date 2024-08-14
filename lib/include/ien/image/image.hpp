@@ -4,6 +4,7 @@
 
 #include <array>
 #include <cstdint>
+#include <optional>
 #include <string>
 
 #ifndef LIBIEN_BUILD_IMAGE
@@ -102,4 +103,12 @@ namespace ien
     };
 
     bool is_valid_image_file(const std::string& path);
+
+    struct image_info
+    {
+        int width = 0;
+        int height = 0;
+        int channels = 0;
+    };
+    std::optional<image_info> get_image_info(const std::string& path);
 } // namespace ien
