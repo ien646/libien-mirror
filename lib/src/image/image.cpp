@@ -474,11 +474,11 @@ namespace ien
         image result(_width + x, _height + x, _format);
         const auto source_row_size = _width * image_format_channels(_format);
 
-        for(size_t row = 0; row < _height; ++row)
+        for (size_t row = 0; row < _height; ++row)
         {
             auto* target_ptr = result.data(0, row);
             std::memcpy(target_ptr, data(0, row), source_row_size);
-            for(size_t i = 0; i < image_format_channels(_format); ++i)
+            for (size_t i = 0; i < image_format_channels(_format); ++i)
             {
                 target_ptr[source_row_size + i] = rgba >> (8 * (3 - i));
             }
@@ -487,12 +487,12 @@ namespace ien
         std::vector<uint8_t> padded_row_data;
         padded_row_data.resize((_width + x) * image_format_channels(_format));
 
-        for(size_t i = 0; i < padded_row_data.size(); ++i)
+        for (size_t i = 0; i < padded_row_data.size(); ++i)
         {
             padded_row_data[i] = rgba >> (8 * (3 - i));
         }
 
-        for(size_t i = 0; i < y; ++i)
+        for (size_t i = 0; i < y; ++i)
         {
             std::memcpy(result.data(0, _height + i), padded_row_data.data(), padded_row_data.size());
         }
@@ -503,5 +503,16 @@ namespace ien
     bool is_valid_image_file(const std::string& path)
     {
         return stbi_info(path.c_str(), nullptr, nullptr, nullptr) == 1 ? true : false;
+    }
+
+    std::optional<image_info> get_image_info(const std::string& path)
+    {
+        image_info result;
+        bool ok = stbi_info(path.c_str(), &result.width, &result.height, &result.channels);
+        if (ok)
+        {
+            return result;
+        }
+        return std::nullopt;
     }
 } // namespace ien
