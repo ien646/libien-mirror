@@ -58,3 +58,5 @@ namespace ien
         }
     }
 } // namespace ien
+
+#define IEN_CONDITIONAL_INIT_LAZY(cond, a, b) ien::conditional_init((cond), [&]{ return (a); }, [&]{ return (b); });
