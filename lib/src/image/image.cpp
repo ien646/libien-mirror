@@ -499,4 +499,9 @@ namespace ien
 
         return result;
     }
+
+    bool is_valid_image_file(const std::string& path)
+    {
+        return stbi_info(path.c_str(), nullptr, nullptr, nullptr) == 1 ? true : false;
+    }
 } // namespace ien
