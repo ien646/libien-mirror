@@ -27,7 +27,7 @@ namespace ien
         template <typename T, typename TResult>
         constexpr bool is_convertible_or_invoke_result = std::is_convertible_v<T, TResult> ||
                                                          (std::is_invocable_v<T> &&
-                                                          std::is_convertible_v<std::invoke_result_t<T>, TResult>)
+                                                          std::is_convertible_v<std::invoke_result_t<T>, TResult>);
     }
 
     template <typename TResult, typename TA, typename TB>
