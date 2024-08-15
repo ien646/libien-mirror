@@ -37,6 +37,8 @@ namespace ien
             }
         }
 
-        inline const std::vector<uint8_t>& data() const { return _data; }
+        const std::vector<uint8_t>& data() const { return _data; }
+
+        std::vector<uint8_t> release_data() { return std::move(_data); }
     };
 } // namespace ien

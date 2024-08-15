@@ -4,6 +4,8 @@
 .vscode/
 .*/
 
+**/.directory
+
 build*/
 cmake-build*/
 html/
