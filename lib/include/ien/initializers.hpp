@@ -61,5 +61,4 @@ namespace ien
 
 // Conditionally initialize return value with a if cond==true or b otherwise.
 // Statements in a and b are not evaluated unless their value is requested on base of cond.
-#define IEN_CONDITIONAL_INIT_LAZY(type, cond, a, b) \
-    ien::conditional_init<type>((cond), [&]{ return (a); }, [&]{ return (b); });
+#define IEN_CONDITIONAL_INIT_LAZY(type, cond, a, b) ien::conditional_init<type>((cond), [&]{ return (a); }, [&]{ return (b); })
