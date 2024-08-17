@@ -31,7 +31,7 @@ namespace ien
     }
 
     template <typename TResult, typename TA, typename TB>
-        requires(detail::is_convertible_or_invoke_result<TA, TResult>() && detail::is_convertible_or_invoke_result<TB, TResult>())
+        requires(detail::is_convertible_or_invoke_result<TA, TResult> && detail::is_convertible_or_invoke_result<TB, TResult>)
     TResult conditional_init(bool cond, TA&& a, TB&& b)
     {
         if(cond)
