@@ -7,8 +7,14 @@ project(libien
     LANGUAGES C CXX
 )
 
+if(MSVC)
+    add_compile_options("/W4")
+else()
+    add_compile_options("-Wall")
+endif()
+
 option(LIBIEN_BUILD_TESTS "Build tests" OFF)
-option(LIBIEN_BUILD_IMAGE "Build image library" OFF)
+option(LIBIEN_BUILD_IMAGE "Build image library" ON)
 option(LIBIEN_BUILD_SFTP "Build sftp library" OFF)
 option(LIBIEN_BUILD_FONTS "Build fonts library" OFF)
 option(LIBIEN_ENABLE_PLAYGROUND "Enable playground executable" OFF)
