@@ -70,7 +70,7 @@ namespace ien
             // Special case for JPEG loading with 2-channel format
             if(image_format_channels(_format) != loaded_channels)
             {
-                _format = static_cast<image_format>(loaded_channels);
+                _format = channels_to_image_format(loaded_channels);
             }
         }
         else // if (load_mode == image_load_mode::RAW)
