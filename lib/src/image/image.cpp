@@ -67,8 +67,7 @@ namespace ien
             _width = (size_t)w;
             _height = (size_t)h;
 
-            // Special case for JPEG loading with 2-channel format
-            if(_format != image_format::RGBA)
+            if(fmt != image_format::RGBA)
             {
                 *this = cast_format(fmt);
             }
