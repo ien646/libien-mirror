@@ -56,9 +56,9 @@ namespace ien
         _format = fmt;
         if (load_mode == image_load_mode::IMAGE)
         {
-            int loaded_channels;
+            int image_channels;
             int w, h;
-            _data = stbi_load(path.c_str(), &w, &h, &loaded_channels, channel_count());
+            _data = stbi_load(path.c_str(), &w, &h, &image_channels, 4);
             if (_data == nullptr)
             {
                 throw std::logic_error(std::format("Unable to open image at '{}' ({})", path, stbi_failure_reason()));
@@ -68,9 +68,9 @@ namespace ien
             _height = (size_t)h;
 
             // Special case for JPEG loading with 2-channel format
-            if(image_format_channels(_format) != loaded_channels)
+            if(_format != image_format::RGBA)
             {
-                _format = channels_to_image_format(loaded_channels);
+                *this = cast_format(fmt);
             }
         }
         else // if (load_mode == image_load_mode::RAW)
