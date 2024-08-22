@@ -53,7 +53,7 @@ namespace ien
     image::image(const std::string& path, image_format fmt, image_load_mode load_mode)
     {
         assert(!path.empty());
-        _format = fmt;
+        _format = ien::image_format::RGBA;
         if (load_mode == image_load_mode::IMAGE)
         {
             int image_channels;
