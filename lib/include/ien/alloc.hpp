@@ -70,4 +70,24 @@ namespace ien
     #define IEN_STACK_ALLOC(bytes) alloca(bytes)
     #define IEN_STACK_FREE(ptr) (void(0))
 #endif
+
+    template<typename T, size_t Alignment>
+    class aligned_allocator
+    {
+    public:
+        using value_type = T;
+        using size_type = size_t;
+        using difference_type = std::ptrdiff_t;
+        using propagate_on_container_move_assignment = std::true_type;
+
+        constexpr T* allocate(size_t n)
+        {
+            return aligned_alloc<T>(n, Alignment);
+        }
+
+        void deallocate(T* ptr, [[maybe_unused]] size_t n)
+        {
+            return aligned_free(ptr);
+        }
+    };
 } // namespace ien
