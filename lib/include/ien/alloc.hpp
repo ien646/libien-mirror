@@ -15,11 +15,11 @@ namespace ien::detail
     {
         assert(is_power_of_2(alignment));
         bytes = bytes + (alignment - (bytes % alignment));
-        #ifdef IEN_OS_WIN
-            return _aligned_malloc(bytes, alignment);
-        #else
-            return ::aligned_alloc(alignment, bytes);
-        #endif
+#ifdef IEN_OS_WIN
+        return _aligned_malloc(bytes, alignment);
+#else
+        return ::aligned_alloc(alignment, bytes);
+#endif
     }
 
     inline void aligned_free(void* ptr)
@@ -71,7 +71,7 @@ namespace ien
     #define IEN_STACK_FREE(ptr) (void(0))
 #endif
 
-    template<typename T, size_t Alignment>
+    template <typename T, size_t Alignment>
     class aligned_allocator
     {
     public:
@@ -80,14 +80,15 @@ namespace ien
         using difference_type = std::ptrdiff_t;
         using propagate_on_container_move_assignment = std::true_type;
 
-        constexpr T* allocate(size_t n)
-        {
-            return aligned_alloc<T>(n, Alignment);
-        }
+        constexpr T* allocate(size_t n) { return aligned_alloc<T>(n, Alignment); }
 
-        void deallocate(T* ptr, [[maybe_unused]] size_t n)
+        void deallocate(T* ptr, [[maybe_unused]] size_t n) { return aligned_free(ptr); }
+
+        // Removed in c++20 but some compilers require it
+        template<typename U>
+        struct rebind
         {
-            return aligned_free(ptr);
-        }
+            using other = aligned_allocator<U, Alignment>;
+        };
     };
 } // namespace ien
