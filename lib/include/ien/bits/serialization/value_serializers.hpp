@@ -31,6 +31,15 @@ namespace ien
         }
     };
 
+    template <>
+    struct value_serializer<std::byte>
+    {
+        void serialize(const std::byte& v, serializer_inserter& inserter)
+        {
+            inserter += static_cast<uint8_t>(v);
+        }
+    };
+
     namespace detail
     {
         template <typename TContainer>

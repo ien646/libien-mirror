@@ -33,6 +33,15 @@ namespace ien
         }
     };
 
+    template<>
+    struct value_deserializer<std::byte>
+    {
+        std::byte deserialize(deserializer_iterator& iterator)
+        {
+            return static_cast<std::byte>(ien::value_deserializer<uint8_t>{}.deserialize(iterator));
+        }
+    };
+
     namespace detail
     {
         template<typename TContainer>
