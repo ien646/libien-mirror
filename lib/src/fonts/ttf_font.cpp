@@ -12,17 +12,27 @@ namespace ien
     {
         std::vector<stbtt_bakedchar> baked_chars;
         baked_chars.resize(num_chars);
-        
+
         const auto ttfdata = ien::read_file_binary(path);
-        if(!ttfdata)
+        if (!ttfdata)
         {
             throw std::logic_error("Unable to read ttf font at: " + path);
         }
 
         _atlas = std::make_unique<ien::image>(atlas_size, atlas_size, image_format::R);
-        stbtt_BakeFontBitmap(ttfdata->data(), 0, font_height_px, _atlas->data(), atlas_size, atlas_size, 0, num_chars, baked_chars.data());
+        stbtt_BakeFontBitmap(
+            reinterpret_cast<const unsigned char*>(ttfdata->data()),
+            0,
+            font_height_px,
+            _atlas->data(),
+            atlas_size,
+            atlas_size,
+            0,
+            num_chars,
+            baked_chars.data()
+        );
 
-        for(const auto& bc : baked_chars)
+        for (const auto& bc : baked_chars)
         {
             ttf_font_char_info elem;
             elem.position.x0 = bc.x0;
@@ -38,10 +48,10 @@ namespace ien
 
     const ttf_font_char_info& ttf_font::get_char_info(uint32_t ch) const
     {
-        if(_char_info.size() >= ch)
+        if (_char_info.size() >= ch)
         {
             throw std::logic_error("Character not present");
         }
         return _char_info.at(ch);
     }
-}
+} // namespace ien

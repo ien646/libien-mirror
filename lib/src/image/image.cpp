@@ -74,7 +74,7 @@ namespace ien
         }
         else // if (load_mode == image_load_mode::RAW)
         {
-            std::optional<std::vector<uint8_t>> data = ien::read_file_binary(path);
+            std::optional<std::vector<std::byte>> data = ien::read_file_binary(path);
             if (!data)
             {
                 throw std::logic_error(std::format("Unable to open image file at '{}'", path));
