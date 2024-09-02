@@ -19,7 +19,7 @@ namespace ien
         {
             return true;
         }
-        const uintptr_t prtval = reinterpret_cast<uintptr_t>(ptr);
+        const auto prtval = reinterpret_cast<uintptr_t>(ptr);
         return (prtval % alignment) == 0;
     }
 } // namespace ien
@@ -30,12 +30,11 @@ namespace ien
 
 #if defined(IEN_ARCH_X86) || defined(IEN_ARCH_X86_64)
 
-    #define IEN_SSE_ALIGNMENT 16
-    #define IEN_AVX_ALIGNMENT 32
-    #define IEN_SSE_VECSIZE 32
-    #define IEN_AVX_VECSIZE 64
+    constexpr auto IEN_SSE_ALIGNMENT = 16;
+    constexpr auto IEN_AVX_ALIGNMENT = 32;
+    constexpr auto IEN_SSE_VECSIZE = 32;
+    constexpr auto IEN_AVX_VECSIZE = 64;
 
-    #include <iostream>
 namespace ien::platform::x86
 {
     enum class feature : int

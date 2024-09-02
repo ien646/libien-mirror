@@ -67,14 +67,14 @@ namespace ien
             _width = (size_t)w;
             _height = (size_t)h;
 
-            if(fmt != image_format::RGBA)
+            if (fmt != image_format::RGBA)
             {
                 *this = cast_format(fmt);
             }
         }
         else // if (load_mode == image_load_mode::RAW)
         {
-            std::optional<std::vector<std::byte>> data = ien::read_file_binary(path);
+            const std::optional<std::vector<std::byte>> data = ien::read_file_binary(path);
             if (!data)
             {
                 throw std::logic_error(std::format("Unable to open image file at '{}'", path));
@@ -90,16 +90,13 @@ namespace ien
             uint32_t height = 0;
             uint8_t format = 0;
 
-            ien::deserializer deserializer(data->data(), data->size());
-            for (size_t i = 0; i < IEN_RAW_TAGGED_SIGNATURE.size(); ++i)
-            {
-                signature.push_back(deserializer.deserialize<char>());
-            }
-
+            ien::deserializer deserializer(std::span{*data});
+            deserializer.deserialize_into_buffer(signature.data(), IEN_RAW_TAGGED_SIGNATURE.size());
             if (signature != IEN_RAW_TAGGED_SIGNATURE)
             {
                 throw std::logic_error("Raw tagged image file signature mismatch");
             }
+            
             width = deserializer.deserialize<uint32_t>();
             height = deserializer.deserialize<uint32_t>();
             format = deserializer.deserialize<uint8_t>();
@@ -155,7 +152,7 @@ namespace ien
         _height = mvsrc._height;
         _format = mvsrc._format;
 
-        mvsrc._data = 0;
+        mvsrc._data = nullptr;
         mvsrc._width = 0;
         mvsrc._height = 0;
 
@@ -168,22 +165,22 @@ namespace ien
         assert(width <= _width && height <= _height);
 
         image result(width, height, _format);
-        const int ok = stbir_resize(
-                           _data,
-                           (int)_width,
-                           (int)_height,
-                           0,
-                           result._data,
-                           width,
-                           height,
-                           0,
-                           static_cast<stbir_pixel_layout>(channel_count()),
-                           stbir_datatype::STBIR_TYPE_UINT8,
-                           stbir_edge::STBIR_EDGE_WRAP,
-                           static_cast<stbir_filter>(filter)
-                       ) != 0;
+        const bool ok = stbir_resize(
+                            _data,
+                            (int)_width,
+                            (int)_height,
+                            0,
+                            result._data,
+                            static_cast<int>(width),
+                            static_cast<int>(height),
+                            0,
+                            static_cast<stbir_pixel_layout>(channel_count()),
+                            stbir_datatype::STBIR_TYPE_UINT8,
+                            stbir_edge::STBIR_EDGE_WRAP,
+                            static_cast<stbir_filter>(filter)
+                        ) != nullptr;
 
-        if (ok == 0)
+        if (!ok)
         {
             throw std::logic_error("Failure resizing image!");
         }
@@ -221,12 +218,12 @@ namespace ien
     void image::write_to_file_raw_tagged(const std::string& path) const
     {
         assert(!path.empty());
-        const uint32_t width = (uint32_t)_width;
-        const uint32_t height = (uint32_t)_height;
-        const uint8_t fmt = static_cast<uint8_t>(format());
+        const auto width = static_cast<uint32_t>(_width);
+        const auto height = static_cast<uint32_t>(_height);
+        const auto fmt = static_cast<uint8_t>(format());
 
         ien::serializer serializer;
-        serializer.serialize_buffer(IEN_RAW_TAGGED_SIGNATURE.data(), IEN_RAW_TAGGED_SIGNATURE.size());
+        serializer.serialize_buffer<char>(IEN_RAW_TAGGED_SIGNATURE);
         serializer.serialize(width);
         serializer.serialize(height);
         serializer.serialize(fmt);
@@ -460,7 +457,7 @@ namespace ien
             accum += davg;
         }
 #endif
-        return accum / pixel_count();
+        return accum / static_cast<float>(pixel_count());
     }
 
     void image::flip_axis_y()
@@ -485,7 +482,7 @@ namespace ien
             std::memcpy(target_ptr, data(0, row), source_row_size);
             for (size_t i = 0; i < image_format_channels(_format); ++i)
             {
-                target_ptr[source_row_size + i] = rgba >> (8 * (3 - i));
+                target_ptr[source_row_size + i] = static_cast<uint8_t>(rgba >> (8 * (3 - i)));
             }
         }
 
@@ -494,7 +491,7 @@ namespace ien
 
         for (size_t i = 0; i < padded_row_data.size(); ++i)
         {
-            padded_row_data[i] = rgba >> (8 * (3 - i));
+            padded_row_data[i] = static_cast<uint8_t>(rgba >> (8 * (3 - i)));
         }
 
         for (size_t i = 0; i < y; ++i)
@@ -512,9 +509,7 @@ namespace ien
 
     std::optional<image_info> get_image_info(const std::string& path)
     {
-        image_info result;
-        bool ok = stbi_info(path.c_str(), &result.width, &result.height, &result.channels);
-        if (ok)
+        if (image_info result; stbi_info(path.c_str(), &result.width, &result.height, &result.channels))
         {
             return result;
         }

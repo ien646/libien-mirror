@@ -16,17 +16,17 @@ namespace ien
     template <typename T>
     struct value_serializer
     {
-        void serialize(const T& t, serializer_inserter& inserter) const = delete;
+        static void serialize(const T& t, serializer_inserter& inserter) = delete;
     };
 
     template <concepts::Integral T>
     struct value_serializer<T>
     {
-        void serialize(const T& v, serializer_inserter& inserter)
+        static void serialize(const T& v, serializer_inserter& inserter)
         {
             for (size_t i = 0; i < sizeof(T); ++i)
             {
-                inserter += static_cast<uint8_t>(v >> ((sizeof(T) - (i + 1)) * 8));
+                inserter += static_cast<std::byte>(v >> ((sizeof(T) - (i + 1)) * 8));
             }
         }
     };
@@ -34,18 +34,18 @@ namespace ien
     template <>
     struct value_serializer<std::byte>
     {
-        void serialize(const std::byte& v, serializer_inserter& inserter)
+        static void serialize(const std::byte& v, serializer_inserter& inserter)
         {
-            inserter += static_cast<uint8_t>(v);
+            inserter += v;
         }
     };
 
     namespace detail
     {
         template <typename TContainer>
-        void serialize_container(const TContainer& container, serializer_inserter& inserter)
+        static void serialize_container(const TContainer& container, serializer_inserter& inserter)
         {
-            ien::value_serializer<IEN_SERIALIZE_CONTAINER_SIZE_T>{}.serialize(container.size(), inserter);
+            ien::value_serializer<IEN_SERIALIZE_CONTAINER_SIZE_T>::serialize(container.size(), inserter);
 
             ien::value_serializer<typename TContainer::value_type> serializer;
             for (size_t i = 0; i < container.size(); ++i)
@@ -58,27 +58,27 @@ namespace ien
     template <concepts::FloatingPoint T>
     struct value_serializer<T>
     {
-        void serialize(const T& v, serializer_inserter& inserter)
+        static void serialize(const T& v, serializer_inserter& inserter)
         {
             using integral_type = std::conditional_t<std::is_same_v<float, T>, uint32_t, uint64_t>;
-            ien::value_serializer<integral_type>{}.serialize(std::bit_cast<integral_type>(v), inserter);
+            ien::value_serializer<integral_type>::serialize(std::bit_cast<integral_type>(v), inserter);
         }
     };
 
     template <concepts::Enum T>
     struct value_serializer<T>
     {
-        void serialize(const T& t, serializer_inserter& inserter)
+        static void serialize(const T& t, serializer_inserter& inserter)
         {
             using integral_type = std::underlying_type_t<T>;
-            ien::value_serializer<integral_type>{}.serialize(t, inserter);
+            ien::value_serializer<integral_type>::serialize(t, inserter);
         }
     };
 
     template <typename T, size_t ArrayLength>
     struct value_serializer<std::array<T, ArrayLength>>
     {
-        void serialize(const std::array<T, ArrayLength>& t, serializer_inserter& inserter)
+        static void serialize(const std::array<T, ArrayLength>& t, serializer_inserter& inserter)
         {
             detail::serialize_container(t, inserter);
         }
@@ -87,7 +87,7 @@ namespace ien
     template <typename T>
     struct value_serializer<std::vector<T>>
     {
-        void serialize(const std::vector<T>& t, serializer_inserter& inserter)
+        static void serialize(const std::vector<T>& t, serializer_inserter& inserter)
         {
             detail::serialize_container(t, inserter);
         }
@@ -96,7 +96,7 @@ namespace ien
     template <concepts::AnyChar T>
     struct value_serializer<std::basic_string<T>>
     {
-        void serialize(const std::basic_string<T>& t, serializer_inserter& inserter)
+        static void serialize(const std::basic_string<T>& t, serializer_inserter& inserter)
         {
             detail::serialize_container(t, inserter);
         }
@@ -105,7 +105,7 @@ namespace ien
     template <typename T>
     struct value_serializer<std::span<T>>
     {
-        void serialize(const std::span<T>& t, serializer_inserter& inserter)
+        static void serialize(const std::span<T>& t, serializer_inserter& inserter)
         {
             detail::serialize_container(t, inserter);
         }
@@ -114,7 +114,7 @@ namespace ien
     template <typename T, size_t Extent>
     struct value_serializer<std::span<T, Extent>>
     {
-        void serialize(const std::span<T, Extent>& t, serializer_inserter& inserter)
+        static void serialize(const std::span<T, Extent>& t, serializer_inserter& inserter)
         {
             detail::serialize_container(t, inserter);
         }

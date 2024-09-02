@@ -12,7 +12,7 @@ namespace ien
     class serializer
     {
     private:
-        std::vector<uint8_t> _data;
+        std::vector<std::byte> _data;
         std::vector<uint32_t> _header;
         serializer_inserter _inserter;
 
@@ -29,16 +29,16 @@ namespace ien
         }
 
         template <typename T>
-        void serialize_buffer(const T* ptr, size_t len)
+        void serialize_buffer(std::span<const T> buff)
         {
-            for (size_t i = 0; i < len; ++i)
+            for (size_t i = 0; i < buff.size(); ++i)
             {
-                ien::value_serializer<T>{}.serialize(ptr[i], _inserter);
+                ien::value_serializer<T>{}.serialize(buff[i], _inserter);
             }
         }
 
-        const std::vector<uint8_t>& data() const { return _data; }
+        const std::vector<std::byte>& data() const { return _data; }
 
-        std::vector<uint8_t> release_data() { return std::move(_data); }
+        std::vector<std::byte> release_data() { return std::move(_data); }
     };
 } // namespace ien

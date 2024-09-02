@@ -8,14 +8,14 @@ namespace ien
     class serializer_inserter
     {
     private:
-        std::back_insert_iterator<std::vector<uint8_t>> _inserter;
+        std::back_insert_iterator<std::vector<std::byte>> _inserter;
 
-        serializer_inserter(std::vector<uint8_t>& data)
+        explicit serializer_inserter(std::vector<std::byte>& data)
             : _inserter(std::back_inserter(data))
         { }
     
     public:
-        void operator+=(uint8_t d) { _inserter = d; }
+        void operator+=(std::byte d) { _inserter = d; }
 
         friend class serializer;
     };
