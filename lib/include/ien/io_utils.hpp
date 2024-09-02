@@ -60,7 +60,7 @@ namespace ien
         return true;
     }
 
-    template <typename TChar = uint8_t, typename TPath, typename TContainer>
+    template <typename TPath, typename TContainer>
         requires(concepts::AnyStr<TPath>)
     bool write_file_binary(const TPath& path, const TContainer& data)
     {
