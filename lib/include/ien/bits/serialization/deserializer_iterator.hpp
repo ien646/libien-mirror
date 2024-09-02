@@ -2,20 +2,19 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <stdexcept>
 
 class deserializer_iterator
 {
 private:
-    const uint8_t* _data;
-    size_t _len;
-    size_t _pos;
+    std::span<const std::byte> _data;
+    size_t _pos = 0;
 
 public:
-    deserializer_iterator(const uint8_t* data, size_t len)
-        : _data(data)
-        , _len(len)
-        , _pos(0)
+    template <typename T>
+    explicit deserializer_iterator(std::span<T> data)
+        : _data(std::span<const std::byte>{ reinterpret_cast<const std::byte*>(data.data()), data.size_bytes() })
     {
     }
 
@@ -32,18 +31,18 @@ public:
         return result;
     }
 
-    uint8_t operator*() { return _data[_pos]; }
+    std::byte operator*() const { return _data[_pos]; }
 
-    inline void advance(size_t pos) 
-    { 
-        _pos += pos; 
-        if(pos >= _len)
+    inline void advance(size_t pos)
+    {
+        _pos += pos;
+        if (pos >= _data.size())
         {
             throw std::logic_error("Attempt to advance deserializer_iterator past end of data");
         }
     }
 
-    inline const uint8_t* data() const { return _data; }
-    inline size_t length() const { return _len; }
+    inline const std::byte* data() const { return _data.data(); }
+    inline size_t length() const { return _data.size(); }
     inline size_t position() const { return _pos; }
 };

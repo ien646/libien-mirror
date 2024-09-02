@@ -16,14 +16,9 @@ namespace ien
         deserializer_iterator _iterator;
 
     public:
-        deserializer(const void* data, size_t len)
-            : _iterator(reinterpret_cast<const uint8_t*>(data), len)
-        {
-        }
-
-        template <typename T>
-        deserializer(const std::span<T>& data)
-            : _iterator(reinterpret_cast<const uint8_t*>(data.data()), data.size())
+        template<typename T>
+        explicit deserializer(std::span<T> data)
+            : _iterator(data)
         {
         }
 
@@ -36,8 +31,7 @@ namespace ien
         template <typename T, bool Advance = true>
         void deserialize_into_buffer(T* dst, size_t len)
         {
-            size_t bytes = len * sizeof(T);
-            if ((_iterator.position() + bytes) > length())
+            if ((_iterator.position() + (len * sizeof(T))) > length())
             {
                 throw std::logic_error("Attempt to deserialize out of bounds data");
             }
@@ -59,37 +53,30 @@ namespace ien
             }
         }
 
-        void deserialize_into_buffer_uint8(uint8_t* dst, size_t len)
+        template <bool Advance = true>
+        void deserialize_into_buffer_of_bytes(std::byte* dst, size_t len)
         {
             if ((_iterator.position() + len) > length())
             {
                 throw std::logic_error("Attempt to deserialize out of bounds data");
             }
 
-            const uint8_t* data = _iterator.data() + _iterator.position();
+            const std::byte* data = _iterator.data() + _iterator.position();
             for (size_t i = 0; i < len; ++i)
             {
                 std::memcpy(dst, data, len);
+            }
+
+            if constexpr (Advance)
+            {
+                _iterator.advance(len);
             }
         }
 
         inline void advance(size_t bytes) { _iterator.advance(bytes); }
 
-        inline const uint8_t* data() const { return _iterator.data(); }
+        inline const std::byte* data() const { return _iterator.data(); }
         inline size_t length() const { return _iterator.length(); }
         inline size_t position() const { return _iterator.position(); }
     };
-
-    template <>
-    inline void deserializer::deserialize_into_buffer<uint8_t, true>(uint8_t* dst, size_t len)
-    {
-        deserialize_into_buffer_uint8(dst, len);
-        _iterator.advance(len);
-    }
-
-    template <>
-    inline void deserializer::deserialize_into_buffer<uint8_t, false>(uint8_t* dst, size_t len)
-    {
-        deserialize_into_buffer_uint8(dst, len);
-    }
 } // namespace ien
