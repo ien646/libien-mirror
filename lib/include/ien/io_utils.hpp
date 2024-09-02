@@ -40,7 +40,7 @@ namespace ien
         return read_file<false, TChar>(path);
     }
 
-    template <typename TVal = uint8_t, typename TPath>
+    template <typename TVal = std::byte, typename TPath>
         requires(concepts::AnyStr<TPath>)
     std::optional<std::vector<TVal>> read_file_binary(const TPath& path)
     {
