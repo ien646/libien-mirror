@@ -90,13 +90,13 @@ namespace ien
             uint32_t height = 0;
             uint8_t format = 0;
 
-            ien::deserializer deserializer(std::span{*data});
+            ien::deserializer deserializer(std::span{ *data });
             deserializer.deserialize_into_buffer(signature.data(), IEN_RAW_TAGGED_SIGNATURE.size());
             if (signature != IEN_RAW_TAGGED_SIGNATURE)
             {
                 throw std::logic_error("Raw tagged image file signature mismatch");
             }
-            
+
             width = deserializer.deserialize<uint32_t>();
             height = deserializer.deserialize<uint32_t>();
             format = deserializer.deserialize<uint8_t>();
@@ -147,6 +147,11 @@ namespace ien
 
     image& image::operator=(image&& mvsrc) noexcept
     {
+        if (_data)
+        {
+            free(_data);
+        }
+
         _data = mvsrc._data;
         _width = mvsrc._width;
         _height = mvsrc._height;
