@@ -15,30 +15,29 @@ namespace ien
     template <typename T>
     struct value_deserializer
     {
-        T deserialize(deserializer_iterator& iterator) const = delete;
-    };
-
-    template<concepts::Integral T>
-    struct value_deserializer<T>
-    {
-        T deserialize(deserializer_iterator& iterator)
-        {
-            T result = 0;
-            for(size_t i = 0; i < sizeof(T); ++i)
-            {
-                result |= (static_cast<T>(*iterator)) << ((sizeof(T) - (i + 1)) * 8);
-                ++iterator;
-            }
-            return result;
-        }
+        static T deserialize(deserializer_iterator& iterator) = delete;
     };
 
     template<>
     struct value_deserializer<std::byte>
     {
-        std::byte deserialize(deserializer_iterator& iterator)
+        static std::byte deserialize(deserializer_iterator& iterator)
         {
-            return static_cast<std::byte>(ien::value_deserializer<uint8_t>{}.deserialize(iterator));
+            return *iterator++;
+        }
+    };
+
+    template<concepts::Integral T>
+    struct value_deserializer<T>
+    {
+        static T deserialize(deserializer_iterator& iterator)
+        {
+            T result = 0;
+            for(size_t i = 0; i < sizeof(T); ++i)
+            {
+                result |= (static_cast<T>(*iterator++)) << ((sizeof(T) - (i + 1)) * 8);
+            }
+            return result;
         }
     };
 
@@ -47,7 +46,7 @@ namespace ien
         template<typename TContainer>
         TContainer deserialize_container(deserializer_iterator& iterator)
         {
-            auto len = ien::value_deserializer<SERIALIZE_CONTAINER_SIZE_T>{}.deserialize(iterator);
+            const auto len = ien::value_deserializer<SERIALIZE_CONTAINER_SIZE_T>::deserialize(iterator);
 
             TContainer result;
             result.reserve(len / sizeof(typename TContainer::value_type));
@@ -63,7 +62,7 @@ namespace ien
     template<concepts::FloatingPoint T>
     struct value_deserializer<T>
     {
-        T deserialize(deserializer_iterator& iterator)
+        static T deserialize(deserializer_iterator& iterator)
         {
             using integral_type = std::conditional_t<std::is_same_v<float, T>, uint32_t, uint64_t>;
             integral_type intval = ien::value_deserializer<integral_type>{}.deserialize(iterator);
@@ -74,7 +73,7 @@ namespace ien
     template<concepts::Enum T>
     struct value_deserializer<T>
     {
-        T deserialize(deserializer_iterator& iterator)
+        static T deserialize(deserializer_iterator& iterator)
         {
             using integral_type = std::underlying_type_t<T>;
             integral_type intval = ien::value_deserializer<integral_type>{}.deserialize(iterator);
@@ -85,7 +84,7 @@ namespace ien
     template<typename T, size_t ArrayLength>
     struct value_deserializer<std::array<T, ArrayLength>>
     {
-        std::array<T, ArrayLength> deserialize(deserializer_iterator& iterator)
+        static std::array<T, ArrayLength> deserialize(deserializer_iterator& iterator)
         {
             return detail::deserialize_container<std::array<T, ArrayLength>>(iterator); 
         }
@@ -94,7 +93,7 @@ namespace ien
     template<typename T>
     struct value_deserializer<std::vector<T>>
     {
-        std::vector<T> deserialize(deserializer_iterator& iterator)
+        static std::vector<T> deserialize(deserializer_iterator& iterator)
         {
             return detail::deserialize_container<std::vector<T>>(iterator); 
         }
@@ -103,7 +102,7 @@ namespace ien
     template<typename T>
     struct value_deserializer<std::basic_string<T>>
     {
-        std::basic_string<T> deserialize(deserializer_iterator& iterator)
+        static std::basic_string<T> deserialize(deserializer_iterator& iterator)
         {
             return detail::deserialize_container<std::basic_string<T>>(iterator);
         }
