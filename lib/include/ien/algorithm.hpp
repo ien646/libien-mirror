@@ -10,7 +10,7 @@ namespace ien
     template <concepts::IterableContainer TSrc, concepts::HasPushBack TDst>
     void push_many(TDst& dst, TSrc&& src)
     {
-        for (auto& v : src)
+        for (auto&& v : std::forward<TSrc>(src))
         {
             dst.push_back(std::forward<container_value_type<TSrc>>(v));
         }
@@ -20,8 +20,7 @@ namespace ien
         requires(concepts::HasPopBack<T>)
     void erase_unsorted(T& container, size_t index)
     {
-        const size_t last_index = container.size() - 1;
-        if (index != last_index)
+        if (const size_t last_index = container.size() - 1; index != last_index)
         {
             if constexpr (std::is_default_constructible_v<typename T::value_type>)
             {
@@ -39,22 +38,17 @@ namespace ien
         requires(concepts::HasPopBack<T>)
     void erase_unsorted(T& container, typename T::const_iterator at)
     {
-        const auto last_it = container.end() - 1;
-        if (at != last_it)
+        if (const auto last_it = container.end() - 1; at != last_it)
         {
             std::swap(*at, last_it);
         }
         container.pop_back();
     }
 
-    template <concepts::IterableContainer T, typename TVal>
-        requires requires(T t) {
-            {
-                *(t.begin())
-            } -> std::equality_comparable_with<TVal>;
-        }
-    void contains(const T& container, const TVal& val)
+    template <concepts::IterableContainer TContainer, typename TVal>
+        requires(std::is_convertible_v<TVal, container_value_type<TContainer>>)
+    void contains(const TContainer& container, const TVal& val)
     {
-        return std::find(container.begin(), container.end(), val) != container.end();
+        return std::find(std::begin(container), std::end(container), val) != std::end(container);
     }
 } // namespace ien
