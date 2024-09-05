@@ -167,7 +167,6 @@ namespace ien
     image image::resize(size_t width, size_t height, resize_filter filter) const
     {
         assert(width > 0 && height > 0);
-        assert(width <= _width && height <= _height);
 
         image result(width, height, _format);
         const bool ok = stbir_resize(
