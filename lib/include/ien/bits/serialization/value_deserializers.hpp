@@ -23,7 +23,9 @@ namespace ien
     {
         static std::byte deserialize(deserializer_iterator& iterator)
         {
-            return *iterator++;
+            std::byte result = *iterator;
+            ++iterator;
+            return result;
         }
     };
 
@@ -35,7 +37,8 @@ namespace ien
             T result = 0;
             for(size_t i = 0; i < sizeof(T); ++i)
             {
-                result |= (static_cast<T>(*iterator++)) << ((sizeof(T) - (i + 1)) * 8);
+                result |= (static_cast<T>(*iterator)) << ((sizeof(T) - (i + 1)) * 8);
+                ++iterator;
             }
             return result;
         }
