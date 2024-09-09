@@ -399,7 +399,7 @@ namespace ien
         const wchar_t* userprofile = _wgetenv(L"USERPROFILE");
         if (userprofile)
         {
-            return userprofile;
+            return wstr_to_str(userprofile);
         }
 
         const wchar_t* homedrive = _wgetenv(L"HOMEDRIVE");
