@@ -11,6 +11,7 @@
 #include <stb_image_resize2.h>
 #include <stb_image_write.h>
 
+#include <algorithm>
 #include <array>
 #include <cassert>
 #include <cstdint>
