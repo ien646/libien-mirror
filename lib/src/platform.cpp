@@ -49,7 +49,7 @@ namespace ien::platform::x86
     void init();
     bool get_feature(feature f);
 
-    typedef std::unordered_map<int, std::string> feature_names_map_t;
+    using feature_names_map_t = std::unordered_map<int, std::string>;
 
     feature_names_map_t gen_names_map()
     {
