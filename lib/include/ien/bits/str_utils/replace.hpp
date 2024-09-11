@@ -47,8 +47,8 @@ namespace ien
         const size_t replacement_length = anystr_length(replacement);
         const int64_t size_diff = (int64_t)replacement_length - (int64_t)ocurrence_length;
 
-        std::basic_string_view<char_type> view = detail::str_view_range(str, offset, maxlen);
-        std::vector<size_t> found_indices = str_indices_of(view, ocurrence);
+        std::basic_string_view<char_type> view = detail::str_view_range(str, 0, maxlen);
+        std::vector<size_t> found_indices = str_indices_of(view, ocurrence, offset);
         std::basic_string result(view.begin(), view.end());
 
         int64_t replace_offset = 0;
