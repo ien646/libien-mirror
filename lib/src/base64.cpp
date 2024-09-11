@@ -23,7 +23,7 @@ std::string ien::base64::encode(const void* src, size_t len)
 
     std::string result;
     result.resize(olen);
-    out = (unsigned char*)&result[0];
+    out = reinterpret_cast<unsigned char*>(&result[0]);
 
     end = reinterpret_cast<const uint8_t*>(src) + len;
     in = reinterpret_cast<const uint8_t*>(src);
@@ -65,7 +65,7 @@ const std::array<int32_t, 256> b64i = { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  
 
 std::vector<uint8_t> ien::base64::decode(const void* data, size_t len)
 {
-    const unsigned char* p = reinterpret_cast<const uint8_t*>(data);
+    const auto* p = reinterpret_cast<const uint8_t*>(data);
     const int pad = len > 0 && (len % 4 || p[len - 1] == '=');
     const size_t L = ((len + 3) / 4 - pad) * 4;
     std::vector<uint8_t> result;
