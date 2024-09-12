@@ -84,6 +84,11 @@ namespace ien
         aligned_allocator(const aligned_allocator&) noexcept = default;
         aligned_allocator(aligned_allocator&&) noexcept = default;
 
+        template<typename U>
+        constexpr aligned_allocator(const aligned_allocator<U, Alignment>&) noexcept
+        {
+        }
+
         constexpr T* allocate(size_t n) const { return aligned_alloc<T>(n, Alignment); }
 
         void deallocate(T* ptr, [[maybe_unused]] size_t n) const { return aligned_free(ptr); }
