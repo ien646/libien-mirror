@@ -5,6 +5,7 @@
 #include <ien/lang_utils.hpp>
 
 #include <cassert>
+#include <limits>
 #include <span>
 #include <type_traits>
 
