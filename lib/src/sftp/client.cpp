@@ -12,6 +12,7 @@
 #include <climits>
 #include <format>
 #include <functional>
+#include <iostream>
 #include <stdexcept>
 
 #ifdef IEN_COMPILER_MSVC

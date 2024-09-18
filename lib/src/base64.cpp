@@ -74,14 +74,14 @@ std::vector<uint8_t> ien::base64::decode(const void* data, size_t len)
     for (size_t i = 0, j = 0; i < L; i += 4)
     {
         const int n = b64i[p[i]] << 18 | b64i[p[i + 1]] << 12 | b64i[p[i + 2]] << 6 | b64i[p[i + 3]];
-        result[j++] = n >> 16;
-        result[j++] = n >> 8 & 0xFF;
-        result[j++] = n & 0xFF;
+        result[j++] = static_cast<uint8_t>(n >> 16);
+        result[j++] = static_cast<uint8_t>(n >> 8 & 0xFF);
+        result[j++] = static_cast<uint8_t>(n & 0xFF);
     }
     if (pad)
     {
         int n = b64i[p[L]] << 18 | b64i[p[L + 1]] << 12;
-        result[result.size() - 1] = n >> 16;
+        result[result.size() - 1] = static_cast<uint8_t>(n >> 16);
 
         if (len > L + 2 && p[L + 2] != '=')
         {

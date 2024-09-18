@@ -316,7 +316,7 @@ namespace ien
 
     /// @brief Obtain the length value for any string-like or character type
     template <concepts::AnyChar T>
-    constexpr inline size_t anystr_length(const T& str)
+    constexpr inline size_t anystr_length([[maybe_unused]] const T& str)
     {
         return 1;
     }

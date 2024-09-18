@@ -11,17 +11,17 @@ TEST_CASE("Serialization")
 {
     SECTION("Serialization sequence")
     {
-        uint32_t u32 = 0xA0B1C2D3;
-        uint16_t u16 = 0x0A1B;
-        uint8_t u8 = 0xD7;
-        std::string str = "IRIS";
+        const uint32_t u32 = 0xA0B1C2D3;
+        const uint16_t u16 = 0x0A1B;
+        const uint8_t u8 = 0xD7;
+        const std::string str = "IRIS";
 
-        float f32 = 0.75F;
-        uint32_t f32_bitcast = std::bit_cast<uint32_t>(f32);
+        const float f32 = 0.75F;
+        const uint32_t f32_bitcast = std::bit_cast<uint32_t>(f32);
 
-        std::vector<uint16_t> vec16 = { 0xABCD, 0xBADD, 0xD066, 0x7877 };
+        const std::vector<uint16_t> vec16 = { 0xABCD, 0xBADD, 0xD066, 0x7877 };
 
-        std::vector<uint8_t> expected = {
+        const std::vector<uint8_t> u8_expected = {
             /*u32*/         0xA0, 0xB1, 0xC2, 0xD3,
             /*u16*/         0x0A, 0x1B,
             /*u8*/          0xD7,
@@ -32,6 +32,10 @@ TEST_CASE("Serialization")
             /*vec16-data*/  0xAB, 0xCD, 0xBA, 0xDD, 0xD0, 0x66, 0x78, 0x77
         };
 
+        std::vector<std::byte> byte_expected;
+        byte_expected.resize(u8_expected.size());
+        std::memcpy(byte_expected.data(), u8_expected.data(), u8_expected.size());
+
         ien::serializer serializer;
         serializer.serialize(u32);
         serializer.serialize(u16);
@@ -40,7 +44,7 @@ TEST_CASE("Serialization")
         serializer.serialize(f32);
         serializer.serialize(vec16);
 
-        REQUIRE(serializer.data() == expected);
+        REQUIRE(serializer.data() == byte_expected);
     };
 
     SECTION("Deserialization sequence")
@@ -66,7 +70,7 @@ TEST_CASE("Serialization")
             /*vec16-data*/  0xAB, 0xCD, 0xBA, 0xDD, 0xD0, 0x66, 0x78, 0x77
         };
 
-        ien::deserializer deserializer{std::span<uint8_t>(data)};
+        ien::deserializer deserializer{ std::span{ data } };
         uint32_t u32 = deserializer.deserialize<uint32_t>();
         uint16_t u16 = deserializer.deserialize<uint16_t>();
         uint8_t u8 = deserializer.deserialize<uint8_t>();
