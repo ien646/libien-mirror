@@ -3,6 +3,7 @@
 #include <ien/alloc.hpp>
 #include <ien/platform.hpp>
 
+#include <array>
 #include <cassert>
 #include <cstring>
 #include <variant>
