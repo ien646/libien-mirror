@@ -14,7 +14,7 @@ else()
 endif()
 
 option(LIBIEN_BUILD_TESTS "Build tests" OFF)
-option(LIBIEN_BUILD_IMAGE "Build image library" ON)
+option(LIBIEN_BUILD_IMAGE "Build image library" OFF)
 option(LIBIEN_BUILD_SFTP "Build sftp library" OFF)
 option(LIBIEN_BUILD_FONTS "Build fonts library" OFF)
 option(LIBIEN_ENABLE_PLAYGROUND "Enable playground executable" OFF)
@@ -42,7 +42,7 @@ if(LIBIEN_BUILD_TESTS)
     CPMAddPackage(
         NAME catch2
         GIT_REPOSITORY "https://github.com/catchorg/Catch2"
-        GIT_TAG "v3.4.0"
+        GIT_TAG "v3.7.1"
         OPTIONS "CATCH_INSTALL_EXTRAS OFF" "CATCH_INSTALL_DOCS OFF"
     )
 endif()

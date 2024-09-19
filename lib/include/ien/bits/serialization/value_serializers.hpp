@@ -4,6 +4,7 @@
 #include <ien/bits/serialization/serializer_inserter.hpp>
 #include <ien/lang_utils.hpp>
 
+#include <cassert>
 #include <span>
 #include <type_traits>
 
@@ -45,7 +46,12 @@ namespace ien
         template <typename TContainer>
         static void serialize_container(const TContainer& container, serializer_inserter& inserter)
         {
-            ien::value_serializer<IEN_SERIALIZE_CONTAINER_SIZE_T>::serialize(container.size(), inserter);
+            assert(container.size() <= std::numeric_limits<IEN_SERIALIZE_CONTAINER_SIZE_T>::max());
+
+            ien::value_serializer<IEN_SERIALIZE_CONTAINER_SIZE_T>::serialize(
+                static_cast<IEN_SERIALIZE_CONTAINER_SIZE_T> (container.size()),
+                inserter
+            );
 
             ien::value_serializer<typename TContainer::value_type> serializer;
             for (size_t i = 0; i < container.size(); ++i)
