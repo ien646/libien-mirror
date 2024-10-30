@@ -86,7 +86,7 @@ namespace ien
                 throw std::logic_error("Invalid tagged raw image file");
             }
 
-            std::string signature;
+            std::string signature(4, 0);
             uint32_t width = 0;
             uint32_t height = 0;
             uint8_t format = 0;
