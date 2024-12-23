@@ -39,7 +39,7 @@ namespace ien
                     _data = std::vector<T>(max_stack_elems + 1);
 
                     auto& heap_data = get_heap_data();
-                    std:memcpy(heap_data.data(), tempbuff, bytes);
+                    std::memcpy(heap_data.data(), tempbuff, bytes);
                     heap_data.back() = elem;
                 }
                 else
@@ -66,7 +66,7 @@ namespace ien
                     _data = std::vector<T>(max_stack_elems + 1);
 
                     auto& heap_data = get_heap_data();
-                    std:memcpy(heap_data.data(), tempbuff, bytes);
+                    std::memcpy(heap_data.data(), tempbuff, bytes);
                     heap_data.back() = std::move(elem);
                 }
                 else
