@@ -3,6 +3,7 @@
 #include <concepts>
 #include <ien/lang_utils.hpp>
 
+#include <algorithm>
 #include <type_traits>
 
 namespace ien

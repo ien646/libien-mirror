@@ -48,10 +48,11 @@ struct move_tracking_object
     }
 
     move_tracking_object(move_tracking_object&& o)
-        : moved_into(true)
-        , deleted(o.deleted)
+        : value(o.value)
+        , moved_into(true)
         , moved_from(o.moved_from)
-        , value(o.value)
+        
+        , deleted(o.deleted)
     {
         o.moved_from = true;
     }
@@ -130,8 +131,7 @@ TEST_CASE("algorithm")
         {
             v.moved_into = false;
         }
-
-        move_tracking_object& olast = vec.back();
+        
         ien::erase_unsorted(vec, 5);
 
         REQUIRE(vec.size() == 9);

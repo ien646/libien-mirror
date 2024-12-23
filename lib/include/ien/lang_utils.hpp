@@ -106,10 +106,10 @@ namespace ien
         concept Arithmetic = std::is_arithmetic_v<T>;
 
         template <typename T>
-        concept RawCStr = (Pointer<T> || CArray<T>)&&CChar<raw_str_char_t<T>>;
+        concept RawCStr = (Pointer<T> || CArray<T>) && CChar<raw_str_char_t<T>>;
 
         template <typename T>
-        concept RawUnicodeStr = (Pointer<T> || CArray<T>)&&UnicodeChar<raw_str_char_t<T>>;
+        concept RawUnicodeStr = (Pointer<T> || CArray<T>) && UnicodeChar<raw_str_char_t<T>>;
 
         template <typename T>
         concept RawAnyStr = RawCStr<T> || RawUnicodeStr<T>;
@@ -337,4 +337,18 @@ namespace ien
 
     template <typename T>
     using container_value_type = typename std::remove_cvref_t<T>::value_type;
+
+    template <typename T>
+        requires(std::is_convertible_v<T, bool>)
+    constexpr inline bool is_true(const T& value)
+    {
+        return value == true;
+    }
+
+    template <typename T>
+        requires(std::is_convertible_v<T, bool>)
+    constexpr inline bool is_false(const T& value)
+    {
+        return value == false;
+    }
 } // namespace ien

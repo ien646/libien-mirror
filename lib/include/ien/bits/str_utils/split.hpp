@@ -12,7 +12,7 @@ namespace ien::detail
     using string_or_stringview = std::
         conditional_t<WantsStrView, std::basic_string_view<TChar>, std::basic_string<TChar>>;
 
-    template <bool StrView, concepts::AnyStr T, concepts::AnyStrOrChar TDelim>
+    template <size_t ExpectedHits = 0, bool StrView, concepts::AnyStr T, concepts::AnyStrOrChar TDelim>
         requires is_same_underlying_char_type<T, TDelim>
     IEN_CPP_STDVECTOR_CONSTEXPR std::vector<string_or_stringview<underlying_char_t<T>, StrView>> str_split(
         const T& str,
@@ -37,7 +37,7 @@ namespace ien::detail
 
         std::basic_string_view<char_type> view = str_view_range(str, offset, maxlen);
 
-        std::vector<size_t> found_indices = str_indices_of(view, delim);
+        std::vector<size_t> found_indices = str_indices_of<ExpectedHits>(view, delim);
         if (found_indices.empty())
         {
             return { str };
@@ -77,7 +77,7 @@ namespace ien::detail
 
 namespace ien
 {
-    template <concepts::AnyStr T, concepts::AnyStrOrChar TDelim>
+    template <size_t ExpectedHits = 0, concepts::AnyStr T, concepts::AnyStrOrChar TDelim>
         requires detail::is_same_underlying_char_type<T, TDelim>
     IEN_CPP_STDVECTOR_CONSTEXPR std::vector<std::basic_string<underlying_char_t<T>>> str_split(
         const T& str,
@@ -86,10 +86,10 @@ namespace ien
         size_t maxlen = std::numeric_limits<size_t>::max()
     )
     {
-        return detail::str_split<false>(str, delim, offset, maxlen);
+        return detail::str_split<ExpectedHits, false>(str, delim, offset, maxlen);
     }
 
-    template <concepts::StdAnyStrStrV T, concepts::AnyStrOrChar TDelim>
+    template <size_t ExpectedHits = 0, concepts::StdAnyStrStrV T, concepts::AnyStrOrChar TDelim>
         requires detail::is_same_underlying_char_type<T, TDelim>
     IEN_CPP_STDVECTOR_CONSTEXPR std::vector<std::basic_string_view<underlying_char_t<T>>> str_splitv(
         const T& str,
@@ -98,10 +98,10 @@ namespace ien
         size_t maxlen = std::numeric_limits<size_t>::max()
     )
     {
-        return detail::str_split<true>(std::basic_string_view(str.begin(), str.end()), delim, offset, maxlen);
+        return detail::str_split<ExpectedHits, true>(std::basic_string_view(str.begin(), str.end()), delim, offset, maxlen);
     }
 
-    template <concepts::RawAnyStr T, concepts::AnyStrOrChar TDelim>
+    template <size_t ExpectedHits = 0, concepts::RawAnyStr T, concepts::AnyStrOrChar TDelim>
         requires detail::is_same_underlying_char_type<T, TDelim>
     IEN_CPP_STDVECTOR_CONSTEXPR std::vector<std::basic_string_view<underlying_char_t<T>>> str_splitv(
         const T& str,
@@ -110,6 +110,6 @@ namespace ien
         size_t maxlen = std::numeric_limits<size_t>::max()
     )
     {
-        return detail::str_split<true>(std::basic_string_view(str, anystr_length(str)), delim, offset, maxlen);
+        return detail::str_split<ExpectedHits, true>(std::basic_string_view(str, anystr_length(str)), delim, offset, maxlen);
     }
 } // namespace ien
