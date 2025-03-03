@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ien/image/image_format.hpp>
+#include <ien/image/resize_filter.hpp>
 
 #include <array>
 #include <cstdint>
@@ -17,17 +18,6 @@ namespace ien
     {
         IMAGE,
         RAW
-    };
-
-    enum class resize_filter
-    {
-        DEFAULT = 0,      // use same filter type that easy-to-use API chooses
-        BOX = 1,          // A trapezoid w/1-pixel wide ramps, same result as box for integer scale ratios
-        TRIANGLE = 2,     // On upsampling, produces same results as bilinear texture filtering
-        CUBICBSPLINE = 3, // The cubic b-spline (aka Mitchell-Netrevalli with B=1,C=0), gaussian-esque
-        CATMULLROM = 4,   // An interpolating cubic spline
-        MITCHELL = 5,     // Mitchell-Netrevalli filter with B=1/3, C=1/3
-        POINT_SAMPLE = 6  // Simple point sampling
     };
 
     struct image_shuffle
@@ -62,25 +52,25 @@ namespace ien
 
         [[nodiscard]] ien::image copy_rect(size_t x, size_t y, size_t w, size_t h) const;
 
-        inline size_t width() const { return _width; }
-        inline size_t height() const { return _height; }
+        size_t width() const { return _width; }
+        size_t height() const { return _height; }
 
-        inline image_format format() const { return _format; }
+        image_format format() const { return _format; }
 
-        inline size_t pixel_count() const { return _width * _height; }
-        inline unsigned char channel_count() const { return image_format_channels(_format); }
-        inline size_t size() const { return pixel_count() * channel_count(); }
+        size_t pixel_count() const { return _width * _height; }
+        unsigned char channel_count() const { return image_format_channels(_format); }
+        size_t size() const { return pixel_count() * channel_count(); }
 
-        inline unsigned char* data() { return _data; }
-        inline const unsigned char* data() const { return _data; }
+        unsigned char* data() { return _data; }
+        const unsigned char* data() const { return _data; }
 
-        inline unsigned char* data(size_t pxindex) { return _data + (pxindex * channel_count()); }
-        inline const unsigned char* data(size_t pxindex) const { return _data + (pxindex * channel_count()); }
+        unsigned char* data(size_t pxindex) { return _data + (pxindex * channel_count()); }
+        const unsigned char* data(size_t pxindex) const { return _data + (pxindex * channel_count()); }
 
-        inline size_t pixel_index(size_t x, size_t y) const { return (y * _width) + x; }
+        size_t pixel_index(size_t x, size_t y) const { return (y * _width) + x; }
 
-        inline unsigned char* data(size_t x, size_t y) { return _data + (pixel_index(x, y) * channel_count()); }
-        inline const unsigned char* data(size_t x, size_t y) const
+        unsigned char* data(size_t x, size_t y) { return _data + (pixel_index(x, y) * channel_count()); }
+        const unsigned char* data(size_t x, size_t y) const
         {
             return _data + (pixel_index(x, y) * channel_count());
         }
