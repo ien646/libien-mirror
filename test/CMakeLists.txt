@@ -33,6 +33,10 @@ set(LIBIEN_BENCH_SOURCES
     "benchmark/str_utils.cpp"
 )
 
+if(LIBIEN_BUILD_IMAGE)
+    set(LIBIEN_BENCH_SOURCES ${LIBIEN_BENCH_SOURCES} "benchmark/image.cpp")
+endif()
+
 add_executable(libien_benchmarks ${LIBIEN_BENCH_SOURCES})
 target_link_libraries(libien_benchmarks PRIVATE Catch2WithMain libien)
 set_target_properties(libien_benchmarks PROPERTIES
