@@ -37,11 +37,11 @@ namespace ien
 
     template <concepts::RandomAccessContainer T>
         requires(concepts::HasPopBack<T>)
-    void erase_unsorted(T& container, typename T::const_iterator at)
+    void erase_unsorted(T& container, typename T::iterator at)
     {
-        if (const auto last_it = container.end() - 1; at != last_it)
+        if (auto last_it = container.end() - 1; at != last_it)
         {
-            std::swap(*at, last_it);
+            std::swap(*at, *last_it);
         }
         container.pop_back();
     }
