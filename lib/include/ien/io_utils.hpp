@@ -64,7 +64,7 @@ namespace ien
         requires(concepts::AnyStr<TPath>)
     bool write_file_binary(const TPath& path, const TContainer& data)
     {
-        unique_file_descriptor fd = detail::get_write_fd<false>(path);
+        unique_file_descriptor fd = detail::get_write_fd<true>(path);
         if (!fd.is_valid())
         {
             return false;

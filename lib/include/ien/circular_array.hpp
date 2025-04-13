@@ -14,9 +14,18 @@ namespace ien
 
         circular_array() { std::ranges::fill(_array, T{}); }
 
+        void push(const T& val)
+        {
+            _array[_index++] = val;
+            if (_index >= _array.size())
+            {
+                _index = 0;
+            }
+        }
+
         void push(T&& val)
         {
-            _array[_index++] = std::forward<T>(val);
+            _array[_index++] = std::move(val);
             if (_index >= _array.size())
             {
                 _index = 0;
