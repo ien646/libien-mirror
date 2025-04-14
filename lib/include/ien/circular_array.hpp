@@ -1,18 +1,17 @@
 #pragma once
 
-#include <algorithm>
 #include <array>
 
 namespace ien
 {
-    template <typename T, size_t Length>
+    template <typename T, std::size_t Length>
         requires(std::is_copy_constructible_v<T> && std::is_copy_assignable_v<T>)
     class circular_array
     {
     public:
         using value_type = T;
 
-        circular_array() { std::ranges::fill(_array, T{}); }
+        circular_array() { _array.fill(T{}); }
 
         void push(const T& val)
         {
@@ -32,7 +31,7 @@ namespace ien
             }
         }
 
-        constexpr size_t size() const { return Length; }
+        constexpr std::size_t size() const { return Length; }
 
         T* data() { return _array.data(); }
 
@@ -40,10 +39,10 @@ namespace ien
 
         const std::array<T, Length>& underlying_array() const { return _array; }
 
-        void clear(T value = {}) { std::ranges::fill(_array, value); }
+        void clear(T value = {}) { _array.fill(value); }
 
     private:
         std::array<T, Length> _array;
-        size_t _index = 0;
+        std::size_t _index = 0;
     };
 } // namespace ien
