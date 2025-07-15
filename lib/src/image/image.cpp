@@ -148,7 +148,7 @@ namespace ien
 
     image& image::operator=(image&& mvsrc) noexcept
     {
-        if (_data)
+        if (_data && _data != mvsrc._data)
         {
             free(_data);
         }
